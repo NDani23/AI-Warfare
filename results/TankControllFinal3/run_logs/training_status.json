@@ -1,0 +1,66 @@
+{
+    "TankControll": {
+        "checkpoints": [
+            {
+                "steps": 6999996,
+                "file_path": "results\\TankControllFinal3\\TankControll\\TankControll-6999996.onnx",
+                "reward": 1.5047105153756481,
+                "creation_time": 1732454691.6910012,
+                "auxillary_file_paths": [
+                    "results\\TankControllFinal3\\TankControll\\TankControll-6999996.pt"
+                ]
+            },
+            {
+                "steps": 7499954,
+                "file_path": "results\\TankControllFinal3\\TankControll\\TankControll-7499954.onnx",
+                "reward": 2.0469980813238933,
+                "creation_time": 1732456321.0959709,
+                "auxillary_file_paths": [
+                    "results\\TankControllFinal3\\TankControll\\TankControll-7499954.pt"
+                ]
+            },
+            {
+                "steps": 7999960,
+                "file_path": "results\\TankControllFinal3\\TankControll\\TankControll-7999960.onnx",
+                "reward": 1.7712641808649767,
+                "creation_time": 1732457952.5553834,
+                "auxillary_file_paths": [
+                    "results\\TankControllFinal3\\TankControll\\TankControll-7999960.pt"
+                ]
+            },
+            {
+                "steps": 8499800,
+                "file_path": "results\\TankControllFinal3\\TankControll\\TankControll-8499800.onnx",
+                "reward": 1.7598221370577811,
+                "creation_time": 1732459628.8416262,
+                "auxillary_file_paths": [
+                    "results\\TankControllFinal3\\TankControll\\TankControll-8499800.pt"
+                ]
+            },
+            {
+                "steps": 8752766,
+                "file_path": "results\\TankControllFinal3\\TankControll\\TankControll-8752766.onnx",
+                "reward": null,
+                "creation_time": 1732460777.0255284,
+                "auxillary_file_paths": [
+                    "results\\TankControllFinal3\\TankControll\\TankControll-8752766.pt"
+                ]
+            }
+        ],
+        "elo": 1995.6290389365404,
+        "final_checkpoint": {
+            "steps": 8752766,
+            "file_path": "results\\TankControllFinal3\\TankControll.onnx",
+            "reward": null,
+            "creation_time": 1732460777.0255284,
+            "auxillary_file_paths": [
+                "results\\TankControllFinal3\\TankControll\\TankControll-8752766.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.0.0",
+        "torch_version": "2.2.1+cu121"
+    }
+}

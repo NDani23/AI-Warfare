@@ -1,0 +1,66 @@
+{
+    "TankControll": {
+        "checkpoints": [
+            {
+                "steps": 23499985,
+                "file_path": "results\\TankPreTrainFullLocal\\TankControll\\TankControll-23499985.onnx",
+                "reward": 30.87828516960144,
+                "creation_time": 1730362167.204428,
+                "auxillary_file_paths": [
+                    "results\\TankPreTrainFullLocal\\TankControll\\TankControll-23499985.pt"
+                ]
+            },
+            {
+                "steps": 23999985,
+                "file_path": "results\\TankPreTrainFullLocal\\TankControll\\TankControll-23999985.onnx",
+                "reward": 27.581660270690918,
+                "creation_time": 1730365738.3264813,
+                "auxillary_file_paths": [
+                    "results\\TankPreTrainFullLocal\\TankControll\\TankControll-23999985.pt"
+                ]
+            },
+            {
+                "steps": 24499985,
+                "file_path": "results\\TankPreTrainFullLocal\\TankControll\\TankControll-24499985.onnx",
+                "reward": 30.542467832565308,
+                "creation_time": 1730369290.487985,
+                "auxillary_file_paths": [
+                    "results\\TankPreTrainFullLocal\\TankControll\\TankControll-24499985.pt"
+                ]
+            },
+            {
+                "steps": 24999985,
+                "file_path": "results\\TankPreTrainFullLocal\\TankControll\\TankControll-24999985.onnx",
+                "reward": 32.54131317138672,
+                "creation_time": 1730372857.1089966,
+                "auxillary_file_paths": [
+                    "results\\TankPreTrainFullLocal\\TankControll\\TankControll-24999985.pt"
+                ]
+            },
+            {
+                "steps": 25001985,
+                "file_path": "results\\TankPreTrainFullLocal\\TankControll\\TankControll-25001985.onnx",
+                "reward": 33.20292981465658,
+                "creation_time": 1730372857.7360542,
+                "auxillary_file_paths": [
+                    "results\\TankPreTrainFullLocal\\TankControll\\TankControll-25001985.pt"
+                ]
+            }
+        ],
+        "elo": 1200.0,
+        "final_checkpoint": {
+            "steps": 25001985,
+            "file_path": "results\\TankPreTrainFullLocal\\TankControll.onnx",
+            "reward": 33.20292981465658,
+            "creation_time": 1730372857.7360542,
+            "auxillary_file_paths": [
+                "results\\TankPreTrainFullLocal\\TankControll\\TankControll-25001985.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.0.0",
+        "torch_version": "2.2.1+cu121"
+    }
+}

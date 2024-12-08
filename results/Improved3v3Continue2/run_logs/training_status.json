@@ -1,0 +1,30 @@
+{
+    "TankControll": {
+        "elo": 1201.9913820042966,
+        "checkpoints": [
+            {
+                "steps": 2283,
+                "file_path": "results\\Improved3v3Continue2\\TankControll\\TankControll-2283.onnx",
+                "reward": 2.6636846562226615,
+                "creation_time": 1731139486.9480953,
+                "auxillary_file_paths": [
+                    "results\\Improved3v3Continue2\\TankControll\\TankControll-2283.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 2283,
+            "file_path": "results\\Improved3v3Continue2\\TankControll.onnx",
+            "reward": 2.6636846562226615,
+            "creation_time": 1731139486.9480953,
+            "auxillary_file_paths": [
+                "results\\Improved3v3Continue2\\TankControll\\TankControll-2283.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.0.0",
+        "torch_version": "2.2.1+cu121"
+    }
+}
