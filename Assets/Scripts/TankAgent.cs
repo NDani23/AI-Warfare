@@ -74,7 +74,7 @@ public class TankAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
 
-        sensor.AddObservation(Vector3.Dot(transform.forward, tankRB.velocity) / 30.0f);
+        sensor.AddObservation(Vector3.Dot(transform.forward, tankRB.linearVelocity) / 30.0f);
         sensor.AddObservation(tankController.coolDownTime / 3.0f);
         sensor.AddObservation(health / 100.0f);
         sensor.AddObservation(transform.InverseTransformVector(tankCannon.forward));
@@ -156,7 +156,7 @@ public class TankAgent : Agent
         }
 
         RayPerceptionInput spec = aimSensor.GetRayPerceptionInput();
-        RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec);
+        RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec, false);
         if (obs.RayOutputs[0].HitTagIndex == 0)
         {
              envController.EnemyDetected(obs.RayOutputs[0].HitGameObject.transform.parent.gameObject, this.team);
@@ -171,9 +171,9 @@ public class TankAgent : Agent
         AddReward(-0.005f);
         if(health <= 0)
         {
-            Transform deadTankTransform = GameObject.Instantiate(DeadTankPrefab);
-            DeadTankScript deadTank = deadTankTransform.gameObject.GetComponent<DeadTankScript>();
-            deadTank.setTransform(tankController);
+            //Transform deadTankTransform = GameObject.Instantiate(DeadTankPrefab);
+            //DeadTankScript deadTank = deadTankTransform.gameObject.GetComponent<DeadTankScript>();
+            //deadTank.setTransform(tankController);
 
             DiedEvent.Invoke();
             if (inCT)

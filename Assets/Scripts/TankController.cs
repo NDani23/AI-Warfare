@@ -60,7 +60,7 @@ public class TankController : MonoBehaviour
     public void setStartingState(int teamID, int memberID)
     {
 
-        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.linearVelocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
 
         foreach (var wheel in wheels)
@@ -102,7 +102,7 @@ public class TankController : MonoBehaviour
     {
         foreach (var wheel in wheels)
         {
-            if (_rigidbody.velocity.magnitude > 2.0f && transform.InverseTransformDirection(_rigidbody.velocity).z * Throttle < 0)
+            if (_rigidbody.linearVelocity.magnitude > 2.0f && transform.InverseTransformDirection(_rigidbody.linearVelocity).z * Throttle < 0)
             {
                 wheel.Torque = 0;
                 wheel.BreakTorque = breakTorque;
@@ -120,7 +120,7 @@ public class TankController : MonoBehaviour
 
             _rigidbody.AddRelativeTorque(Vector3.up * Steer * turnSpeed, ForceMode.Acceleration);
 
-            if (_rigidbody.angularVelocity.magnitude < 0.01f && Steer != 0 && _rigidbody.velocity.magnitude < 0.1f)
+            if (_rigidbody.angularVelocity.magnitude < 0.01f && Steer != 0 && _rigidbody.linearVelocity.magnitude < 0.1f)
             {
                 wheels[0].Torque = motorTorque * Time.fixedDeltaTime * 50;
 
@@ -152,7 +152,7 @@ public class TankController : MonoBehaviour
         HandleShooting();
 
 
-        if (Vector3.Dot(transform.forward, _rigidbody.velocity) >= 0)
+        if (Vector3.Dot(transform.forward, _rigidbody.linearVelocity) >= 0)
         {
             DirtParticles1.transform.localRotation = Quaternion.Euler(-160, 0, 0);
             DirtParticles2.transform.localRotation = Quaternion.Euler(-160, 0, 0);
@@ -163,8 +163,8 @@ public class TankController : MonoBehaviour
             DirtParticles2.transform.localRotation = Quaternion.Euler(-40, 0, 0);
         }
 
-        DirtParticles1.startSpeed = _rigidbody.velocity.magnitude;
-        DirtParticles2.startSpeed = _rigidbody.velocity.magnitude;
+        DirtParticles1.startSpeed = _rigidbody.linearVelocity.magnitude;
+        DirtParticles2.startSpeed = _rigidbody.linearVelocity.magnitude;
 
 
         coolDownTime = Mathf.Max(0, coolDownTime - Time.fixedDeltaTime);

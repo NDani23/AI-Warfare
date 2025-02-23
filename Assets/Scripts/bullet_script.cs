@@ -24,7 +24,7 @@ public class bullet_script : MonoBehaviour
         transform.position = pos;
         transform.rotation = rot;
 
-        this.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
+        this.GetComponent<Rigidbody>().linearVelocity = new Vector3(0, 0, 0);
         this.GetComponent<Rigidbody>().AddForce(dir * force);
     }
     private void OnCollisionEnter(Collision collision)
@@ -35,8 +35,8 @@ public class bullet_script : MonoBehaviour
         if ((collision.gameObject.CompareTag("YellowAgent") && _parent.team == Team.Red) ||
           (collision.gameObject.CompareTag("RedAgent") && _parent.team == Team.Yellow))
        {
-            Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
-            emitter.position = collision.transform.position;
+            //Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
+            //emitter.position = collision.transform.position;
             if (_parent.team == Team.Red)
                 envController.EnemyDetected(_parent.gameObject, Team.Yellow);
             else
@@ -49,8 +49,8 @@ public class bullet_script : MonoBehaviour
        else if((collision.gameObject.CompareTag("YellowAgent") && _parent.team == Team.Yellow) ||
                (collision.gameObject.CompareTag("RedAgent") && _parent.team == Team.Red))
        {
-            Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
-            emitter.position = collision.transform.position;
+            //Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
+            //emitter.position = collision.transform.position;
             _parent.AddReward(-0.5f);
             collision.gameObject.GetComponent<TankAgent>().Hit(_damage);
         }
