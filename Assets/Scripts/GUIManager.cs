@@ -35,8 +35,8 @@ public class GUIManager : MonoBehaviour
     {
         CursorHotspot = new Vector2(aimCursor.width / 2.0f, aimCursor.height / 2.0f);
         Cursor.SetCursor(aimCursor, CursorHotspot, CursorMode.Auto);
-        player.DiedEvent.AddListener(PlayerDiedHandler);
-        player.RespawnEvent.AddListener(PlayerRespawnHandler);
+        //player.DiedEvent.AddListener(PlayerDiedHandler);
+        //player.RespawnEvent.AddListener(PlayerRespawnHandler);
         env.RedWonEvent.AddListener(RedWonHandler);
         env.YellowWonEvent.AddListener(YellowWonHandler);
         env.TieEvent.AddListener(TieHandler);

@@ -74,8 +74,8 @@ public class TankController : MonoBehaviour
 
         if (teamID == (int)Team.Yellow)
         {
-            transform.localPosition = new Vector3((200 - 100 * memberID) + Random.Range(-40.0f, 40.0f), 3f, -300);
             transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+            transform.localPosition = new Vector3((200 - 100 * memberID) + Random.Range(-40.0f, 40.0f), 3f, -300);
         }
         else
         {
@@ -83,6 +83,8 @@ public class TankController : MonoBehaviour
             transform.localRotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
             transform.localPosition = new Vector3((200 - 100 * memberID) + Random.Range(-40.0f, 40.0f), 3f, 300);
         }
+
+        //transform.localPosition = new Vector3(Random.Range(-300.0f, 300.0f), 3f, Random.Range(-300.0f, 300.0f));
 
         tankCannon.localRotation = Quaternion.Euler(0, 0, 0);
         tankTower.localRotation = Quaternion.Euler(0, 0, 0);

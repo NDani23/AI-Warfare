@@ -1,0 +1,66 @@
+{
+    "TankControll": {
+        "checkpoints": [
+            {
+                "steps": 8999466,
+                "file_path": "results\\TankPreTrainNoMemory4Layer\\TankControll\\TankControll-8999466.onnx",
+                "reward": 0.37000012397766113,
+                "creation_time": 1742670921.4962919,
+                "auxillary_file_paths": [
+                    "results\\TankPreTrainNoMemory4Layer\\TankControll\\TankControll-8999466.pt"
+                ]
+            },
+            {
+                "steps": 9999485,
+                "file_path": "results\\TankPreTrainNoMemory4Layer\\TankControll\\TankControll-9999485.onnx",
+                "reward": 2.2069333136081695,
+                "creation_time": 1742676072.750062,
+                "auxillary_file_paths": [
+                    "results\\TankPreTrainNoMemory4Layer\\TankControll\\TankControll-9999485.pt"
+                ]
+            },
+            {
+                "steps": 10999892,
+                "file_path": "results\\TankPreTrainNoMemory4Layer\\TankControll\\TankControll-10999892.onnx",
+                "reward": 1.9491537534273589,
+                "creation_time": 1742681261.4218314,
+                "auxillary_file_paths": [
+                    "results\\TankPreTrainNoMemory4Layer\\TankControll\\TankControll-10999892.pt"
+                ]
+            },
+            {
+                "steps": 11999476,
+                "file_path": "results\\TankPreTrainNoMemory4Layer\\TankControll\\TankControll-11999476.onnx",
+                "reward": 3.0361944139003754,
+                "creation_time": 1742686415.2886243,
+                "auxillary_file_paths": [
+                    "results\\TankPreTrainNoMemory4Layer\\TankControll\\TankControll-11999476.pt"
+                ]
+            },
+            {
+                "steps": 12790537,
+                "file_path": "results\\TankPreTrainNoMemory4Layer\\TankControll\\TankControll-12790537.onnx",
+                "reward": 3.2768809029034207,
+                "creation_time": 1742690442.0842652,
+                "auxillary_file_paths": [
+                    "results\\TankPreTrainNoMemory4Layer\\TankControll\\TankControll-12790537.pt"
+                ]
+            }
+        ],
+        "elo": 1303.1313337605875,
+        "final_checkpoint": {
+            "steps": 12790537,
+            "file_path": "results\\TankPreTrainNoMemory4Layer\\TankControll.onnx",
+            "reward": 3.2768809029034207,
+            "creation_time": 1742690442.0842652,
+            "auxillary_file_paths": [
+                "results\\TankPreTrainNoMemory4Layer\\TankControll\\TankControll-12790537.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

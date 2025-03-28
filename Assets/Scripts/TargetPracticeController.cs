@@ -14,7 +14,8 @@ public class TargetPracticeController : MonoBehaviour
     [SerializeField] private Transform targetTankPrefab;
     [SerializeField] private Transform fakeTargetTankPrefab;
     [SerializeField] private Transform fakeTargetWallPrefab;
-
+    [SerializeField] private CTController m_ControlPoint;
+    [SerializeField] private EnvController m_EnvController;
     [SerializeField] private TankAgent agent;
 
     [SerializeField] private float PracticeAreaWidth;
@@ -33,30 +34,16 @@ public class TargetPracticeController : MonoBehaviour
 
     [SerializeField] private bool AutomaticProgression;
 
-    [SerializeField] private bool UseRearrange;
-
     [SerializeField] private Speed ProgressionSpeed = Speed.Normal;
 
-    [SerializeField] private CTController m_ControlPoint;
-
-    public float RearrangeTime { get; set; }
     private float CTRearrangeCooldown;
-    private static float RearrangeInterval = 350.0f;
-    private static float CTRearrangeInterval = 7.0f;
+    private static float CTRearrangeInterval = 60.0f;
 
-    private TargetScript targetWall;
-    private TargetScript targetTank;
-    private TargetScript currentTarget;
-
-    private Vector3 basePos;
+    private TargetScript[] m_targets;
+    private TargetScript[] m_fakeTargets;
 
     private int hitCount = 0;
-
-    private Transform fakeTargetWall;
-    private Transform fakeTargetTank;
-    private Transform currentFakeTarget;
-
-    public bool agentInCT = false;
+    private int captureCount = 0;
 
 
 
@@ -70,218 +57,167 @@ public class TargetPracticeController : MonoBehaviour
             FloatingTargets = false;
             MovingTargets = false;
             FakeTargets = false;
-            UseRearrange = true;
             PracticeAreaLength = 600;
             PracticeAreaWidth = 600;
-            TargetHeight = 80;
-            TargetWidth = 200;
+            TargetHeight = 50;
+            TargetWidth = 120;
         }
 
-        Transform newTarget = GameObject.Instantiate(targetWallPrefab, this.transform);
-        targetWall = newTarget.gameObject.GetComponent<TargetScript>();
-        targetWall.setController(this);
-
-
-        if (FakeTargets)
+        m_targets = new TargetScript[1];
+        for (int i = 0; i < m_targets.Length; i++)
         {
-            fakeTargetWall = GameObject.Instantiate(fakeTargetWallPrefab, this.transform);
-            currentFakeTarget = fakeTargetWall;
+            Transform newTarget = GameObject.Instantiate(targetWallPrefab, this.transform);
+            m_targets[i] = newTarget.gameObject.GetComponent<TargetScript>();
+            m_targets[i].setController(this, false);
+            m_targets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
         }
 
-        currentTarget = targetWall;
-        basePos = newTarget.localPosition;
+        //FakeTargets = true;
+        //m_fakeTargets = new TargetScript[1];
+        //for (int i = 0; i < m_fakeTargets.Length; i++)
+        //{
+        //    Transform newFakeTarget = GameObject.Instantiate(fakeTargetTankPrefab, this.transform);
+        //    m_fakeTargets[i] = newFakeTarget.gameObject.GetComponent<TargetScript>();
+        //    m_fakeTargets[i].setController(this, true);
+        //    m_fakeTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+        //}
 
-        RearrangeTargets();
+        //m_ControlPoint.StateChangedEvent.AddListener(handleCTStateChanged);
+
         RearrangeCT();
-
-        RearrangeTime = RearrangeInterval;
-        CTRearrangeCooldown = 0;
+        CTRearrangeCooldown = CTRearrangeInterval;
 
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (!Active) return;
         float t = Time.time;
         float dt = Time.deltaTime;
 
-        if (MovingTargets)
+        CTRearrangeCooldown -= Time.deltaTime;
+
+        if (CTRearrangeCooldown <= 0)
         {
-            currentTarget.transform.localPosition = basePos + new Vector3(Mathf.Sin(t * (TargetSpeed / 10)) * MoveDistance, 0, 0);
+            RearrangeCT();
+
+            CTRearrangeCooldown = CTRearrangeInterval;
         }
 
-        RearrangeTime = Mathf.Max(0, RearrangeTime - Time.deltaTime);
-
-        if (RearrangeTime == 0 && UseRearrange)
-        {
-            RearrangeTargets();
-
-            RearrangeTime = RearrangeInterval;
-        }
-
-        if(agentInCT)
-        {
-
-            CTRearrangeCooldown -= Time.deltaTime;
-            agent.AddReward(0.001f);
-
-            if (CTRearrangeCooldown <= 0)
-            {
-                CTRearrangeCooldown = 0;
-                agentInCT = false;
-                RearrangeCT();
-                Debug.Log("CAPTURED");
-                agent.AddReward(5.0f);
-            }
-        }
 
     }
 
-    public void HandleTargetHit()
+    public void HandleTargetHit(TargetScript target)
     {
+        if(target.isFakeTarget())
+        {
+            target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+            return;
+        }
+
         if (AutomaticProgression)
         {
             HandleProgression();
         }
 
-        RearrangeTargets();
-
-        basePos = currentTarget.transform.localPosition;
-
+        target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
         hitCount++;
-
-        if(UseRearrange)    
-            RearrangeTime = RearrangeInterval;
-
-    }
-
-    public void HandleCTEnter()
-    {
-        CTRearrangeCooldown = CTRearrangeInterval;
-        agentInCT = true;
-    }
-
-    public void HandleCTExit()
-    {
-
-        CTRearrangeCooldown = 0;
-        agentInCT = false;
     }
 
     private void HandleProgression()
     {
-        //if(hitCount == 3000)
-        //{
-        //    FakeTargets = true;
-        //    fakeTargetWall = GameObject.Instantiate(fakeTargetWallPrefab, this.transform);
-        //    SetTargetTransforms(fakeTargetWall);
-        //    currentFakeTarget = fakeTargetWall;
-        //}
 
-        if(hitCount == 1)
+        if (hitCount == 500)
         {
-            //FloatingTargets = true;
-            Transform newTarget = GameObject.Instantiate(targetTankPrefab, this.transform);
-            targetTank = newTarget.gameObject.GetComponent<TargetScript>();
-            targetTank.setController(this);
-            currentTarget = targetTank;
-            targetWall.gameObject.SetActive(false);
-            //fakeTargetWall.gameObject.SetActive(false);
+            m_EnvController.clearDetectedEnemies();
+            for (int i = 0; i < m_targets.Length; i++)
+            {
+                Destroy(m_targets[i].gameObject);
+            }
 
-            RearrangeTargets();
 
+            m_targets = new TargetScript[3];
+            for (int i = 0; i < m_targets.Length; i++)
+            {
+                Transform newTarget = GameObject.Instantiate(targetWallPrefab, this.transform);
+                m_targets[i] = newTarget.gameObject.GetComponent<TargetScript>();
+                m_targets[i].setController(this, false);
+                m_targets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+            }
+
+            FakeTargets = true;
+            m_fakeTargets = new TargetScript[2];
+            for (int i = 0; i < m_fakeTargets.Length; i++)
+            {
+                Transform newFakeTarget = GameObject.Instantiate(fakeTargetWallPrefab, this.transform);
+                m_fakeTargets[i] = newFakeTarget.gameObject.GetComponent<TargetScript>();
+                m_fakeTargets[i].setController(this, true);
+                m_fakeTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+            }
         }
+
+
 
         if (hitCount == 1000)
         {
-            FakeTargets = true;
-            fakeTargetTank = GameObject.Instantiate(fakeTargetTankPrefab, this.transform);
-            currentFakeTarget = fakeTargetTank;
-            RearrangeTargets();
-            //fakeTargetWall.gameObject.SetActive(false);
+            m_EnvController.clearDetectedEnemies();
+            for (int i = 0; i < m_targets.Length; i++)
+            {
+                Destroy(m_targets[i].gameObject);
+            }
+
+            for (int i = 0; i < m_fakeTargets.Length; i++)
+            {
+                Destroy(m_fakeTargets[i].gameObject);
+            }
+
+            m_targets = new TargetScript[5];
+            for (int i = 0; i < m_targets.Length; i++)
+            {
+                Transform newTarget = GameObject.Instantiate(targetTankPrefab, this.transform);
+                m_targets[i] = newTarget.gameObject.GetComponent<TargetScript>();
+                m_targets[i].setController(this, false);
+                m_targets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+            }
+
+            m_fakeTargets = new TargetScript[3];
+            for (int i = 0; i < m_fakeTargets.Length; i++)
+            {
+                Transform newFakeTarget = GameObject.Instantiate(fakeTargetTankPrefab, this.transform);
+                m_fakeTargets[i] = newFakeTarget.gameObject.GetComponent<TargetScript>();
+                m_fakeTargets[i].setController(this, true);
+                m_fakeTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+            }
+
         }
 
-        //if(hitCount == 30000)
-        //{
-        //    MovingTargets = true;
-        //    TargetSpeed = 1;
-        //    MoveDistance = 50;
-        //}
+        TargetWidth = TargetWidth <= 15 ? TargetWidth : TargetWidth - 0.15f;
+        TargetHeight = TargetHeight <= 7 ? TargetHeight : TargetHeight - 0.04f;
 
-        if (MovingTargets)
-        {
-            TargetSpeed = TargetSpeed >= 5 ? TargetSpeed : TargetSpeed + 0.0005f;
-        }
-
-        TargetWidth = TargetWidth <= 15 ? TargetWidth : TargetWidth - 0.01f;
-        TargetHeight = TargetHeight <= 15 ? TargetHeight : TargetHeight - 0.0035f;
-
-        //PracticeAreaLength = PracticeAreaLength == 300 ? PracticeAreaLength : PracticeAreaLength + 0.5f;
-        //PracticeAreaWidth = PracticeAreaWidth == 400 ? PracticeAreaWidth : PracticeAreaWidth + 0.5f;
-    }
-
-    private void SetTargetTransforms(Transform target, int AreaID)
-    {
-        float newHeight = 3.0f;
-        if (target == targetWall.transform || target == fakeTargetWall)
-        {
-            target.localScale = new Vector3(TargetWidth, TargetHeight, 3);
-            newHeight = FloatingTargets ? Random.Range(TargetHeight / 2, 50.0f) : TargetHeight / 2;
-        }
-
-        switch(AreaID)
-        {
-            case 0:
-                target.transform.localPosition = new Vector3(Random.Range(-PracticeAreaWidth / 2, 0),
-                                                 newHeight,
-                                                 Random.Range(-PracticeAreaLength / 2, 0));
-                break;
-            case 1:
-                target.transform.localPosition = new Vector3(Random.Range(-PracticeAreaWidth / 2, 0),
-                                                  newHeight,
-                                                  Random.Range(0, PracticeAreaLength / 2));
-                break;
-            case 2:
-                target.transform.localPosition = new Vector3(Random.Range(0, PracticeAreaWidth / 2),
-                                                 newHeight,
-                                                 Random.Range(0, PracticeAreaLength / 2));
-                break;
-            case 3:
-                target.transform.localPosition = new Vector3(Random.Range(0, PracticeAreaWidth / 2),
-                                                  newHeight,
-                                                  Random.Range(-PracticeAreaLength / 2, 0));
-                break;
-            default:
-                target.transform.localPosition = new Vector3(Random.Range(-PracticeAreaWidth / 2, PracticeAreaWidth / 2),
-                                                  newHeight,
-                                                  Random.Range(-PracticeAreaLength / 2, PracticeAreaLength / 2));
-                break;
-        }
-
-    }
-
-    private void RearrangeTargets()
-    {
-        if (!FakeTargets)
-        {
-            SetTargetTransforms(currentTarget.transform, -1);
-        }
-        else
-        {
-            int areaId = Random.Range(0, 3);
-            SetTargetTransforms(currentTarget.transform, areaId);
-
-            int newId = Random.Range(0, 3);
-            if (newId == areaId) newId = newId += 1 % 4;
-
-            SetTargetTransforms(currentFakeTarget, newId);
-        }
     }
 
     private void RearrangeCT()
     {
-        m_ControlPoint.transform.localPosition = new Vector3(Random.Range(-200, 200), 0, Random.Range(-200, 200));
-        //agentInCT = false;
+        m_ControlPoint.transform.localPosition = new Vector3(Random.Range(-PracticeAreaWidth / 2, PracticeAreaWidth / 2),
+                                                0.0f,
+                                                Random.Range(-PracticeAreaLength / 2, PracticeAreaLength / 2));
+
+        m_EnvController.resetCT();
+    }
+
+    public void RequestRearrange(TargetScript target)
+    {
+        target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+    }
+
+    private void handleCTStateChanged()
+    {
+        if(m_ControlPoint.GetState() == CTState.Yellow && agent.team == Team.Yellow
+        || m_ControlPoint.GetState() == CTState.Red && agent.team == Team.Red)
+        {
+            captureCount++;
+            HandleProgression();
+        }
     }
 }

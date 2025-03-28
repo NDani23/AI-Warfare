@@ -1,0 +1,66 @@
+{
+    "TankControll": {
+        "checkpoints": [
+            {
+                "steps": 7999110,
+                "file_path": "results\\Tank5v5\\TankControll\\TankControll-7999110.onnx",
+                "reward": 0.0,
+                "creation_time": 1742951086.232782,
+                "auxillary_file_paths": [
+                    "results\\Tank5v5\\TankControll\\TankControll-7999110.pt"
+                ]
+            },
+            {
+                "steps": 8999175,
+                "file_path": "results\\Tank5v5\\TankControll\\TankControll-8999175.onnx",
+                "reward": 0.0,
+                "creation_time": 1742956435.0229664,
+                "auxillary_file_paths": [
+                    "results\\Tank5v5\\TankControll\\TankControll-8999175.pt"
+                ]
+            },
+            {
+                "steps": 9999550,
+                "file_path": "results\\Tank5v5\\TankControll\\TankControll-9999550.onnx",
+                "reward": 0.0,
+                "creation_time": 1742961701.7001297,
+                "auxillary_file_paths": [
+                    "results\\Tank5v5\\TankControll\\TankControll-9999550.pt"
+                ]
+            },
+            {
+                "steps": 10999820,
+                "file_path": "results\\Tank5v5\\TankControll\\TankControll-10999820.onnx",
+                "reward": 0.0,
+                "creation_time": 1742966955.6124303,
+                "auxillary_file_paths": [
+                    "results\\Tank5v5\\TankControll\\TankControll-10999820.pt"
+                ]
+            },
+            {
+                "steps": 11360305,
+                "file_path": "results\\Tank5v5\\TankControll\\TankControll-11360305.onnx",
+                "reward": 0.0,
+                "creation_time": 1742968905.6467233,
+                "auxillary_file_paths": [
+                    "results\\Tank5v5\\TankControll\\TankControll-11360305.pt"
+                ]
+            }
+        ],
+        "elo": 1263.6518733249695,
+        "final_checkpoint": {
+            "steps": 11360305,
+            "file_path": "results\\Tank5v5\\TankControll.onnx",
+            "reward": 0.0,
+            "creation_time": 1742968905.6467233,
+            "auxillary_file_paths": [
+                "results\\Tank5v5\\TankControll\\TankControll-11360305.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

@@ -1,3 +1,4 @@
+using Unity.MLAgents.Policies;
 using UnityEngine;
 
 public class bullet_script : MonoBehaviour
@@ -35,13 +36,16 @@ public class bullet_script : MonoBehaviour
         if ((collision.gameObject.CompareTag("YellowAgent") && _parent.team == Team.Red) ||
           (collision.gameObject.CompareTag("RedAgent") && _parent.team == Team.Yellow))
        {
-            //Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
-            //emitter.position = collision.transform.position;
+            if (_parent.GetComponent<BehaviorParameters>().BehaviorType != BehaviorType.Default)
+            {
+                Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
+                emitter.position = collision.transform.position;
+            }
+            Debug.Log("HIT!");
             if (_parent.team == Team.Red)
                 envController.EnemyDetected(_parent.gameObject, Team.Yellow);
             else
                 envController.EnemyDetected(_parent.gameObject, Team.Red);
-
             _parent.AddReward(0.1f);
             collision.gameObject.GetComponent<TankAgent>().Hit(_damage);
             
@@ -49,14 +53,18 @@ public class bullet_script : MonoBehaviour
        else if((collision.gameObject.CompareTag("YellowAgent") && _parent.team == Team.Yellow) ||
                (collision.gameObject.CompareTag("RedAgent") && _parent.team == Team.Red))
        {
-            //Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
-            //emitter.position = collision.transform.position;
-            _parent.AddReward(-0.5f);
+            if (_parent.GetComponent<BehaviorParameters>().BehaviorType != BehaviorType.Default)
+            {
+                Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
+                emitter.position = collision.transform.position;
+            }
+            //Debug.Log("Friendly!");
+            _parent.AddReward(-0.2f);
             collision.gameObject.GetComponent<TankAgent>().Hit(_damage);
         }
        else
        {
-            _parent.AddReward(-0.01f);
+           //_parent.AddReward(-0.0005f);
        }
 
         this.gameObject.SetActive(false);

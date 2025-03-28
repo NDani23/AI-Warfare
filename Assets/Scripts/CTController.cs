@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public enum CTState
 {
@@ -17,6 +18,8 @@ public class CTController : MonoBehaviour
 
     private EnvController m_envController;
 
+    //public UnityEvent StateChangedEvent;
+
     private CTState m_state = CTState.Neutral;
 
     private void Start()
@@ -26,6 +29,7 @@ public class CTController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+
         if(other.tag == "YellowAgent")
         {
             if (other.transform.parent.GetComponent<TankAgent>().inCT) return;
@@ -43,6 +47,7 @@ public class CTController : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+
         if (other.tag == "YellowAgent")
         {
             if (!other.transform.parent.GetComponent<TankAgent>().inCT) return;
@@ -60,8 +65,9 @@ public class CTController : MonoBehaviour
     public void ChangeState(CTState state)
     {
         m_state = state;
+        //StateChangedEvent.Invoke();
 
-        if(m_state == CTState.Yellow)
+        if (m_state == CTState.Yellow)
         {
             FlagObject.GetComponent<Renderer>().material = YellowMaterial;
         }
@@ -73,5 +79,10 @@ public class CTController : MonoBehaviour
         {
             FlagObject.GetComponent<Renderer>().material = NeutralMaterial;
         }
+    }
+
+    public CTState GetState()
+    {
+        return m_state;
     }
 }

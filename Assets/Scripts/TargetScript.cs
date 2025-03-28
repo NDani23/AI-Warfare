@@ -1,20 +1,69 @@
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class TargetScript : MonoBehaviour
 {
     private TargetPracticeController targetController;
+    public bool isWall = false;
+    private bool isFake = false;
 
-    public void setController(TargetPracticeController controller)
+    private float m_rearrangeInterval = 60.0f;
+    private float m_rearrangeCooldown = 60.0f;
+
+    public void setController(TargetPracticeController controller, bool isFake)
     {
         this.targetController = controller;
+        this.isFake = isFake;
+    }
+
+    private void FixedUpdate()
+    {
+        m_rearrangeCooldown -= Time.deltaTime;
+        if(m_rearrangeCooldown <= 0.0f)
+        {
+            targetController.RequestRearrange(this);
+            m_rearrangeCooldown = m_rearrangeInterval;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         if (targetController && collision.gameObject.tag == "Bullet")
         {
-            targetController.HandleTargetHit();
+            targetController.HandleTargetHit(this);
+            m_rearrangeCooldown = m_rearrangeInterval;
         }
 
+    }
+
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    Debug.Log("BEMEGY");
+    //    if (targetController && other.gameObject.tag == "Bullet")
+    //    {
+    //        targetController.HandleTargetHit(this);
+    //        m_rearrangeCooldown = m_rearrangeInterval;
+    //    }
+    //}
+
+    public void Rearrange(float width, float height, float practiceAreaLenght, float practiceAreaWidth)
+    {
+        float newHeight = 2.6f;
+        if (isWall)
+        {
+            transform.localScale = new Vector3(width, height, 7);
+            newHeight = height / 2;
+        }
+
+        transform.localPosition = new Vector3(Random.Range(-practiceAreaWidth / 2, practiceAreaWidth / 2),
+                                                newHeight,
+                                                Random.Range(-practiceAreaLenght / 2, practiceAreaLenght / 2));
+        transform.localRotation = Quaternion.Euler(transform.localRotation.x, Random.Range(0.0f, 360.0f), transform.localRotation.z);
+
+    }
+
+    public bool isFakeTarget()
+    {
+        return isFake;
     }
 }

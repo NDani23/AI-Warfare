@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7432308692147654818}
-  - component: {fileID: 4912210740146760143}
   - component: {fileID: 1223274593382565872}
+  - component: {fileID: 8490102508804481309}
   m_Layer: 3
   m_Name: ControlPoint
   m_TagString: ControllPoint
@@ -35,27 +35,6 @@ Transform:
   - {fileID: 2534717917210415594}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &4912210740146760143
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 682503658785066558}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 100, y: 50, z: 100}
-  m_Center: {x: 0, y: 25, z: 0}
 --- !u!114 &1223274593382565872
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,6 +51,27 @@ MonoBehaviour:
   NeutralMaterial: {fileID: 2100000, guid: 6c60d61114973fd48bd0271a86fed5e6, type: 2}
   RedMaterial: {fileID: 2100000, guid: 3fa8773277c0e7e44a87ae2d0f525889, type: 2}
   YellowMaterial: {fileID: 2100000, guid: daed0731a8acea44c827f234ef81a28f, type: 2}
+--- !u!135 &8490102508804481309
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 682503658785066558}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 32768
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 49.09
+  m_Center: {x: 0, y: 2.0757725, z: 0}
 --- !u!1001 &1865859505904451669
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -121,7 +121,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 6b280c033621028418a962b5be9db5c6, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: cb817c28c686cfb4bb85699e297948af, type: 2}
     - target: {fileID: 919132149155446097, guid: 6b280c033621028418a962b5be9db5c6, type: 3}
