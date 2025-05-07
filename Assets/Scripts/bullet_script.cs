@@ -46,10 +46,12 @@ public class bullet_script : MonoBehaviour
                 envController.EnemyDetected(_parent.gameObject, Team.Yellow);
             else
                 envController.EnemyDetected(_parent.gameObject, Team.Red);
-            _parent.AddReward(0.1f);
+            //_parent.AddReward(0.1f);
             collision.gameObject.GetComponent<TankAgent>().Hit(_damage);
-            
-       }
+            //if(collision.gameObject.GetComponent<TankAgent>().getHealth() == 0)
+            //    _parent.AddReward(0.3f);
+
+        }
        else if((collision.gameObject.CompareTag("YellowAgent") && _parent.team == Team.Yellow) ||
                (collision.gameObject.CompareTag("RedAgent") && _parent.team == Team.Red))
        {
@@ -58,8 +60,11 @@ public class bullet_script : MonoBehaviour
                 Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
                 emitter.position = collision.transform.position;
             }
-            //Debug.Log("Friendly!");
-            _parent.AddReward(-0.2f);
+            if(_parent.team == Team.Red)
+                Debug.Log("Red Friendly!");
+            else
+                Debug.Log("Yellow Friendly!");
+            //_parent.AddReward(-0.1f);
             collision.gameObject.GetComponent<TankAgent>().Hit(_damage);
         }
        else

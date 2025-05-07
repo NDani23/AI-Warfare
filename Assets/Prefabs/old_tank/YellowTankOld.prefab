@@ -1143,7 +1143,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7802670320222683188, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: m_Name
-      value: YellowTank
+      value: YellowTankOld
       objectReference: {fileID: 0}
     - target: {fileID: 7802670320222683188, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: m_TagString
@@ -1504,13 +1504,10 @@ MonoBehaviour:
   tankCannon: {fileID: 4735659501657711226}
   memberID: 0
   DeadTankPrefab: {fileID: 4379246079796819148, guid: 8ccba4ec171adec429c2184d8d6c2045, type: 3}
+  detectedEnemiesSensor: {fileID: 5349347806503298668}
+  teammateSensor: {fileID: 0}
+  demonstrationRecorder: {fileID: 0}
   inCT: 0
-  DiedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  RespawnEvent:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &1951065714925477944
 MonoBehaviour:
   m_ObjectHideFlags: 0

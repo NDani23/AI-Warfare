@@ -102,7 +102,7 @@ MonoBehaviour:
   - YellowAgent
   - RedAgent
   m_RaysPerDirection: 1
-  m_MaxRayDegrees: 5
+  m_MaxRayDegrees: 7
   m_SphereCastRadius: 2
   m_RayLength: 600
   m_RayLayerMask:
@@ -169,7 +169,7 @@ MonoBehaviour:
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967283
-  m_ObservationStacks: 2
+  m_ObservationStacks: 3
   m_AlternatingRayOrder: 0
   m_UseBatchedRaycasts: 0
   rayHitColor: {r: 1, g: 0.045822944, b: 0, a: 1}
@@ -222,14 +222,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SensorName: FindTargetSensorWide
   m_DetectableTags: []
-  m_RaysPerDirection: 4
-  m_MaxRayDegrees: 20
-  m_SphereCastRadius: 2
+  m_RaysPerDirection: 5
+  m_MaxRayDegrees: 31.6
+  m_SphereCastRadius: 3
   m_RayLength: 600
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967283
-  m_ObservationStacks: 3
+  m_ObservationStacks: 5
   m_AlternatingRayOrder: 0
   m_UseBatchedRaycasts: 0
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
@@ -429,7 +429,7 @@ MonoBehaviour:
   - YellowAgent
   - RedAgent
   m_RaysPerDirection: 1
-  m_MaxRayDegrees: 5
+  m_MaxRayDegrees: 7
   m_SphereCastRadius: 2
   m_RayLength: 600
   m_RayLayerMask:
@@ -537,7 +537,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &879394418842639145
 RectTransform:
   m_ObjectHideFlags: 0
@@ -881,6 +881,10 @@ PrefabInstance:
       value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 5326564363232667707, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
+      propertyPath: BodyCollider
+      value: 
+      objectReference: {fileID: 5858901302957185743}
+    - target: {fileID: 5326564363232667707, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: bulletPrefab
       value: 
       objectReference: {fileID: 871023184319305435, guid: 62c3a6abccb77f34ba7d249cccb09439, type: 3}
@@ -896,6 +900,10 @@ PrefabInstance:
       propertyPath: FireParticles
       value: 
       objectReference: {fileID: 5977853762219167062}
+    - target: {fileID: 5326564363232667707, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
+      propertyPath: BottomCollider
+      value: 
+      objectReference: {fileID: 1948795752012349641}
     - target: {fileID: 5326564363232667707, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: DirtParticles1
       value: 
@@ -1236,10 +1244,10 @@ PrefabInstance:
       addedObject: {fileID: 882228258290603118}
     - targetCorrespondingSourceObject: {fileID: 7802670320222683188, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4919813770530184922}
+      addedObject: {fileID: 5787601114699799351}
     - targetCorrespondingSourceObject: {fileID: 7802670320222683188, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1975141638130999128}
+      addedObject: {fileID: 384638465518604843}
     - targetCorrespondingSourceObject: {fileID: 4928748514462155333, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6177013423654029609}
@@ -1496,8 +1504,8 @@ MonoBehaviour:
   tankCannon: {fileID: 5858992171742504264}
   memberID: 0
   DeadTankPrefab: {fileID: 4379246079796819148, guid: 8ccba4ec171adec429c2184d8d6c2045, type: 3}
-  detectedEnemiesSensor: {fileID: 4919813770530184922}
-  teammateSensor: {fileID: 1975141638130999128}
+  detectedEnemiesSensor: {fileID: 5787601114699799351}
+  teammateSensor: {fileID: 384638465518604843}
   demonstrationRecorder: {fileID: 0}
   inCT: 0
 --- !u!114 &4780874329360715698
@@ -1546,7 +1554,7 @@ MonoBehaviour:
   DecisionPeriod: 5
   DecisionStep: 0
   TakeActionsBetweenDecisions: 1
---- !u!114 &4919813770530184922
+--- !u!114 &5787601114699799351
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1555,14 +1563,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8616252851933621038}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38b7cc1f5819445aa85e9a9b054552dc, type: 3}
+  m_Script: {fileID: 11500000, guid: dd8012d5925524537b27131fef517017, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_SensorName: DetectedEnemiesSensor
-  m_ObservationSize: 25
-  m_ObservationType: 0
-  m_ObservationStacks: 1
---- !u!114 &1975141638130999128
+  m_ObservableSize: 6
+  m_MaxNumObservables: 5
+--- !u!114 &384638465518604843
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1571,13 +1578,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 8616252851933621038}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38b7cc1f5819445aa85e9a9b054552dc, type: 3}
+  m_Script: {fileID: 11500000, guid: dd8012d5925524537b27131fef517017, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_SensorName: TeammateSensor
-  m_ObservationSize: 20
-  m_ObservationType: 0
-  m_ObservationStacks: 1
+  m_ObservableSize: 6
+  m_MaxNumObservables: 4
 --- !u!146 &8616711944631061792 stripped
 WheelCollider:
   m_CorrespondingSourceObject: {fileID: 7804464228629341754, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
