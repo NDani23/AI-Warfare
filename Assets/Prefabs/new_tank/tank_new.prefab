@@ -537,7 +537,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &879394418842639145
 RectTransform:
   m_ObjectHideFlags: 0
@@ -804,6 +804,10 @@ PrefabInstance:
       propertyPath: wheelTransform
       value: 
       objectReference: {fileID: 1597079366969330225}
+    - target: {fileID: 2557069538603651589, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2831158888335658621, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
@@ -823,6 +827,10 @@ PrefabInstance:
     - target: {fileID: 3004599605156114843, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: m_TagString
       value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 3121739704436486554, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3179021826825029288, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: m_TagString
@@ -1080,6 +1088,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Untagged
       objectReference: {fileID: 0}
+    - target: {fileID: 6773964774625360917, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6874343342762615696, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -1192,7 +1204,8 @@ PrefabInstance:
     - {fileID: 4958265942450583456, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
     - {fileID: 8602266203947889165, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
     - {fileID: 7543911113443414542, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 3993989843503837946, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 7422908537114401422, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       insertIndex: -1
@@ -1281,17 +1294,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1004940680549130539, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
   m_PrefabInstance: {fileID: 2007394878050822938}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2080951020444477513 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 520929831756235603, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
-  m_PrefabInstance: {fileID: 2007394878050822938}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e04875d5c3f20145b8c56333f193fe3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!146 &2097765640183638469 stripped
 WheelCollider:
   m_CorrespondingSourceObject: {fileID: 488484144293216991, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
@@ -1491,7 +1493,6 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
   tankController: {fileID: 5922357826236482337}
-  inputController: {fileID: 2080951020444477513}
   tankRB: {fileID: 4704374785696201200}
   tankCannon: {fileID: 5858992171742504264}
   memberID: 0
@@ -1500,6 +1501,12 @@ MonoBehaviour:
   teammateSensor: {fileID: 1975141638130999128}
   demonstrationRecorder: {fileID: 0}
   inCT: 0
+  DiedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  RespawnEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &4780874329360715698
 MonoBehaviour:
   m_ObjectHideFlags: 0

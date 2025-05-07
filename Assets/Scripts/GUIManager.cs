@@ -2,11 +2,12 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
+using Unity.MLAgents;
 
 public class GUIManager : MonoBehaviour
 {
     [SerializeField] private Texture2D aimCursor;
-    [SerializeField] private TankAgent player;
+    [SerializeField] private Agent playerSerialized;
     [SerializeField] private UnityEngine.UI.Image AimPointerImage;
     [SerializeField] private UnityEngine.UI.Image CooldownForeground;
     [SerializeField] private UnityEngine.UI.Image RedState;
@@ -23,7 +24,8 @@ public class GUIManager : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Image TiePanel;
     [SerializeField] private UnityEngine.UI.Text RespawnCooldownText;
     [SerializeField] private EnvController env;
-    [SerializeField] private InputController inputController;
+
+    private IVehicleAgent player;
 
     public UnityEvent PausedEvent;
 
@@ -41,6 +43,15 @@ public class GUIManager : MonoBehaviour
         env.YellowWonEvent.AddListener(YellowWonHandler);
         env.TieEvent.AddListener(TieHandler);
         PausedEvent.AddListener(PauseGameHandler);
+        if (playerSerialized is IVehicleAgent vehicleAgent)
+        {
+            player = vehicleAgent;
+        }
+
+        if(player is HeliAgent)
+        {
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        }
     }
 
     void Update()
@@ -59,13 +70,13 @@ public class GUIManager : MonoBehaviour
 
 
         AimPointerImage.transform.position = player.GetScreenSpaceAimPos();
-        int playerHealth = (int)player.getHealth();
+        int playerHealth = (int)player.Health;
         HealthText.text = playerHealth.ToString() + "%";
-        if (HealthForeground != null) HealthForeground.fillAmount = player.getHealth() / 100;
+        if (HealthForeground != null) HealthForeground.fillAmount = player.Health / 100;
         TimeSpan timeSpan = TimeSpan.FromSeconds(env.getRemainingTime());
         TimerText.text = timeSpan.ToString(@"mm\:ss");
-        if(playerRespawnCooldown == 0.0f)
-            CooldownForeground.fillAmount = player.getCooldown() / 3.0f;
+        //if(playerRespawnCooldown == 0.0f)
+        //    CooldownForeground.fillAmount = player.getCooldown() / 3.0f;
         RedTeamPoints.fillAmount = env.RedTeamPoints / 100.0f;
         YellowTeamPoints.fillAmount = env.YellowTeamPoints / 100.0f;
 
@@ -131,13 +142,13 @@ public class GUIManager : MonoBehaviour
     {
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         PausePanel.gameObject.SetActive(true);
-        inputController.gameObject.SetActive(false);
+        //inputController.gameObject.SetActive(false);
     }
 
     public void ContinueGameHandler()
     {
         Cursor.SetCursor(aimCursor, CursorHotspot, CursorMode.Auto);
         PausePanel.gameObject.SetActive(false);
-        inputController.gameObject.SetActive(true);
+        //inputController.gameObject.SetActive(true);
     }
 }

@@ -33,16 +33,14 @@ public class bullet_script : MonoBehaviour
         if (destroyed) return;
         destroyed = true;
 
-        if ((collision.gameObject.CompareTag("YellowAgent") && _parent.team == Team.Red) ||
-          (collision.gameObject.CompareTag("RedAgent") && _parent.team == Team.Yellow))
+        if ((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Red) ||
+          (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Yellow))
        {
-            if (_parent.GetComponent<BehaviorParameters>().BehaviorType != BehaviorType.Default)
-            {
-                Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
-                emitter.position = collision.transform.position;
-            }
+            Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
+            emitter.position = collision.transform.position;
+
             Debug.Log("HIT!");
-            if (_parent.team == Team.Red)
+            if (_parent.Team == Team.Red)
                 envController.EnemyDetected(_parent.gameObject, Team.Yellow);
             else
                 envController.EnemyDetected(_parent.gameObject, Team.Red);
@@ -50,14 +48,12 @@ public class bullet_script : MonoBehaviour
             collision.gameObject.GetComponent<TankAgent>().Hit(_damage);
             
        }
-       else if((collision.gameObject.CompareTag("YellowAgent") && _parent.team == Team.Yellow) ||
-               (collision.gameObject.CompareTag("RedAgent") && _parent.team == Team.Red))
+       else if((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Yellow) ||
+               (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Red))
        {
-            if (_parent.GetComponent<BehaviorParameters>().BehaviorType != BehaviorType.Default)
-            {
-                Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
-                emitter.position = collision.transform.position;
-            }
+           Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
+           emitter.position = collision.transform.position;
+
             //Debug.Log("Friendly!");
             _parent.AddReward(-0.2f);
             collision.gameObject.GetComponent<TankAgent>().Hit(_damage);

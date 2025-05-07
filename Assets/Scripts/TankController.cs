@@ -57,7 +57,7 @@ public class TankController : MonoBehaviour
 
         coolDownTime = 3.0f;
     }
-    public void setStartingState(int teamID, int memberID)
+    public void setStartingState(int teamID, uint memberID)
     {
 
         _rigidbody.linearVelocity = Vector3.zero;

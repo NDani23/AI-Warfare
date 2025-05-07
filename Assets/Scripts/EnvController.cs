@@ -13,7 +13,9 @@ public class EnvController : MonoBehaviour
 
     public static int RespawnCooldown = 5;
 
-    public List<TankAgent> AgentsList = new List<TankAgent>();
+    //public List<TankAgent> AgentsList = new List<TankAgent>();
+    public List<Agent> AgentsListSerialized = new List<Agent>();
+    public List<IVehicleAgent> AgentsList = new List<IVehicleAgent>();
 
     public SimpleMultiAgentGroup m_RedAgentGroup;
     public SimpleMultiAgentGroup m_YellowAgentGroup;
@@ -22,7 +24,7 @@ public class EnvController : MonoBehaviour
 
     public Dictionary<GameObject,float> m_DetectedRedEnemies;
     public Dictionary<GameObject, float> m_DetectedYellowEnemies;
-    public Dictionary<TankAgent, float> m_DeadAgents;
+    public Dictionary<IVehicleAgent, float> m_DeadAgents;
 
     public float RedTeamPoints = 0.0f;
     public float YellowTeamPoints = 0.0f;
@@ -44,7 +46,7 @@ public class EnvController : MonoBehaviour
     {
         m_DetectedRedEnemies = new Dictionary<GameObject, float>();
         m_DetectedYellowEnemies = new Dictionary<GameObject, float>();
-        m_DeadAgents = new Dictionary<TankAgent, float>();
+        m_DeadAgents = new Dictionary<IVehicleAgent, float>();
     }
 
 
@@ -54,15 +56,24 @@ public class EnvController : MonoBehaviour
         m_RedAgentGroup = new SimpleMultiAgentGroup();
         m_YellowAgentGroup = new SimpleMultiAgentGroup();
 
+        foreach (var agent in AgentsListSerialized)
+        {
+
+            if (agent is IVehicleAgent vehicleAgent)
+            {
+                AgentsList.Add(vehicleAgent);
+            }
+        }
+
         foreach (var agent in AgentsList)
         {
-            if (agent.team == Team.Red)
+            if (agent.Team == Team.Red)
             {
-                m_RedAgentGroup.RegisterAgent(agent);
+                m_RedAgentGroup.RegisterAgent((Agent)agent);
             }
             else
             {
-                m_YellowAgentGroup.RegisterAgent(agent);
+                m_YellowAgentGroup.RegisterAgent((Agent)agent);
             }
         }
     }
@@ -173,57 +184,23 @@ public class EnvController : MonoBehaviour
             }
         }
 
-        //float pointDifferenceForRed = (RedTeamPoints - YellowTeamPoints) * 0.01f;
-        //m_RedAgentGroup.AddGroupReward(pointDifferenceForRed * (Time.fixedDeltaTime / timeLimit));
-        //float pointDifferenceForYellow = (YellowTeamPoints - RedTeamPoints) * 0.01f;
-        //m_YellowAgentGroup.AddGroupReward(pointDifferenceForYellow * (Time.fixedDeltaTime / timeLimit));
-
         float pointToAdd = (100.0f / 45.0f) * Time.fixedDeltaTime;
         if (ctState == CTState.Red)
         {
             RedTeamPoints += pointToAdd;
-            //AddRewardToTeamMembers(Team.Red, pointToAdd * 0.01f);
-            //AddRewardToTeamMembers(Team.Yellow, -pointToAdd * 0.001f);
             m_RedAgentGroup.AddGroupReward(pointToAdd * 0.01f);
             m_YellowAgentGroup.AddGroupReward(pointToAdd * -0.005f);
         }
         else if (ctState == CTState.Yellow)
         {
             YellowTeamPoints += pointToAdd;
-            //AddRewardToTeamMembers(Team.Yellow, pointToAdd * 0.01f);
-            //AddRewardToTeamMembers(Team.Red, -pointToAdd * 0.001f);
             m_RedAgentGroup.AddGroupReward(pointToAdd * -0.005f);
             m_YellowAgentGroup.AddGroupReward(pointToAdd * 0.01f);
         }
-        //else
-        //{
-        //    AddRewardToTeamMembers(Team.Yellow, -(Time.fixedDeltaTime * 0.2f) / timeLimit);
-        //    AddRewardToTeamMembers(Team.Red, -(Time.fixedDeltaTime * 0.2f) / timeLimit);
-        //}
 
         if (m_ResetTimer <= 0.0f)
         {
 
-            //if (RedTeamPoints > YellowTeamPoints)
-            //{
-            //    RedWonEvent.Invoke();
-            //    m_RedAgentGroup.AddGroupReward(1.0f);
-            //}
-            //else if (RedTeamPoints < YellowTeamPoints)
-            //{
-            //    YellowWonEvent.Invoke();
-            //    m_YellowAgentGroup.AddGroupReward(1.0f);
-            //}
-            //else
-            //{
-            //    TieEvent.Invoke();
-            //    m_YellowAgentGroup.AddGroupReward(0);
-            //    m_RedAgentGroup.AddGroupReward(0);
-            //}
-            //gameEnded = true;
-            //m_YellowAgentGroup.GroupEpisodeInterrupted();
-            //m_RedAgentGroup.GroupEpisodeInterrupted();
-            //ResetEnv();
             if (RedTeamPoints == YellowTeamPoints)
                 ResetEnv(null, true);
             else if (RedTeamPoints > YellowTeamPoints)
@@ -237,10 +214,10 @@ public class EnvController : MonoBehaviour
 
         if (RedTeamPoints >= 100.0f && YellowTeamPoints >= 100.0f)
         {
-            //TieEvent.Invoke();
+            TieEvent.Invoke();
             //m_YellowAgentGroup.AddGroupReward(0);
             //m_RedAgentGroup.AddGroupReward(0);
-            //gameEnded = true;
+            gameEnded = true;
             //m_YellowAgentGroup.EndGroupEpisode();
             //m_RedAgentGroup.EndGroupEpisode();
             //ResetEnv();
@@ -249,9 +226,9 @@ public class EnvController : MonoBehaviour
         }
         else if (RedTeamPoints >= 100.0f)
         {
-            //RedWonEvent.Invoke();
+            RedWonEvent.Invoke();
             //m_RedAgentGroup.AddGroupReward(1.0f);
-            //gameEnded = true;
+            gameEnded = true;
             //m_YellowAgentGroup.EndGroupEpisode();
             //m_RedAgentGroup.EndGroupEpisode();
             //ResetEnv();
@@ -260,9 +237,9 @@ public class EnvController : MonoBehaviour
         }
         else if (YellowTeamPoints >= 100.0f)
         {
-            //YellowWonEvent.Invoke();
+            YellowWonEvent.Invoke();
             //m_YellowAgentGroup.AddGroupReward(1.0f);
-            //gameEnded = true;
+            gameEnded = true;
             //m_YellowAgentGroup.EndGroupEpisode();
             //m_RedAgentGroup.EndGroupEpisode();
             //ResetEnv();
@@ -271,23 +248,19 @@ public class EnvController : MonoBehaviour
         }
     }
 
-    public void AgentDied(TankAgent agent)
+    public void AgentDied(IVehicleAgent agent)
     {
-        if (agent.team == Team.Red)
+        if (agent.Team == Team.Red)
         {
             YellowTeamPoints += 10;
-            //AddRewardToTeamMembers(Team.Yellow, 0.5f);
-            //AddRewardToTeamMembers(Team.Red, -0.1f);
             m_YellowAgentGroup.AddGroupReward(0.1f);
             m_RedAgentGroup.AddGroupReward(-0.01f);
             m_DetectedRedEnemies.Remove(agent.gameObject);
 
         }
-        else if (agent.team == Team.Yellow)
+        else if (agent.Team == Team.Yellow)
         {
             RedTeamPoints += 10;
-            //AddRewardToTeamMembers(Team.Red, 0.5f);
-            //AddRewardToTeamMembers(Team.Yellow, -0.1f);
             m_YellowAgentGroup.AddGroupReward(-0.01f);
             m_RedAgentGroup.AddGroupReward(0.1f);
             m_DetectedYellowEnemies.Remove(agent.gameObject);
@@ -480,7 +453,7 @@ public class EnvController : MonoBehaviour
     {
         foreach(TankAgent agent in AgentsList)
         {
-            if(agent.team == team)
+            if(agent.Team == team)
             {
                 agent.AddReward(reward);
             }

@@ -13,6 +13,6 @@ public class agentInfoScript : MonoBehaviour
     void Update()
     {
         transform.rotation = Quaternion.LookRotation(transform.position - m_Camera.transform.position);
-        if (HealthBar != null) HealthBar.fillAmount = m_Agent.getHealth() / 100;
+        if (HealthBar != null) HealthBar.fillAmount = m_Agent.Health / 100;
     }
 }

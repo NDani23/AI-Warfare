@@ -213,8 +213,8 @@ public class TargetPracticeController : MonoBehaviour
 
     private void handleCTStateChanged()
     {
-        if(m_ControlPoint.GetState() == CTState.Yellow && agent.team == Team.Yellow
-        || m_ControlPoint.GetState() == CTState.Red && agent.team == Team.Red)
+        if(m_ControlPoint.GetState() == CTState.Yellow && agent.Team == Team.Yellow
+        || m_ControlPoint.GetState() == CTState.Red && agent.Team == Team.Red)
         {
             captureCount++;
             HandleProgression();

@@ -17,8 +17,17 @@ public class FollowObject : MonoBehaviour
     {
         if(player != null)
         {
+            // Smoothly follow the helicopter's position
             transform.position = Vector3.Lerp(transform.position, player.position, smoothing);
-            transform.rotation = Quaternion.Slerp(transform.rotation, player.rotation, turnSmoothing);
+
+            // Get the helicopter's rotation as Euler angles
+            Vector3 playerEuler = player.rotation.eulerAngles;
+
+            // Create a target rotation with only yaw (Y) and pitch (X), setting roll (Z) to 0
+            Quaternion targetRotation = Quaternion.Euler(playerEuler.x, playerEuler.y, 0f);
+
+            // Smoothly interpolate the camera's rotation to the target rotation
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSmoothing);
         }
     }
 }
