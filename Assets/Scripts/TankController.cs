@@ -13,6 +13,8 @@ public class TankController : MonoBehaviour
     [SerializeField] private Transform firePosition;
     [SerializeField] private Transform recoilPosition;
     [SerializeField] private Rigidbody _rigidbody;
+    [SerializeField] private GameObject BodyCollider;
+    [SerializeField] private GameObject BottomCollider;
     [SerializeField] private WheelScript[] wheels;
     [SerializeField] private ParticleSystem FireParticles;
     [SerializeField] private ParticleSystem DirtParticles1;
@@ -59,7 +61,9 @@ public class TankController : MonoBehaviour
     }
     public void setStartingState(int teamID, uint memberID)
     {
-
+        BottomCollider.tag = tankAgent.team == Team.Red ? "RedAgent" : "YellowAgent";
+        BodyCollider.tag = tankAgent.team == Team.Red ? "RedAgent" : "YellowAgent";
+        tankTower.gameObject.tag = tankAgent.team == Team.Red ? "RedAgent" : "YellowAgent";
         _rigidbody.linearVelocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
 
@@ -72,7 +76,7 @@ public class TankController : MonoBehaviour
 
         coolDownTime = 3.0f;
 
-        if (teamID == (int)Team.Yellow)
+        if (teamID == (int)Team.Red)
         {
             transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
             transform.localPosition = new Vector3((200 - 100 * memberID) + Random.Range(-40.0f, 40.0f), 3f, -300);
@@ -102,6 +106,7 @@ public class TankController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //if (tankAgent.getHealth() == 0) return;
         foreach (var wheel in wheels)
         {
             if (_rigidbody.linearVelocity.magnitude > 2.0f && transform.InverseTransformDirection(_rigidbody.linearVelocity).z * Throttle < 0)
@@ -230,5 +235,20 @@ public class TankController : MonoBehaviour
     public Transform getCannonTransform()
     {
         return tankCannon.transform;
+    }
+
+    public void setDeadState()
+    {
+        HorizontalAimInput = 0.0f;
+        VerticalAimInput = 0.0f;
+        FireInput = 0;
+        Steer = 0;
+        Throttle = 0;
+
+        BodyCollider.tag = "Untagged";
+        BottomCollider.tag = "Untagged";
+        tankTower.gameObject.tag = "Untagged";
+
+
     }
 }

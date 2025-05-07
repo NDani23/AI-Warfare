@@ -918,6 +918,10 @@ PrefabInstance:
       value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 5326564363232667707, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
+      propertyPath: BodyCollider
+      value: 
+      objectReference: {fileID: 4131456701246134221}
+    - target: {fileID: 5326564363232667707, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: bulletPrefab
       value: 
       objectReference: {fileID: 871023184319305435, guid: 62c3a6abccb77f34ba7d249cccb09439, type: 3}
@@ -933,6 +937,10 @@ PrefabInstance:
       propertyPath: FireParticles
       value: 
       objectReference: {fileID: 4756567825002072676}
+    - target: {fileID: 5326564363232667707, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
+      propertyPath: BottomCollider
+      value: 
+      objectReference: {fileID: 5198187670774027031}
     - target: {fileID: 5326564363232667707, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: DirtParticles1
       value: 
@@ -1552,13 +1560,10 @@ MonoBehaviour:
   tankCannon: {fileID: 4735659501657711226}
   memberID: 0
   DeadTankPrefab: {fileID: 4379246079796819148, guid: 8ccba4ec171adec429c2184d8d6c2045, type: 3}
+  detectedEnemiesSensor: {fileID: 3245299028463134500}
+  teammateSensor: {fileID: 0}
+  demonstrationRecorder: {fileID: 0}
   inCT: 0
-  DiedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  RespawnEvent:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &1951065714925477944
 MonoBehaviour:
   m_ObjectHideFlags: 0

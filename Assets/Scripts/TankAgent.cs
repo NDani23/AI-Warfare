@@ -10,6 +10,7 @@ using Unity.VisualScripting;
 using NUnit.Framework;
 using System.Text;
 using Unity.MLAgents.Demonstrations;
+using Unity.Sentis;
 
 
 
@@ -20,13 +21,16 @@ public class TankAgent : Agent, IVehicleAgent
     [SerializeField] private Transform tankCannon;
     [SerializeField] private uint memberID;
     [SerializeField] private Transform DeadTankPrefab;
-    [SerializeField] private VectorSensorComponent detectedEnemiesSensor;
-    [SerializeField] private VectorSensorComponent teammateSensor;
+    [SerializeField] private BufferSensorComponent detectedEnemiesSensor;
+    [SerializeField] private BufferSensorComponent teammateSensor;
 
     public DemonstrationRecorder? demonstrationRecorder;
 
     BehaviorParameters m_BehaviorParameters;
     RayPerceptionSensorComponent3D aimSensor = null;
+    //BufferSensorComponent detectedEnemiesBufferSensor = null;
+
+    private float health = 100;
 
     private float RegenHealthCooldown = 0;
 
@@ -82,14 +86,23 @@ public class TankAgent : Agent, IVehicleAgent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-
         sensor.AddObservation(Vector3.Dot(transform.forward, tankRB.linearVelocity) / 30.0f);
         sensor.AddObservation(tankController.coolDownTime / 3.0f);
         sensor.AddObservation(_health / 100.0f);
         sensor.AddObservation(transform.InverseTransformVector(tankCannon.forward));
-        sensor.AddObservation(Vector3.Normalize(transform.InverseTransformVector(_envController.GetCTPosition() - transform.localPosition)));
-        DistanceToCT = Vector3.Distance(_envController.GetCTPosition(), transform.localPosition) / 700.0f;
-        sensor.AddObservation(DistanceToCT);
+        if(health == 0)
+        {
+            sensor.AddObservation(Vector3.zero);
+            sensor.AddObservation(0.0f);
+        }
+        else
+        {
+            sensor.AddObservation(Vector3.Normalize(transform.InverseTransformVector(envController.GetCTPosition() - transform.localPosition)));
+            DistanceToCT = Vector3.Distance(envController.GetCTPosition(), transform.localPosition) / 700.0f;
+            sensor.AddObservation(DistanceToCT);
+        }
+
+
         sensor.AddObservation(0);
         sensor.AddObservation(_envController.m_ResetTimer / (float)_envController.timeLimit);
 
@@ -106,69 +119,55 @@ public class TankAgent : Agent, IVehicleAgent
 
 
 
-        float stateNum = _team == Team.Red ? -1 * _envController.getStateNum() : _envController.getStateNum();
-        stateNum /= 10;
 
 
-        CTState currentState = _envController.ctState;
-        int stateObs = 0;
-        switch (currentState)
+        float stateNum = team == Team.Red ? -1 * envController.getStateNum() : envController.getStateNum();
+        //float stateNum = team == Team.Red ? (envController.RedTeamPoints - envController.YellowTeamPoints) * 0.01f : (envController.YellowTeamPoints - envController.RedTeamPoints) * 0.01f;
+
+        sensor.AddObservation(stateNum /= 10);
+
+        Dictionary<GameObject, float> detectedEnemies = team == Team.Red ? envController.m_DetectedYellowEnemies : envController.m_DetectedRedEnemies;
+
+        //BufferSensor
+
+        if(health != 0)
         {
-            case CTState.Red:
-                stateObs = _team == Team.Red ? 1 : -1;
-                break;
-            case CTState.Yellow:
-                stateObs = _team == Team.Yellow ? 1 : -1;
-                break;
+                foreach (var agent in detectedEnemies.Keys.ToList())
+                {
+                    Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(agent.transform.localPosition - transform.localPosition));
+                    float dist = Vector3.Distance(agent.transform.localPosition, transform.localPosition) / 700.0f;
+                    float health = agent.GetComponent<TankAgent>().getHealth() * 0.01f;
+    
+                    float[] Obs = { dir.x, dir.y, dir.z, dist, health, 0.0f };
+                    detectedEnemiesSensor.AppendObservation(Obs);
+                }
 
+
+                foreach (var agent in envController.AgentsList)
+                {
+                    if (agent.team != this.team || agent.memberID == this.memberID)
+                        continue;
+
+                    if (agent.health == 0)
+                        continue;
+
+                    Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(agent.transform.localPosition - transform.localPosition));
+                    float dist = Vector3.Distance(agent.transform.localPosition, transform.localPosition) / 700.0f;
+                    float health = agent.getHealth() * 0.01f;
+
+                    float[] Obs = { dir.x, dir.y, dir.z, dist, health, 0.0f };
+                    teammateSensor.AppendObservation(Obs);
+                }
+            
         }
-        sensor.AddObservation(stateNum);
-
-        Dictionary<GameObject, float> detectedEnemies = _team == Team.Red ? _envController.m_DetectedYellowEnemies : _envController.m_DetectedRedEnemies;
-
-        for (int i = 0; i < 5; i++)
-        {
-            if (detectedEnemies.Keys.Any(key => key.gameObject.GetComponent<IVehicleAgent>()?.MemberID == i))
-            {
-                var agent = detectedEnemies.Keys.First(key => key.gameObject.GetComponent<IVehicleAgent>()?.MemberID == i);
-                Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(agent.transform.localPosition - transform.localPosition));
-                float dist = Vector3.Distance(agent.transform.localPosition, transform.localPosition) / 700.0f;
-
-                detectedEnemiesSensor.GetSensor().AddObservation(dir);
-                detectedEnemiesSensor.GetSensor().AddObservation(dist);
-                detectedEnemiesSensor.GetSensor().AddObservation(agent.GetComponent<IVehicleAgent>().Health * 0.01f);
-            }
-            else
-            {
-                detectedEnemiesSensor.GetSensor().AddObservation(0.0f);
-                detectedEnemiesSensor.GetSensor().AddObservation(0.0f);
-                detectedEnemiesSensor.GetSensor().AddObservation(0.0f);
-                detectedEnemiesSensor.GetSensor().AddObservation(0.0f);
-                detectedEnemiesSensor.GetSensor().AddObservation(0.0f);
-            }
-        }
-
-        foreach (IVehicleAgent agent in _envController.AgentsList)
-        {
-            if (agent.Team != _team)
-                continue;
-
-            if (agent.MemberID == memberID)
-                continue;
-
-            Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(agent.gameObject.transform.localPosition - transform.localPosition));
-            float dist = Vector3.Distance(agent.gameObject.transform.localPosition, transform.localPosition) / 700.0f;
-
-            teammateSensor.GetSensor().AddObservation(dir);
-            teammateSensor.GetSensor().AddObservation(dist);
-            teammateSensor.GetSensor().AddObservation(agent.Health * 0.01f);
-
-        }
-
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
+        if (health == 0.0f)
+            return;
+
+
         tankController.Throttle = actions.DiscreteActions[0]-1;
 
         if (actions.DiscreteActions[1] - 1 == 0 || (actions.DiscreteActions[1] - 1) * tankController.Steer < 0)
@@ -189,6 +188,7 @@ public class TankAgent : Agent, IVehicleAgent
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
+        if(health == 0.0f) return;
         ActionSegment<int> discreteActions = actionsOut.DiscreteActions;
 
         var aimDirection = Input.mousePosition;
@@ -204,13 +204,14 @@ public class TankAgent : Agent, IVehicleAgent
     {
         if (collision.gameObject.tag != "Bullet")
         {
-            AddReward(-0.01f);
+            //AddReward(-0.01f);
         }
     }
 
 
     public void FixedUpdate()
     {
+        if (health == 0.0f) return;
         if (RegenHealthCooldown != 0) RegenHealthCooldown = Mathf.Max(0, RegenHealthCooldown - Time.fixedDeltaTime);
 
         if(_health != 100 && RegenHealthCooldown == 0)
@@ -231,36 +232,28 @@ public class TankAgent : Agent, IVehicleAgent
     {
         _health = Mathf.Max(_health - damage, 0);
         RegenHealthCooldown = 10.0f;
-        AddReward(-0.01f);
-        if(_health <= 0)
+        if (health <= 0)
         {
-            Transform deadTankTransform = GameObject.Instantiate(DeadTankPrefab);
-            DeadTankScript deadTank = deadTankTransform.gameObject.GetComponent<DeadTankScript>();
-            deadTank.setTransform(tankController);
-
-
-            DiedEvent.Invoke();
-            if (inCT)
-            {
-                inCT = false;
-                _envController.AgentExitedCT(_team);
-            }
-            _envController.AgentDied(this);
-
+            //AddReward(-0.1f);
+            setDeadState();
         }
     }
 
     public void ResetAgent()
     {
+        //RespawnEvent.Invoke();
+        health = 100.0f;
+        //this.memberID = UnityEngine.Random.Range(0, 5);
 
-        tankController.setStartingState((int)_team, memberID);
-        _health = 100;
+        gameObject.tag = team == Team.Red ? "RedAgent" : "YellowAgent";
+        tankController.setStartingState((int)team, memberID);
         if (inCT)
         {
             inCT = false;
             _envController.AgentExitedCT(_team);
         }
-        //_envController.resetCT();
+
+        //envController.resetCT();
     }
 
     public Vector2 GetScreenSpaceAimPos()
@@ -271,5 +264,27 @@ public class TankAgent : Agent, IVehicleAgent
     public float getCooldown()
     {
         return tankController.coolDownTime;
+    }
+
+    public void setDeadState()
+    {
+        if (GetComponent<BehaviorParameters>().BehaviorType != BehaviorType.Default)
+        {
+            Transform deadTankTransform = GameObject.Instantiate(DeadTankPrefab);
+            DeadTankScript deadTank = deadTankTransform.gameObject.GetComponent<DeadTankScript>();
+            deadTank.setTransform(tankController);
+        }
+
+        tankController.setDeadState();
+
+        //DiedEvent.Invoke();
+        if (inCT)
+        {
+            inCT = false;
+            envController.AgentExitedCT(team);
+        }
+        health = 0;
+        envController.AgentDied(this);
+        gameObject.tag = "Untagged";
     }
 }

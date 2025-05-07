@@ -7,7 +7,7 @@ using UnityEngine.Events;
 
 public class EnvController : MonoBehaviour
 {
-    [Tooltip("Time limit (seconds)")] public int timeLimit = 60;
+    [Tooltip("Time limit (seconds)")] public int timeLimit = 90;
 
     [SerializeField] private CTController m_ControlPoint;
 
@@ -20,7 +20,7 @@ public class EnvController : MonoBehaviour
     public SimpleMultiAgentGroup m_RedAgentGroup;
     public SimpleMultiAgentGroup m_YellowAgentGroup;
 
-    public float m_ResetTimer = 0;
+    public float m_ResetTimer = 5;
 
     public Dictionary<GameObject,float> m_DetectedRedEnemies;
     public Dictionary<GameObject, float> m_DetectedYellowEnemies;
@@ -42,6 +42,8 @@ public class EnvController : MonoBehaviour
     public UnityEvent RedWonEvent;
     public UnityEvent YellowWonEvent;
     public UnityEvent TieEvent;
+
+    private int winBalance = 0;
     private void Awake()
     {
         m_DetectedRedEnemies = new Dictionary<GameObject, float>();
@@ -99,24 +101,15 @@ public class EnvController : MonoBehaviour
             if (m_DetectedYellowEnemies[agent] <= 0.0f) m_DetectedYellowEnemies.Remove(agent);
         }
 
-        //foreach (var agent in m_DeadAgents.Keys.ToList())
-        //{
-        //    m_DeadAgents[agent] = m_DeadAgents[agent] - Time.fixedDeltaTime;
-        //    if (m_DeadAgents[agent] <= 0.0f)
-        //    {
-        //        m_DeadAgents.Remove(agent);
-        //        agent.ResetAgent();
-        //        agent.gameObject.SetActive(true);
-        //        if (agent.team == Team.Red)
-        //        {
-        //            m_RedAgentGroup.RegisterAgent(agent);
-        //        }
-        //        else
-        //        {
-        //            m_YellowAgentGroup.RegisterAgent(agent);
-        //        }
-        //    }
-        //}
+        foreach (var agent in m_DeadAgents.Keys.ToList())
+        {
+            m_DeadAgents[agent] = m_DeadAgents[agent] - Time.fixedDeltaTime;
+            if (m_DeadAgents[agent] <= 0.0f)
+            {
+                m_DeadAgents.Remove(agent);
+                agent.ResetAgent();
+            }
+        }
 
         if (capturing)
         {
@@ -136,10 +129,17 @@ public class EnvController : MonoBehaviour
 
                     ctState = CTState.Yellow;
                     m_ControlPoint.ChangeState(ctState);
-                    //AddRewardToTeamMembers(Team.Yellow, 0.5f);
-                    m_YellowAgentGroup.AddGroupReward(0.5f);
+                    //AddRewardToTeamMembers(Team.Yellow, 2.0f - (1.0f - m_ResetTimer / timeLimit) * 2);
+                    //m_YellowAgentGroup.AddGroupReward(0.5f - (1.0f - m_ResetTimer / timeLimit) * 0.5f);
+                    //m_RedAgentGroup.AddGroupReward(-(0.5f - (1.0f - m_ResetTimer / timeLimit) * 0.5f));
+                    //m_RedAgentGroup.AddGroupReward(-1.0f);
+                    //ResetEnv(Team.Yellow);
                     capturing = false;
+                    Debug.Log("CAPTURED!");
                 }
+
+                //if (capturing)
+                //    m_YellowAgentGroup.AddGroupReward((100 / 60) * Time.fixedDeltaTime * 0.01f);
             }
             else
             {
@@ -156,10 +156,17 @@ public class EnvController : MonoBehaviour
                 {
                     ctState = CTState.Red;
                     m_ControlPoint.ChangeState(ctState);
-                    //AddRewardToTeamMembers(Team.Red, 0.5f);
-                    m_RedAgentGroup.AddGroupReward(0.5f);
+                    //AddRewardToTeamMembers(Team.Red, 2.0f - (1.0f - m_ResetTimer / timeLimit) * 2);
+                    //m_RedAgentGroup.AddGroupReward(0.5f - (1.0f - m_ResetTimer / timeLimit) * 0.5f);
+                    //m_YellowAgentGroup.AddGroupReward(-(0.5f - (1.0f - m_ResetTimer / timeLimit) * 0.5f));
+                    //m_YellowAgentGroup.AddGroupReward(-1.0f);
+                    //ResetEnv(Team.Red);
                     capturing = false;
+                    Debug.Log("CAPTURED!");
                 }
+
+                //if (capturing)
+                //    m_RedAgentGroup.AddGroupReward((100 / 60) * Time.fixedDeltaTime * 0.01f);
             }
         }
         else
@@ -184,24 +191,22 @@ public class EnvController : MonoBehaviour
             }
         }
 
-        float pointToAdd = (100.0f / 45.0f) * Time.fixedDeltaTime;
+
+        float pointToAdd = (100.0f / 40.0f) * Time.fixedDeltaTime;
         if (ctState == CTState.Red)
         {
             RedTeamPoints += pointToAdd;
-            m_RedAgentGroup.AddGroupReward(pointToAdd * 0.01f);
-            m_YellowAgentGroup.AddGroupReward(pointToAdd * -0.005f);
         }
         else if (ctState == CTState.Yellow)
         {
             YellowTeamPoints += pointToAdd;
-            m_RedAgentGroup.AddGroupReward(pointToAdd * -0.005f);
-            m_YellowAgentGroup.AddGroupReward(pointToAdd * 0.01f);
         }
 
         if (m_ResetTimer <= 0.0f)
         {
 
-            if (RedTeamPoints == YellowTeamPoints)
+
+            if (RedTeamPoints == YellowTeamPoints || Mathf.Max(RedTeamPoints, YellowTeamPoints) < 50)
                 ResetEnv(null, true);
             else if (RedTeamPoints > YellowTeamPoints)
                 ResetEnv(Team.Red, true);
@@ -252,24 +257,31 @@ public class EnvController : MonoBehaviour
     {
         if (agent.Team == Team.Red)
         {
-            YellowTeamPoints += 10;
-            m_YellowAgentGroup.AddGroupReward(0.1f);
-            m_RedAgentGroup.AddGroupReward(-0.01f);
+            YellowTeamPoints += 5;
+            //AddRewardToTeamMembers(Team.Yellow, 0.5f);
+            //AddRewardToTeamMembers(Team.Red, -0.01f);
+            //m_YellowAgentGroup.AddGroupReward(0.05f);
+            //m_RedAgentGroup.AddGroupReward(-0.05f);
+            //ResetEnv(Team.Yellow);
             m_DetectedRedEnemies.Remove(agent.gameObject);
 
         }
         else if (agent.Team == Team.Yellow)
         {
-            RedTeamPoints += 10;
-            m_YellowAgentGroup.AddGroupReward(-0.01f);
-            m_RedAgentGroup.AddGroupReward(0.1f);
+            RedTeamPoints += 5;
+            //AddRewardToTeamMembers(Team.Yellow, -0.1f);
+            //AddRewardToTeamMembers(Team.Red, 0.5f);
+            //m_YellowAgentGroup.AddGroupReward(-0.1f);
+            //m_RedAgentGroup.AddGroupReward(0.05f);
+            //m_YellowAgentGroup.AddGroupReward(-0.05f);
+            //ResetEnv(Team.Red);
             m_DetectedYellowEnemies.Remove(agent.gameObject);
 
         }
-        agent.ResetAgent();
+        //agent.ResetAgent();
         //ResetEnv(agent.team == Team.Red? Team.Yellow : Team.Red);
 
-        //m_DeadAgents.TryAdd(agent, RespawnCooldown);
+        m_DeadAgents.TryAdd(agent, RespawnCooldown);
         //agent.gameObject.SetActive(false);
     }
 
@@ -277,16 +289,16 @@ public class EnvController : MonoBehaviour
     {
         //foreach (var agent in AgentsList)
         //{
-        //    //agent.ResetAgent();
-        //    //agent.gameObject.SetActive(true);
-        //    //if (agent.team == Team.Red)
-        //    //{
-        //    //    //m_RedAgentGroup.RegisterAgent(agent);
-        //    //}
-        //    //else
-        //    //{
-        //    //    //m_YellowAgentGroup.RegisterAgent(agent);
-        //    //}
+        //    ////agent.ResetAgent();
+        //    ////agent.gameObject.SetActive(true);
+        //    ////if (agent.team == Team.Red)
+        //    ////{
+        //    ////    //m_RedAgentGroup.RegisterAgent(agent);
+        //    ////}
+        //    ////else
+        //    ////{
+        //    ////    //m_YellowAgentGroup.RegisterAgent(agent);
+        //    ////}
 
         //    if (winningTeam is null)
         //    {
@@ -300,34 +312,55 @@ public class EnvController : MonoBehaviour
         //    }
         //    else
         //    {
-
+        //        float pointDiffReward = winningTeam == Team.Yellow ? YellowTeamPoints - RedTeamPoints : RedTeamPoints - YellowTeamPoints;
+        //        pointDiffReward *= 0.005f;
+        //        float timePenalty = 1.0f - Mathf.Clamp01(m_ResetTimer / timeLimit + 0.5f);
+        //        float reward = 0.5f - timePenalty + pointDiffReward;
         //        if (agent.team == winningTeam)
         //        {
-        //            //agent.AddReward(1.0f - (1 - (m_ResetTimer / timeLimit) * 0.5f));
-        //            agent.AddReward(1.0f);
+        //            agent.AddReward(reward);
         //        }
         //        else
         //        {
-        //            agent.AddReward(-1.0f);
+        //            agent.AddReward(-reward);
         //        }
-        //    }
-        //    //if (agent.team == Team.Yellow)
-        //    //    Debug.Log(agent.GetCumulativeReward());
 
+        //    }
         //    agent.EndEpisode();
+
+        //    //Debug.Log(agent.GetCumulativeReward());
         //}
+
+        //UnityEditor.EditorApplication.isPlaying = false;
 
 
         if (winningTeam is null)
         {
             m_YellowAgentGroup.AddGroupReward(0.0f);
             m_RedAgentGroup.AddGroupReward(0.0f);
+            Debug.Log("Tie!");
         }
         else
         {
-            m_YellowAgentGroup.AddGroupReward(winningTeam == Team.Red ? -1.0f : 1.0f);
-            m_RedAgentGroup.AddGroupReward(winningTeam == Team.Red ? 1.0f : -1.0f);
+            float pointDiffReward = winningTeam == Team.Yellow ? YellowTeamPoints - RedTeamPoints : RedTeamPoints - YellowTeamPoints;
+
+            if (winningTeam == Team.Red)
+                Debug.Log("Red won!");
+            else if (winningTeam == Team.Yellow)
+                Debug.Log("Yellow won!");
+
+            pointDiffReward *= 0.005f;
+            float timePenalty = 1.0f - Mathf.Clamp01(m_ResetTimer / timeLimit + 0.5f);
+            //float reward = 1.0f - timePenalty + pointDiffReward;
+            float reward = 0.5f + pointDiffReward;
+            m_YellowAgentGroup.AddGroupReward(winningTeam == Team.Red ? -reward : reward);
+            m_RedAgentGroup.AddGroupReward(winningTeam == Team.Red ? reward : -reward);
+            //m_YellowAgentGroup.AddGroupReward(winningTeam == Team.Red ? -1.0f : 1.0f);
+            //m_RedAgentGroup.AddGroupReward(winningTeam == Team.Red ? 1.0f : -1.0f);
         }
+
+        //m_YellowAgentGroup.EndGroupEpisode();
+        //m_RedAgentGroup.EndGroupEpisode();
 
         if (TimeIsUp)
         {
@@ -381,18 +414,29 @@ public class EnvController : MonoBehaviour
     {
         if (!capturing)
         {
-            if ((redAgentsOnCT > 0 && yellowAgentsOnCT == 0 && ctState != CTState.Red) 
-             || (redAgentsOnCT == 0 && yellowAgentsOnCT > 0 && ctState != CTState.Yellow))
+            //if ((redAgentsOnCT > 0 && yellowAgentsOnCT == 0 && ctState != CTState.Red) 
+            // || (redAgentsOnCT == 0 && yellowAgentsOnCT > 0 && ctState != CTState.Yellow))
+            //{
+            //    capturing = true;
+            //}
+
+            if ((redAgentsOnCT > yellowAgentsOnCT && ctState != CTState.Red)
+             || (yellowAgentsOnCT > redAgentsOnCT && ctState != CTState.Yellow))
             {
                 capturing = true;
             }
         }
         else
         {
-            if (redAgentsOnCT > 0 && yellowAgentsOnCT > 0
-             || redAgentsOnCT == 0 && yellowAgentsOnCT == 0
-             || ctState == CTState.Yellow && redAgentsOnCT == 0
-             || ctState == CTState.Red && yellowAgentsOnCT == 0)
+            //if (redAgentsOnCT > 0 && yellowAgentsOnCT > 0
+            // || redAgentsOnCT == 0 && yellowAgentsOnCT == 0
+            // || ctState == CTState.Yellow && redAgentsOnCT == 0
+            // || ctState == CTState.Red && yellowAgentsOnCT == 0)
+            //{
+            //    capturing = false;
+            //}
+
+            if (redAgentsOnCT == yellowAgentsOnCT)
             {
                 capturing = false;
             }

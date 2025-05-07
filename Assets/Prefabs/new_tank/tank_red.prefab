@@ -110,7 +110,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7265982346246613021, guid: d8142bb4dbd564f489c626f90fa0dc97, type: 3}
       propertyPath: m_SphereCastRadius
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7265982346246613021, guid: d8142bb4dbd564f489c626f90fa0dc97, type: 3}
       propertyPath: m_DetectableTags.Array.size
