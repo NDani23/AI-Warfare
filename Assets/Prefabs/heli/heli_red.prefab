@@ -40,6 +40,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 21861ce258383de4fa72fd32eb33a070, type: 2}
+    - target: {fileID: 5223576739594432450, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: MainMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 25356ba9fae421f4f84d895490b35e08, type: 2}
     - target: {fileID: 6090330496605595991, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -82,7 +86,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6903705954778870765, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Name
-      value: heli_red Variant
+      value: heli_red
       objectReference: {fileID: 0}
     - target: {fileID: 6903705954778870765, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_TagString

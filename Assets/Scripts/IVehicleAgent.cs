@@ -7,11 +7,18 @@ public enum Team
     Yellow = 1
 }
 
+public enum AgentType
+{
+    Tank = 0,
+    Heli = 1
+}
+
 public interface IVehicleAgent
 {
     float Health { get; }
     Team Team { get; }
-    uint MemberID { get; }
+    int MemberID { get; }
+    AgentType AgentType { get; }
     EnvController EnvController { get; }
     GameObject gameObject { get; }
 

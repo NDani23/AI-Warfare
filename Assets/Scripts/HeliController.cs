@@ -17,7 +17,12 @@ public class HeliController : MonoBehaviour
     [SerializeField] private Transform _leftShootPosition;
     [SerializeField] private Transform _rightShootPosition;
     [SerializeField] private TrailRenderer _bulletTrail;
+    [SerializeField] private GameObject _colliders;
     [SerializeField] private float _shootDelay = 0.1f;
+    [SerializeField] private ParticleSystem ExplodeParticles;
+    [SerializeField] private ParticleSystem SmokeParticles;
+    [SerializeField] private Material BurntMaterial;
+    [SerializeField] private Material MainMaterial;
 
     private HitInfo _leftGunHitInfo;
     private HitInfo _rightGunHitInfo;
@@ -113,13 +118,22 @@ public class HeliController : MonoBehaviour
     {
     }
 
-    public void setStartingState(int teamID, uint memberID)
+    public void setStartingState(int teamID, int memberID)
     {
+
+        _colliders.tag = _agent.Team == Team.Red ? "RedAgent" : "YellowAgent";
+        this.GetComponent<MeshRenderer>().material = MainMaterial;
+
+        if (SmokeParticles.isPlaying)
+        {
+            SmokeParticles.Clear();
+            SmokeParticles.Stop();
+        }
 
         _rigidbody.linearVelocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
 
-        if (teamID == (int)Team.Yellow)
+        if (teamID == (int)Team.Red)
         {
             transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
             transform.localPosition = new Vector3((200 - 100 * memberID) + UnityEngine.Random.Range(-40.0f, 40.0f), UnityEngine.Random.Range(10.0f, 200.0f), -300);
@@ -210,6 +224,14 @@ public class HeliController : MonoBehaviour
     public Vector2 GetScreenSpaceAimPos()
     {
         return Camera.main.WorldToScreenPoint(_machineGunLeft.position + _machineGunLeft.forward * 400.0f);
+    }
+
+    public void setDeadState()
+    {
+        _colliders.tag = "Untagged";
+        this.GetComponent<MeshRenderer>().material = BurntMaterial;
+        ExplodeParticles.Play();
+        SmokeParticles.Play();
     }
 
 }

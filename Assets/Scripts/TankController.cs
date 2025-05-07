@@ -19,6 +19,10 @@ public class TankController : MonoBehaviour
     [SerializeField] private ParticleSystem FireParticles;
     [SerializeField] private ParticleSystem DirtParticles1;
     [SerializeField] private ParticleSystem DirtParticles2;
+    [SerializeField] private ParticleSystem ExplodeParticles;
+    [SerializeField] private ParticleSystem SmokeParticles;
+    [SerializeField] private Material BurntMaterial;
+    [SerializeField] private Material MainMaterial;
 
 
     [SerializeField] private Transform bulletPrefab;
@@ -59,13 +63,22 @@ public class TankController : MonoBehaviour
 
         coolDownTime = 3.0f;
     }
-    public void setStartingState(int teamID, uint memberID)
+    public void setStartingState(int teamID, int memberID)
     {
-        BottomCollider.tag = tankAgent.team == Team.Red ? "RedAgent" : "YellowAgent";
-        BodyCollider.tag = tankAgent.team == Team.Red ? "RedAgent" : "YellowAgent";
-        tankTower.gameObject.tag = tankAgent.team == Team.Red ? "RedAgent" : "YellowAgent";
+        BottomCollider.tag = tankAgent.Team == Team.Red ? "RedAgent" : "YellowAgent";
+        BodyCollider.tag = tankAgent.Team == Team.Red ? "RedAgent" : "YellowAgent";
+        tankTower.gameObject.tag = tankAgent.Team == Team.Red ? "RedAgent" : "YellowAgent";
         _rigidbody.linearVelocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
+
+        this.GetComponent<MeshRenderer>().material = MainMaterial;
+        tankTower.gameObject.GetComponent<MeshRenderer>().material = MainMaterial;
+
+        if (SmokeParticles.isPlaying)
+        {
+            SmokeParticles.Clear();
+            SmokeParticles.Stop();
+        }
 
         foreach (var wheel in wheels)
         {
@@ -249,6 +262,9 @@ public class TankController : MonoBehaviour
         BottomCollider.tag = "Untagged";
         tankTower.gameObject.tag = "Untagged";
 
-
+        this.GetComponent<MeshRenderer>().material = BurntMaterial;
+        tankTower.gameObject.GetComponent<MeshRenderer>().material = BurntMaterial;
+        ExplodeParticles.Play();
+        SmokeParticles.Play();
     }
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using Unity.MLAgents;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -49,6 +50,7 @@ public class EnvController : MonoBehaviour
         m_DetectedRedEnemies = new Dictionary<GameObject, float>();
         m_DetectedYellowEnemies = new Dictionary<GameObject, float>();
         m_DeadAgents = new Dictionary<IVehicleAgent, float>();
+        AgentsList = this.GetComponentsInChildren<IVehicleAgent>().ToList();
     }
 
 
@@ -58,14 +60,14 @@ public class EnvController : MonoBehaviour
         m_RedAgentGroup = new SimpleMultiAgentGroup();
         m_YellowAgentGroup = new SimpleMultiAgentGroup();
 
-        foreach (var agent in AgentsListSerialized)
-        {
+        //foreach (var agent in AgentsListSerialized)
+        //{
 
-            if (agent is IVehicleAgent vehicleAgent)
-            {
-                AgentsList.Add(vehicleAgent);
-            }
-        }
+        //    if (agent is IVehicleAgent vehicleAgent)
+        //    {
+        //        AgentsList.Add(vehicleAgent);
+        //    }
+        //}
 
         foreach (var agent in AgentsList)
         {
@@ -82,8 +84,6 @@ public class EnvController : MonoBehaviour
 
     void FixedUpdate()
     {
-
-        if (gameEnded) return;
 
         m_ResetTimer -= Time.fixedDeltaTime;
         HandleCaptureState();

@@ -45,25 +45,25 @@ public class bullet_script : MonoBehaviour
             else
                 envController.EnemyDetected(_parent.gameObject, Team.Red);
             //_parent.AddReward(0.1f);
-            collision.gameObject.GetComponent<TankAgent>().Hit(_damage);
+            collision.gameObject.GetComponent<IVehicleAgent>().Hit(_damage);
             //if(collision.gameObject.GetComponent<TankAgent>().getHealth() == 0)
             //    _parent.AddReward(0.3f);
 
         }
-       else if((collision.gameObject.CompareTag("YellowAgent") && _parent.team == Team.Yellow) ||
-               (collision.gameObject.CompareTag("RedAgent") && _parent.team == Team.Red))
+       else if((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Yellow) ||
+               (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Red))
        {
             if (_parent.GetComponent<BehaviorParameters>().BehaviorType != BehaviorType.Default)
             {
                 Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
                 emitter.position = collision.transform.position;
             }
-            if(_parent.team == Team.Red)
+            if(_parent.Team == Team.Red)
                 Debug.Log("Red Friendly!");
             else
                 Debug.Log("Yellow Friendly!");
             //_parent.AddReward(-0.1f);
-            collision.gameObject.GetComponent<TankAgent>().Hit(_damage);
+            collision.gameObject.GetComponent<IVehicleAgent>().Hit(_damage);
         }
        else
        {
