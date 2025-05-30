@@ -25,5 +25,6 @@ public interface IVehicleAgent
     void Hit(int damage);
     void ResetAgent();
 
+    public void SetMaterial(Material mat = null);
     public Vector2 GetScreenSpaceAimPos();
 }

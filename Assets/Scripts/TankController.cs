@@ -23,6 +23,7 @@ public class TankController : MonoBehaviour
     [SerializeField] private ParticleSystem SmokeParticles;
     [SerializeField] private Material BurntMaterial;
     [SerializeField] private Material MainMaterial;
+    [SerializeField] private Material WheelMaterial;
 
 
     [SerializeField] private Transform bulletPrefab;
@@ -71,8 +72,7 @@ public class TankController : MonoBehaviour
         _rigidbody.linearVelocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
 
-        this.GetComponent<MeshRenderer>().material = MainMaterial;
-        tankTower.gameObject.GetComponent<MeshRenderer>().material = MainMaterial;
+        setMaterial();
 
         if (SmokeParticles.isPlaying)
         {
@@ -250,6 +250,41 @@ public class TankController : MonoBehaviour
         return tankCannon.transform;
     }
 
+    public void setMaterial(Material mat = null)
+    {
+        if(mat == null)
+        {
+            if (tankAgent.Health > 0)
+            {
+                this.GetComponent<MeshRenderer>().material = MainMaterial;
+                tankTower.gameObject.GetComponent<MeshRenderer>().material = MainMaterial;
+            }
+            else
+            {
+                this.GetComponent<MeshRenderer>().material = BurntMaterial;
+                tankTower.gameObject.GetComponent<MeshRenderer>().material = BurntMaterial;
+            }
+            tankCannon.gameObject.GetComponent<MeshRenderer>().material = BurntMaterial;
+
+
+            foreach (var wheel in wheels)
+            {
+                wheel.gameObject.GetComponentInChildren<MeshRenderer>().material = WheelMaterial;
+            }
+        }    
+        else
+        {
+            this.GetComponent<MeshRenderer>().material = mat;
+            tankTower.gameObject.GetComponent<MeshRenderer>().material = mat;
+            tankCannon.gameObject.GetComponent<MeshRenderer>().material = mat;
+
+            foreach(var wheel in wheels)
+            {
+                wheel.gameObject.GetComponentInChildren<MeshRenderer>().material = mat;
+            }
+        }
+    }
+
     public void setDeadState()
     {
         HorizontalAimInput = 0.0f;
@@ -262,8 +297,7 @@ public class TankController : MonoBehaviour
         BottomCollider.tag = "Untagged";
         tankTower.gameObject.tag = "Untagged";
 
-        this.GetComponent<MeshRenderer>().material = BurntMaterial;
-        tankTower.gameObject.GetComponent<MeshRenderer>().material = BurntMaterial;
+        setMaterial();
         ExplodeParticles.Play();
         SmokeParticles.Play();
     }

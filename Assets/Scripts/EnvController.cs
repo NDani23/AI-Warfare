@@ -14,8 +14,6 @@ public class EnvController : MonoBehaviour
 
     public static int RespawnCooldown = 5;
 
-    //public List<TankAgent> AgentsList = new List<TankAgent>();
-    public List<Agent> AgentsListSerialized = new List<Agent>();
     public List<IVehicleAgent> AgentsList = new List<IVehicleAgent>();
 
     public SimpleMultiAgentGroup m_RedAgentGroup;
@@ -219,7 +217,7 @@ public class EnvController : MonoBehaviour
 
         if (RedTeamPoints >= 100.0f && YellowTeamPoints >= 100.0f)
         {
-            TieEvent.Invoke();
+            //TieEvent.Invoke();
             //m_YellowAgentGroup.AddGroupReward(0);
             //m_RedAgentGroup.AddGroupReward(0);
             gameEnded = true;
@@ -231,7 +229,7 @@ public class EnvController : MonoBehaviour
         }
         else if (RedTeamPoints >= 100.0f)
         {
-            RedWonEvent.Invoke();
+            //RedWonEvent.Invoke();
             //m_RedAgentGroup.AddGroupReward(1.0f);
             gameEnded = true;
             //m_YellowAgentGroup.EndGroupEpisode();
@@ -242,7 +240,7 @@ public class EnvController : MonoBehaviour
         }
         else if (YellowTeamPoints >= 100.0f)
         {
-            YellowWonEvent.Invoke();
+            //YellowWonEvent.Invoke();
             //m_YellowAgentGroup.AddGroupReward(1.0f);
             gameEnded = true;
             //m_YellowAgentGroup.EndGroupEpisode();

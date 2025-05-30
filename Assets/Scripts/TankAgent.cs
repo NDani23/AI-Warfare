@@ -104,7 +104,6 @@ public class TankAgent : Agent, IVehicleAgent
             sensor.AddObservation(DistanceToCT);
         }
 
-
         sensor.AddObservation(0);
         sensor.AddObservation(_envController.m_ResetTimer / (float)_envController.timeLimit);
 
@@ -118,10 +117,6 @@ public class TankAgent : Agent, IVehicleAgent
             sensor.AddObservation(_envController.YellowTeamPoints * 0.01f);
             sensor.AddObservation(_envController.RedTeamPoints * 0.01f);
         }
-
-
-
-
 
         float stateNum = _team == Team.Red ? -1 * _envController.getStateNum() : _envController.getStateNum();
         //float stateNum = team == Team.Red ? (envController.RedTeamPoints - envController.YellowTeamPoints) * 0.01f : (envController.YellowTeamPoints - envController.RedTeamPoints) * 0.01f;
@@ -139,11 +134,11 @@ public class TankAgent : Agent, IVehicleAgent
                     Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(agent.transform.localPosition - transform.localPosition));
                     float dist = Vector3.Distance(agent.transform.localPosition, transform.localPosition) / 700.0f;
                     float health = agent.GetComponent<IVehicleAgent>().Health * 0.01f;
-    
+
                     float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.GetComponent<IVehicleAgent>().AgentType };
                     detectedEnemiesSensor.AppendObservation(Obs);
+    
                 }
-
 
                 foreach (var agent in _envController.AgentsList)
                 {
@@ -160,6 +155,7 @@ public class TankAgent : Agent, IVehicleAgent
                     float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.AgentType };
                     teammateSensor.AppendObservation(Obs);
                 }
+                
             
         }
     }
@@ -170,21 +166,23 @@ public class TankAgent : Agent, IVehicleAgent
             return;
 
 
-        tankController.Throttle = actions.DiscreteActions[0]-1;
+        //tankController.Throttle = actions.DiscreteActions[0]-1;
 
-        if (actions.DiscreteActions[1] - 1 == 0 || (actions.DiscreteActions[1] - 1) * tankController.Steer < 0)
-        {
-            tankController.Steer = 0;
-        }
-        else
-        {
-            tankController.Steer = Mathf.Lerp(tankController.Steer, actions.DiscreteActions[1] - 1, 0.1f);
-        }
+        //if (actions.DiscreteActions[1] - 1 == 0 || (actions.DiscreteActions[1] - 1) * tankController.Steer < 0)
+        //{
+        //    tankController.Steer = 0;
+        //}
+        //else
+        //{
+        //    tankController.Steer = Mathf.Lerp(tankController.Steer, actions.DiscreteActions[1] - 1, 0.1f);
+        //}
 
 
-        tankController.HorizontalAimInput = actions.ContinuousActions[0];
-        tankController.VerticalAimInput = actions.DiscreteActions[3] - 1;
-        tankController.FireInput = actions.DiscreteActions[2];
+        //tankController.HorizontalAimInput = actions.ContinuousActions[0];
+        //tankController.VerticalAimInput = actions.DiscreteActions[3] - 1;
+        //tankController.FireInput = actions.DiscreteActions[2];
+
+        tankController.Steer = 1;
 
     }
 
@@ -221,12 +219,12 @@ public class TankAgent : Agent, IVehicleAgent
             _health = Mathf.Min(100, _health + Time.fixedDeltaTime * 10.0f);
         }
 
-        RayPerceptionInput spec = aimSensor.GetRayPerceptionInput();
-        RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec, false);
-        if (obs.RayOutputs[0].HitTagIndex == 0)
-        {
-            _envController.EnemyDetected(obs.RayOutputs[0].HitGameObject.transform.parent.gameObject, this._team);
-        }
+        //RayPerceptionInput spec = aimSensor.GetRayPerceptionInput();
+        //RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec, false);
+        //if (obs.RayOutputs[0].HitTagIndex == 0)
+        //{
+        //    _envController.EnemyDetected(obs.RayOutputs[0].HitGameObject.transform.parent.gameObject, this._team);
+        //}
     }
 
 
@@ -285,5 +283,10 @@ public class TankAgent : Agent, IVehicleAgent
         _health = 0;
         _envController.AgentDied(this);
         gameObject.tag = "Untagged";
+    }
+
+    public void SetMaterial(Material mat = null)
+    {
+        tankController.setMaterial(mat);
     }
 }

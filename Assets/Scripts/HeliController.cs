@@ -122,7 +122,7 @@ public class HeliController : MonoBehaviour
     {
 
         _colliders.tag = _agent.Team == Team.Red ? "RedAgent" : "YellowAgent";
-        this.GetComponent<MeshRenderer>().material = MainMaterial;
+        setMaterial();
 
         if (SmokeParticles.isPlaying)
         {
@@ -226,10 +226,29 @@ public class HeliController : MonoBehaviour
         return Camera.main.WorldToScreenPoint(_machineGunLeft.position + _machineGunLeft.forward * 400.0f);
     }
 
+    public void setMaterial(Material mat = null)
+    {
+        if (mat == null)
+        {
+            if (_agent.Health > 0)
+            {
+                this.GetComponent<MeshRenderer>().material = MainMaterial;
+            }
+            else
+            {
+                this.GetComponent<MeshRenderer>().material = BurntMaterial;
+            }
+        }
+        else
+        {
+            this.GetComponent<MeshRenderer>().material = mat;
+        }
+    }
+
     public void setDeadState()
     {
         _colliders.tag = "Untagged";
-        this.GetComponent<MeshRenderer>().material = BurntMaterial;
+        setMaterial();
         ExplodeParticles.Play();
         SmokeParticles.Play();
     }

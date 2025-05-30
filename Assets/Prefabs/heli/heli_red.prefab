@@ -8,6 +8,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3483283565937040360, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: DefaultEnemyMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: daed0731a8acea44c827f234ef81a28f, type: 2}
+    - target: {fileID: 3483283565937040360, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: DefaultFriendlyMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 3fa8773277c0e7e44a87ae2d0f525889, type: 2}
     - target: {fileID: 3998644805695371758, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_DetectableTags.Array.size
       value: 2

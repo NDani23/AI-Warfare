@@ -28,12 +28,12 @@ TagManager:
   - Env8
   - Env9
   - Targets
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - RedHeliLayer
+  - YellowHeliLayer
+  - Agent
+  - VisualLayer
+  - ScreenSpaceUI
+  - HideFromVisObs
   - 
   - 
   - 

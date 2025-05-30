@@ -179,4 +179,9 @@ public class HeliAgent : Agent, IVehicleAgent
         _heliController.setDeadState();
     }
 
+    public void SetMaterial(Material mat = null)
+    {
+        _heliController.setMaterial(mat);
+    }
+
 }
