@@ -39,7 +39,6 @@ public class bullet_script : MonoBehaviour
             Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
             emitter.position = collision.transform.position;
 
-            Debug.Log("HIT!");
             if (_parent.Team == Team.Red)
                 envController.EnemyDetected(_parent.gameObject, Team.Yellow);
             else
@@ -58,10 +57,6 @@ public class bullet_script : MonoBehaviour
                 Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
                 emitter.position = collision.transform.position;
             }
-            if(_parent.Team == Team.Red)
-                Debug.Log("Red Friendly!");
-            else
-                Debug.Log("Yellow Friendly!");
             //_parent.AddReward(-0.1f);
             collision.gameObject.GetComponent<IVehicleAgent>().Hit(_damage);
         }

@@ -33,8 +33,6 @@ public class TankAgent : Agent, IVehicleAgent
 
     private float RegenHealthCooldown = 0;
 
-    public bool inCT = false;
-
     private float DistanceToCT = 1000;
 
     public UnityEvent DiedEvent;
@@ -42,6 +40,13 @@ public class TankAgent : Agent, IVehicleAgent
 
     private Team _team;
     public Team Team => _team;
+
+    private bool inCT = false;
+    public bool InCT
+    {
+        get => inCT;
+        set => inCT = value;
+    }
 
     private AgentType _agentType = AgentType.Tank;
     public AgentType AgentType => _agentType;
@@ -166,24 +171,24 @@ public class TankAgent : Agent, IVehicleAgent
             return;
 
 
-        //tankController.Throttle = actions.DiscreteActions[0]-1;
+        tankController.Throttle = actions.DiscreteActions[0] - 1;
 
-        //if (actions.DiscreteActions[1] - 1 == 0 || (actions.DiscreteActions[1] - 1) * tankController.Steer < 0)
-        //{
-        //    tankController.Steer = 0;
-        //}
-        //else
-        //{
-        //    tankController.Steer = Mathf.Lerp(tankController.Steer, actions.DiscreteActions[1] - 1, 0.1f);
-        //}
+        if (actions.DiscreteActions[1] - 1 == 0 || (actions.DiscreteActions[1] - 1) * tankController.Steer < 0)
+        {
+            tankController.Steer = 0;
+        }
+        else
+        {
+            tankController.Steer = Mathf.Lerp(tankController.Steer, actions.DiscreteActions[1] - 1, 0.1f);
+        }
 
 
-        //tankController.HorizontalAimInput = actions.ContinuousActions[0];
-        //tankController.VerticalAimInput = actions.DiscreteActions[3] - 1;
-        //tankController.FireInput = actions.DiscreteActions[2];
+        tankController.HorizontalAimInput = actions.ContinuousActions[0];
+        tankController.VerticalAimInput = actions.DiscreteActions[3] - 1;
+        tankController.FireInput = actions.DiscreteActions[2];
 
-        tankController.Steer = 1;
-
+        //tankController.HorizontalAimInput = 1.0f;
+        //tankController.Steer = 1;
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -219,12 +224,12 @@ public class TankAgent : Agent, IVehicleAgent
             _health = Mathf.Min(100, _health + Time.fixedDeltaTime * 10.0f);
         }
 
-        //RayPerceptionInput spec = aimSensor.GetRayPerceptionInput();
-        //RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec, false);
-        //if (obs.RayOutputs[0].HitTagIndex == 0)
-        //{
-        //    _envController.EnemyDetected(obs.RayOutputs[0].HitGameObject.transform.parent.gameObject, this._team);
-        //}
+        RayPerceptionInput spec = aimSensor.GetRayPerceptionInput();
+        RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec, false);
+        if (obs.RayOutputs[0].HitTagIndex == 0)
+        {
+            _envController.EnemyDetected(obs.RayOutputs[0].HitGameObject.transform.parent.gameObject, this._team);
+        }
     }
 
 

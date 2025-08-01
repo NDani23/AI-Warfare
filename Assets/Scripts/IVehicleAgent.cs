@@ -22,6 +22,8 @@ public interface IVehicleAgent
     EnvController EnvController { get; }
     GameObject gameObject { get; }
 
+    bool InCT { get; set; }
+
     void Hit(int damage);
     void ResetAgent();
 

@@ -32,15 +32,15 @@ public class CTController : MonoBehaviour
 
         if(other.tag == "YellowAgent")
         {
-            if (other.transform.parent.GetComponent<TankAgent>().inCT) return;
+            if (other.transform.parent.GetComponent<IVehicleAgent>().InCT) return;
             m_envController.AgentEnteredCT(Team.Yellow);
-            other.transform.parent.GetComponent<TankAgent>().inCT = true;
+            other.transform.parent.GetComponent<IVehicleAgent>().InCT = true;
         }
         else if (other.tag == "RedAgent")
         {
-            if (other.transform.parent.GetComponent<TankAgent>().inCT) return;
+            if (other.transform.parent.GetComponent<IVehicleAgent>().InCT) return;
             m_envController.AgentEnteredCT(Team.Red);
-            other.transform.parent.GetComponent<TankAgent>().inCT = true;
+            other.transform.parent.GetComponent<IVehicleAgent>().InCT = true;
         }
     }
 
@@ -50,15 +50,15 @@ public class CTController : MonoBehaviour
 
         if (other.tag == "YellowAgent")
         {
-            if (!other.transform.parent.GetComponent<TankAgent>().inCT) return;
+            if (!other.transform.parent.GetComponent<IVehicleAgent>().InCT) return;
             m_envController.AgentExitedCT(Team.Yellow);
-            other.transform.parent.GetComponent<TankAgent>().inCT = false;
+            other.transform.parent.GetComponent<IVehicleAgent>().InCT = false;
         }
         else if (other.tag == "RedAgent")
         {
-            if (!other.transform.parent.GetComponent<TankAgent>().inCT) return;
+            if (!other.transform.parent.GetComponent<IVehicleAgent>().InCT) return;
             m_envController.AgentExitedCT(Team.Red);
-            other.transform.parent.GetComponent<TankAgent>().inCT = false;
+            other.transform.parent.GetComponent<IVehicleAgent>().InCT = false;
         }
     }
 

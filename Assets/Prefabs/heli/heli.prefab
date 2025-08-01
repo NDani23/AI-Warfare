@@ -40,7 +40,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 164071648881469760}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 2
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
@@ -74,7 +74,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 1048575
   m_RenderingPath: 1
-  m_TargetTexture: {fileID: 8600000, guid: c1eec85a8e0943841abbc8abcbd24c91, type: 2}
+  m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 1
   m_TargetEye: 3
   m_HDR: 0
@@ -4964,6 +4964,66 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &2406457811010763477
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3897502396277954869}
+  - component: {fileID: 1957719778491282022}
+  m_Layer: 0
+  m_Name: RayCasterVertical
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3897502396277954869
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2406457811010763477}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6090330496605595991}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!114 &1957719778491282022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2406457811010763477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bb6b867a41448888c1cd4f99643ad71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: SorroundingSensorVertical
+  m_DetectableTags: []
+  m_RaysPerDirection: 1
+  m_MaxRayDegrees: 180
+  m_SphereCastRadius: 10
+  m_RayLength: 62
+  m_RayLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967291
+  m_ObservationStacks: 1
+  m_AlternatingRayOrder: 1
+  m_UseBatchedRaycasts: 0
+  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
+  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
+  m_StartVerticalOffset: 0
+  m_EndVerticalOffset: 0
 --- !u!1 &3269247586718064061
 GameObject:
   m_ObjectHideFlags: 0
@@ -10024,6 +10084,66 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &7657872047692413737
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1816348715261111025}
+  - component: {fileID: 5785716275952942362}
+  m_Layer: 0
+  m_Name: RayCasterHorizontal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1816348715261111025
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7657872047692413737}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6090330496605595991}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5785716275952942362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7657872047692413737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bb6b867a41448888c1cd4f99643ad71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: SorroundingSensorHorizontal
+  m_DetectableTags: []
+  m_RaysPerDirection: 2
+  m_MaxRayDegrees: 180
+  m_SphereCastRadius: 10
+  m_RayLength: 62
+  m_RayLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967291
+  m_ObservationStacks: 1
+  m_AlternatingRayOrder: 1
+  m_UseBatchedRaycasts: 0
+  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
+  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
+  m_StartVerticalOffset: 0
+  m_EndVerticalOffset: 0
 --- !u!1001 &3201018877395687850
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10242,6 +10362,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7857460453649982771}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1816348715261111025}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3897502396277954869}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
       insertIndex: -1
@@ -10261,6 +10387,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7547238142640795902}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6618767515980235466}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4436334009465684431}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3850879546965484101}
   m_SourcePrefab: {fileID: 100100000, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
 --- !u!4 &6090330496605595991 stripped
 Transform:
@@ -10324,6 +10459,8 @@ MonoBehaviour:
   memberID: 1
   _leftAimSensor: {fileID: 4713395377111143109}
   _rightAimSensor: {fileID: 3998644805695371758}
+  _detectedEnemiesSensor: {fileID: 6618767515980235466}
+  _teammateSensor: {fileID: 4436334009465684431}
 --- !u!114 &4841696427924709451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10337,7 +10474,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 1
+    VectorObservationSize: 20
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -10413,6 +10550,57 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
+--- !u!114 &6618767515980235466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6903705954778870765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd8012d5925524537b27131fef517017, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: DetectedEnemiesSensor
+  m_ObservableSize: 6
+  m_MaxNumObservables: 5
+--- !u!114 &4436334009465684431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6903705954778870765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd8012d5925524537b27131fef517017, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: TeammateSensor
+  m_ObservableSize: 6
+  m_MaxNumObservables: 4
+--- !u!114 &3850879546965484101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6903705954778870765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 282f342c2ab144bf38be65d4d0c4e07d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Camera: {fileID: 3457863037060981203}
+  m_SensorName: CameraSensor
+  m_Width: 64
+  m_Height: 64
+  m_Grayscale: 0
+  m_ObservationType: 0
+  m_RuntimeCameraEnable: 0
+  m_ObservationStacks: 2
+  m_Compression: 0
 --- !u!1001 &6763780462618174566
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -138,11 +138,11 @@ public class TankController : MonoBehaviour
         if (_rigidbody.angularVelocity.magnitude < 0.8f)
         {
 
-            _rigidbody.AddRelativeTorque(Vector3.up * Steer * turnSpeed, ForceMode.Acceleration);
+            _rigidbody.AddRelativeTorque((Vector3.up * Steer * turnSpeed), ForceMode.Acceleration);
 
             if (_rigidbody.angularVelocity.magnitude < 0.01f && Steer != 0 && _rigidbody.linearVelocity.magnitude < 0.1f)
             {
-                wheels[0].Torque = motorTorque * Time.fixedDeltaTime * 50;
+                wheels[0].Torque = motorTorque * Time.fixedDeltaTime;
 
             }
         }
@@ -167,6 +167,7 @@ public class TankController : MonoBehaviour
                                                       0.0f,
                                                       0.0f,
                                                       tankCannon.localRotation.w);
+            tankTower.Rotate(Vector3.up * (towerRotationSpeed * HorizontalAimInput * Time.fixedDeltaTime));
         }
         HandleTower(towerTargetPosition, aimCurve);
         HandleShooting();

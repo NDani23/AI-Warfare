@@ -4,6 +4,8 @@ using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
 using Unity.VisualScripting;
+using System.Collections.Generic;
+using System.Linq;
 
 public struct HitInfo
 {
@@ -24,9 +26,18 @@ public class HeliAgent : Agent, IVehicleAgent
     [SerializeField] private int memberID;
     [SerializeField] private RayPerceptionSensorComponent3D _leftAimSensor;
     [SerializeField] private RayPerceptionSensorComponent3D _rightAimSensor;
+    [SerializeField] private BufferSensorComponent _detectedEnemiesSensor;
+    [SerializeField] private BufferSensorComponent _teammateSensor;
 
     private Team _team;
     public Team Team => _team;
+
+    private bool inCT = false;
+    public bool InCT
+    {
+        get => inCT;
+        set => inCT = value;
+    }
 
     private AgentType _agentType = AgentType.Heli;
     public AgentType AgentType => _agentType;
@@ -63,8 +74,6 @@ public class HeliAgent : Agent, IVehicleAgent
         ResetAgent();
     }
 
-
-
     public void Hit(int damage)
     {
         _health = Mathf.Max(_health - damage, 0);
@@ -73,6 +82,83 @@ public class HeliAgent : Agent, IVehicleAgent
         {
             setDeadState();
         }
+    }
+
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        //Observations for controlling the vehicle
+        sensor.AddObservation(transform.position.y / 400.0f);
+        sensor.AddObservation(Vector3.Dot(Vector3.up, transform.right)); //ROLL
+        sensor.AddObservation(Vector3.Dot(Vector3.up, transform.forward)); //PITCH
+        sensor.AddObservation(Vector3.Normalize(transform.InverseTransformDirection(_heliController.Rigidbody.linearVelocity)));
+        sensor.AddObservation(transform.InverseTransformDirection(_heliController.Rigidbody.angularVelocity) / 3.0f);
+        sensor.AddObservation(_heliController.getGunOverheatStatus());
+
+        //Gameplay related observations
+        sensor.AddObservation(_health / 50.0f);
+        sensor.AddObservation(_envController.m_ResetTimer / (float)_envController.timeLimit); //remaining time
+
+        //Placeholders
+        sensor.AddObservation(Vector3.zero); //vector to objective
+        sensor.AddObservation(0.0f); //distance to objective
+        sensor.AddObservation(0); //objective type
+        sensor.AddObservation(0.0f); //objective current state
+        sensor.AddObservation(0.0f); //own team points
+        sensor.AddObservation(0.0f); //opponent team points
+
+
+        //Observations about other agents
+        //Dictionary<GameObject, float> detectedEnemies = _team == Team.Red ? _envController.m_DetectedYellowEnemies : _envController.m_DetectedRedEnemies;
+        TargetScript[] Targets = transform.parent.GetComponentsInChildren<TargetScript>();  
+        if (_health != 0)
+        {
+            //foreach (var agent in detectedEnemies.Keys.ToList())
+            //{
+            //    Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(agent.transform.localPosition - transform.localPosition));
+            //    float dist = Vector3.Distance(agent.transform.localPosition, transform.localPosition) / 700.0f;
+            //    //float health = agent.GetComponent<IVehicleAgent>().Health * 0.01f;
+
+            //    //float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.GetComponent<IVehicleAgent>().AgentType };
+            //    float[] Obs = { dir.x, dir.y, dir.z, dist, 1.0f, 0.0f };
+            //    _detectedEnemiesSensor.AppendObservation(Obs);
+
+            //}
+
+            foreach (var Target in Targets)
+            {
+                if(Target.Detected)
+                {
+                    Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(Target.transform.localPosition - transform.localPosition));
+                    float dist = Vector3.Distance(Target.transform.localPosition, transform.localPosition) / 700.0f;
+                    //float health = agent.GetComponent<IVehicleAgent>().Health * 0.01f;
+
+                    //float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.GetComponent<IVehicleAgent>().AgentType };
+                    float[] Obs = { dir.x, dir.y, dir.z, dist, 1.0f, 0.0f };
+                    _detectedEnemiesSensor.AppendObservation(Obs);
+                }
+            }
+
+            foreach (var agent in _envController.AgentsList)
+            {
+                if (agent.Team != this._team || agent.MemberID == this.memberID)
+                    continue;
+
+                if (agent.Health == 0)
+                    continue;
+
+                Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(agent.gameObject.transform.localPosition - transform.localPosition));
+                float dist = Vector3.Distance(agent.gameObject.transform.localPosition, transform.localPosition) / 700.0f;
+                float health = agent.Health * 0.01f;
+
+                float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.AgentType };
+                _teammateSensor.AppendObservation(Obs);
+            }
+
+
+        }
+
+
+
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -121,6 +207,12 @@ public class HeliAgent : Agent, IVehicleAgent
         _heliController.setStartingState((int)_team, memberID);
         _health = 50;
 
+        if (inCT)
+        {
+            inCT = false;
+            _envController.AgentExitedCT(_team);
+        }
+
         gameObject.tag = _team == Team.Red ? "RedAgent" : "YellowAgent";
     }
 
@@ -132,6 +224,11 @@ public class HeliAgent : Agent, IVehicleAgent
         _leftGunHitInfo.hitTag = obs.RayOutputs[0].HitTagIndex;
         _leftGunHitInfo.hitGameObject = obs.RayOutputs[0].HitGameObject;
 
+        if (obs.RayOutputs[0].HitTagIndex == 0)
+        {
+            obs.RayOutputs[0].HitGameObject.transform.parent.GetComponent<TargetScript>().Detect();
+        }
+
         spec = _rightAimSensor.GetRayPerceptionInput();
         obs = RayPerceptionSensor.Perceive(spec, false);
         _rightGunHitInfo.hitPosition = obs.RayOutputs[0].EndPositionWorld;
@@ -140,6 +237,11 @@ public class HeliAgent : Agent, IVehicleAgent
 
         _heliController.LeftGunHitInfo = _leftGunHitInfo;
         _heliController.RightGunHitInfo= _rightGunHitInfo;
+
+        if (obs.RayOutputs[0].HitTagIndex == 0)
+        {
+            obs.RayOutputs[0].HitGameObject.transform.parent.GetComponent<TargetScript>().Detect();
+        }
     }
 
     public void Update()
@@ -168,11 +270,12 @@ public class HeliAgent : Agent, IVehicleAgent
 
 
         //DiedEvent.Invoke();
-        //if (inCT)
-        //{
-        //    inCT = false;
-        //    _envController.AgentExitedCT(_team);
-        //}
+        if (inCT)
+        {
+            inCT = false;
+            _envController.AgentExitedCT(_team);
+        }
+
         _health = 0;
         _envController.AgentDied(this);
         gameObject.tag = "Untagged";

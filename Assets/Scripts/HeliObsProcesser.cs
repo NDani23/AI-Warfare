@@ -13,6 +13,7 @@ public class HeliObsProcesser : MonoBehaviour
 
     private Material defaultMaterial;
     private EnvController playEnv;
+    private TargetPracticeController _targetPracticeController;
 
     private List<IVehicleAgent> Enemies = new List<IVehicleAgent>();
     private List<IVehicleAgent> Friendlies = new List<IVehicleAgent>();
@@ -22,6 +23,7 @@ public class HeliObsProcesser : MonoBehaviour
     private void Awake()
     {
         playEnv = GetComponentInParent<EnvController>();
+        _targetPracticeController = GetComponentInParent<TargetPracticeController>();
     }
 
     private void Start()
@@ -41,17 +43,30 @@ public class HeliObsProcesser : MonoBehaviour
 
     private void OnPreRender()
     {
-        foreach (var agent in Enemies)
+        //foreach (var agent in Enemies)
+        //{
+        //    if (agent.Health > 0)
+        //        agent.SetMaterial(EnemyMaterial);
+        //}
+
+        //foreach (var agent in Friendlies)
+        //{
+        //    if (agent.Health > 0)
+        //        agent.SetMaterial(FriendlyMaterial);
+        //}
+
+        foreach (var target in _targetPracticeController.GetTargets())
         {
-            if(agent.Health > 0)
-                agent.SetMaterial(EnemyMaterial);
+            target.SetMaterial(EnemyMaterial);
         }
 
-        foreach (var agent in Friendlies)
+        foreach (var target in _targetPracticeController.GetFakeTargets())
         {
-            if (agent.Health > 0)
-                agent.SetMaterial(FriendlyMaterial);
+            target.SetMaterial(FriendlyMaterial);
         }
+
+        _targetPracticeController.SetPlayerMaterial(FriendlyMaterial);
+
     }
 
     void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -68,15 +83,28 @@ public class HeliObsProcesser : MonoBehaviour
 
     private void OnPostRender()
     {
-        foreach (var agent in Enemies)
+        //foreach (var agent in Enemies)
+        //{
+        //    agent.SetMaterial();
+        //}
+
+        //foreach (var agent in Friendlies)
+        //{
+        //    agent.SetMaterial();
+        //}
+
+        foreach (var target in _targetPracticeController.GetTargets())
         {
-            agent.SetMaterial();
+            target.SetMaterial();
         }
 
-        foreach (var agent in Friendlies)
+        foreach (var target in _targetPracticeController.GetFakeTargets())
         {
-            agent.SetMaterial();
+            target.SetMaterial();
         }
+
+        _targetPracticeController.SetPlayerMaterial();
+
     }
 
 

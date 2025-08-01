@@ -13,19 +13,12 @@ behaviors:
     network_settings:
       normalize: false
       hidden_units: 512
-      num_layers: 4
+      num_layers: 1
       vis_encode_type: simple
-      memory:
-        sequence_length: 16
-        memory_size: 128
     reward_signals:
       extrinsic:
         gamma: 0.99
         strength: 1.0
-      gail:
-        gamma: 0.99
-        strength: 0.02
-        demo_path: Assets/Demonstrations/VectorSensorDemo.demo
     keep_checkpoints: 5
     checkpoint_interval: 1000000
     max_steps: 10000000

@@ -39,6 +39,11 @@ public class HeliController : MonoBehaviour
         set { _rightGunHitInfo = value; }
     }
 
+    public Rigidbody Rigidbody
+    {
+        get { return _rigidbody; }
+    }
+
     private HeliAgent _agent;
 
     public float rotor_speed = 1000.0f;
@@ -130,6 +135,7 @@ public class HeliController : MonoBehaviour
             SmokeParticles.Stop();
         }
 
+
         _rigidbody.linearVelocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
 
@@ -185,6 +191,7 @@ public class HeliController : MonoBehaviour
             {
                 _overHeatCooldown = 5.0f;
                 _isShooting = 0;
+                _gunOverHeatStatus = 1.0f;
             }
 
             if(_lastShootTime + _shootDelay < Time.time)
@@ -193,10 +200,10 @@ public class HeliController : MonoBehaviour
                 tracer.AddPosition(_leftShootPosition.position);
                 tracer.transform.position = _leftGunHitInfo.hitPosition;
 
-                if (_leftGunHitInfo.hitTag != -1)
-                {
-                    _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                }
+                //if (_leftGunHitInfo.hitTag != -1)
+                //{
+                //    _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                //}
 
                 var tracer2 = Instantiate(_bulletTrail, _rightShootPosition.position, Quaternion.identity, this.transform);
                 tracer2.AddPosition(_rightShootPosition.position);
@@ -204,7 +211,8 @@ public class HeliController : MonoBehaviour
 
                 if (_rightGunHitInfo.hitTag != -1)
                 {
-                    _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                    _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit();
                 }
 
                 _lastShootTime = Time.time;
@@ -216,8 +224,10 @@ public class HeliController : MonoBehaviour
             {
                 _overHeatCooldown = Mathf.Max(0.0f, _overHeatCooldown - Time.fixedDeltaTime);
             }
-
-            _gunOverHeatStatus -= Mathf.Max(0.0f, _gunOverHeatStatus - Time.fixedDeltaTime / 3.5f);
+            else
+            {
+                _gunOverHeatStatus = Mathf.Max(0.0f, _gunOverHeatStatus - Time.fixedDeltaTime / 3.5f);
+            }
         }
     }
 
@@ -251,6 +261,11 @@ public class HeliController : MonoBehaviour
         setMaterial();
         ExplodeParticles.Play();
         SmokeParticles.Play();
+    }
+
+    public float getGunOverheatStatus()
+    {
+        return _gunOverHeatStatus;
     }
 
 }

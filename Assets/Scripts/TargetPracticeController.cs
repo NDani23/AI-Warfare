@@ -1,4 +1,7 @@
+using NUnit.Framework;
+using Unity.MLAgents;
 using UnityEngine;
+using System.Collections.Generic;
 
 enum Speed
 {
@@ -16,7 +19,7 @@ public class TargetPracticeController : MonoBehaviour
     [SerializeField] private Transform fakeTargetWallPrefab;
     [SerializeField] private CTController m_ControlPoint;
     [SerializeField] private EnvController m_EnvController;
-    [SerializeField] private TankAgent agent;
+    [SerializeField] private Agent playerSerialized;
 
     [SerializeField] private float PracticeAreaWidth;
     [SerializeField] private float PracticeAreaLength;
@@ -45,12 +48,17 @@ public class TargetPracticeController : MonoBehaviour
     private int hitCount = 0;
     private int captureCount = 0;
 
-
+    private IVehicleAgent player;
 
     // Start is called before the first frame update
     void Start()
     {
         if(!Active) return;
+
+        if (playerSerialized is IVehicleAgent vehicleAgent)
+        {
+            player = vehicleAgent;
+        }
 
         if (AutomaticProgression)
         {
@@ -69,18 +77,21 @@ public class TargetPracticeController : MonoBehaviour
             Transform newTarget = GameObject.Instantiate(targetWallPrefab, this.transform);
             m_targets[i] = newTarget.gameObject.GetComponent<TargetScript>();
             m_targets[i].setController(this, false);
-            m_targets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+            m_targets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
         }
 
-        //FakeTargets = true;
-        //m_fakeTargets = new TargetScript[1];
-        //for (int i = 0; i < m_fakeTargets.Length; i++)
-        //{
-        //    Transform newFakeTarget = GameObject.Instantiate(fakeTargetTankPrefab, this.transform);
-        //    m_fakeTargets[i] = newFakeTarget.gameObject.GetComponent<TargetScript>();
-        //    m_fakeTargets[i].setController(this, true);
-        //    m_fakeTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
-        //}
+
+        if(FakeTargets)
+        {
+            m_fakeTargets = new TargetScript[1];
+            for (int i = 0; i < m_fakeTargets.Length; i++)
+            {
+                Transform newFakeTarget = GameObject.Instantiate(fakeTargetWallPrefab, this.transform);
+                m_fakeTargets[i] = newFakeTarget.gameObject.GetComponent<TargetScript>();
+                m_fakeTargets[i].setController(this, true);
+                m_fakeTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
+            }
+        }
 
         //m_ControlPoint.StateChangedEvent.AddListener(handleCTStateChanged);
 
@@ -112,7 +123,7 @@ public class TargetPracticeController : MonoBehaviour
     {
         if(target.isFakeTarget())
         {
-            target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+            target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
             return;
         }
 
@@ -121,7 +132,7 @@ public class TargetPracticeController : MonoBehaviour
             HandleProgression();
         }
 
-        target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+        target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
         hitCount++;
     }
 
@@ -143,7 +154,7 @@ public class TargetPracticeController : MonoBehaviour
                 Transform newTarget = GameObject.Instantiate(targetWallPrefab, this.transform);
                 m_targets[i] = newTarget.gameObject.GetComponent<TargetScript>();
                 m_targets[i].setController(this, false);
-                m_targets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+                m_targets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
             }
 
             FakeTargets = true;
@@ -153,7 +164,7 @@ public class TargetPracticeController : MonoBehaviour
                 Transform newFakeTarget = GameObject.Instantiate(fakeTargetWallPrefab, this.transform);
                 m_fakeTargets[i] = newFakeTarget.gameObject.GetComponent<TargetScript>();
                 m_fakeTargets[i].setController(this, true);
-                m_fakeTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+                m_fakeTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
             }
         }
 
@@ -178,7 +189,7 @@ public class TargetPracticeController : MonoBehaviour
                 Transform newTarget = GameObject.Instantiate(targetTankPrefab, this.transform);
                 m_targets[i] = newTarget.gameObject.GetComponent<TargetScript>();
                 m_targets[i].setController(this, false);
-                m_targets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+                m_targets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
             }
 
             m_fakeTargets = new TargetScript[3];
@@ -187,7 +198,7 @@ public class TargetPracticeController : MonoBehaviour
                 Transform newFakeTarget = GameObject.Instantiate(fakeTargetTankPrefab, this.transform);
                 m_fakeTargets[i] = newFakeTarget.gameObject.GetComponent<TargetScript>();
                 m_fakeTargets[i].setController(this, true);
-                m_fakeTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+                m_fakeTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
             }
 
         }
@@ -208,16 +219,41 @@ public class TargetPracticeController : MonoBehaviour
 
     public void RequestRearrange(TargetScript target)
     {
-        target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth);
+        target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
     }
 
-    private void handleCTStateChanged()
+    //private void handleCTStateChanged()
+    //{
+    //    if(m_ControlPoint.GetState() == CTState.Yellow && agent.Team == Team.Yellow
+    //    || m_ControlPoint.GetState() == CTState.Red && agent.Team == Team.Red)
+    //    {
+    //        captureCount++;
+    //        HandleProgression();
+    //    }
+    //}
+
+    public TargetScript[] GetTargets()
     {
-        if(m_ControlPoint.GetState() == CTState.Yellow && agent.Team == Team.Yellow
-        || m_ControlPoint.GetState() == CTState.Red && agent.Team == Team.Red)
+        return m_targets;
+    }
+
+    public TargetScript[] GetFakeTargets()
+    {
+        if (FakeTargets)
+            return m_fakeTargets;
+        else
+            return null;
+    }
+
+    public void SetPlayerMaterial(Material mat = null)
+    {
+        if(mat is null)
         {
-            captureCount++;
-            HandleProgression();
+            player.SetMaterial();
+        }
+        else
+        {
+            player.SetMaterial(mat);
         }
     }
 }

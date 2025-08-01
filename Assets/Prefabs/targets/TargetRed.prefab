@@ -154,6 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e421eb89d3b90a48a81f2737f30aad1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MainMaterial: {fileID: 2100000, guid: 3fa8773277c0e7e44a87ae2d0f525889, type: 2}
   isWall: 1
 --- !u!54 &2588925699280142152
 Rigidbody:
