@@ -151,6 +151,8 @@ public class HeliAgent : VehicleAgent
 
         if (impactRelativeVelocity < 2.0f) return;
 
+        AddReward(-1.0f);
+
         _health = Mathf.Max(0.0f, _health - impactRelativeVelocity);
         if (_health <= 0)
         {
