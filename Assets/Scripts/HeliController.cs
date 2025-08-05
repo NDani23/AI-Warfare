@@ -192,27 +192,36 @@ public class HeliController : MonoBehaviour
                 _overHeatCooldown = 5.0f;
                 _isShooting = 0;
                 _gunOverHeatStatus = 1.0f;
+                _agent.AddReward(-1.0f);
             }
 
             if(_lastShootTime + _shootDelay < Time.time)
             {
-                var tracer = Instantiate(_bulletTrail, _leftShootPosition.position, Quaternion.identity, this.transform);
-                tracer.AddPosition(_leftShootPosition.position);
-                tracer.transform.position = _leftGunHitInfo.hitPosition;
+                //var tracer = Instantiate(_bulletTrail, _leftShootPosition.position, Quaternion.identity, this.transform);
+                //tracer.AddPosition(_leftShootPosition.position);
+                //tracer.transform.position = _leftGunHitInfo.hitPosition;
 
                 //if (_leftGunHitInfo.hitTag != -1)
                 //{
                 //    _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
                 //}
 
-                var tracer2 = Instantiate(_bulletTrail, _rightShootPosition.position, Quaternion.identity, this.transform);
-                tracer2.AddPosition(_rightShootPosition.position);
-                tracer2.transform.position = _rightGunHitInfo.hitPosition;
+                //var tracer2 = Instantiate(_bulletTrail, _rightShootPosition.position, Quaternion.identity, this.transform);
+                //tracer2.AddPosition(_rightShootPosition.position);
+                //tracer2.transform.position = _rightGunHitInfo.hitPosition;
 
                 if (_rightGunHitInfo.hitTag != -1)
                 {
                     //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                    _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit();
+                    if(_rightGunHitInfo.hitGameObject is not null)
+                        _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit();
+                }
+
+                if (_leftGunHitInfo.hitTag != -1)
+                {
+                    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                    if (_leftGunHitInfo.hitGameObject is not null)
+                        _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit();
                 }
 
                 _lastShootTime = Time.time;

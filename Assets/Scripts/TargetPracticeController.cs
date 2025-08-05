@@ -123,17 +123,19 @@ public class TargetPracticeController : MonoBehaviour
     {
         if(target.isFakeTarget())
         {
-            target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
-            return;
+            player.gameObject.GetComponent<Agent>().AddReward(-1.0f);
         }
-
-        if (AutomaticProgression)
+        else
         {
-            HandleProgression();
+            hitCount++;
+            player.gameObject.GetComponent<Agent>().AddReward(1.0f);
+            if (AutomaticProgression)
+            {
+                HandleProgression();
+            }
         }
 
         target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
-        hitCount++;
     }
 
     private void HandleProgression()

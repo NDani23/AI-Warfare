@@ -170,6 +170,8 @@ public class HeliAgent : Agent, IVehicleAgent
 
         _heliController.Pitch = actions.ContinuousActions[0];
         _heliController.Yaw = actions.ContinuousActions[1];
+
+        AddReward((Time.fixedDeltaTime / EnvController.timeLimit) * 10.0f);
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -195,6 +197,8 @@ public class HeliAgent : Agent, IVehicleAgent
 
         if (impactRelativeVelocity < 2.0f) return;
 
+        AddReward(-1.0f);
+
         _health = Mathf.Max(0.0f, _health - impactRelativeVelocity);
         if (_health <= 0)
         {
@@ -218,29 +222,32 @@ public class HeliAgent : Agent, IVehicleAgent
 
     private void FixedUpdate()
     {
-        RayPerceptionInput spec = _leftAimSensor.GetRayPerceptionInput();
-        RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec, false);
-        _leftGunHitInfo.hitPosition = obs.RayOutputs[0].EndPositionWorld;
-        _leftGunHitInfo.hitTag = obs.RayOutputs[0].HitTagIndex;
-        _leftGunHitInfo.hitGameObject = obs.RayOutputs[0].HitGameObject;
-
-        if (obs.RayOutputs[0].HitTagIndex == 0)
+        if(_heliController.IsShooting == 1)
         {
-            obs.RayOutputs[0].HitGameObject.transform.parent.GetComponent<TargetScript>().Detect();
-        }
+            RayPerceptionInput spec = _leftAimSensor.GetRayPerceptionInput();
+            RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec, false);
+            _leftGunHitInfo.hitPosition = obs.RayOutputs[0].EndPositionWorld;
+            _leftGunHitInfo.hitTag = obs.RayOutputs[0].HitTagIndex;
+            _leftGunHitInfo.hitGameObject = obs.RayOutputs[0].HitGameObject;
 
-        spec = _rightAimSensor.GetRayPerceptionInput();
-        obs = RayPerceptionSensor.Perceive(spec, false);
-        _rightGunHitInfo.hitPosition = obs.RayOutputs[0].EndPositionWorld;
-        _rightGunHitInfo.hitTag = obs.RayOutputs[0].HitTagIndex;
-        _rightGunHitInfo.hitGameObject = obs.RayOutputs[0].HitGameObject;
+            if (obs.RayOutputs[0].HitTagIndex == 0)
+            {
+                obs.RayOutputs[0].HitGameObject.transform.parent.GetComponent<TargetScript>().Detect();
+            }
 
-        _heliController.LeftGunHitInfo = _leftGunHitInfo;
-        _heliController.RightGunHitInfo= _rightGunHitInfo;
+            spec = _rightAimSensor.GetRayPerceptionInput();
+            obs = RayPerceptionSensor.Perceive(spec, false);
+            _rightGunHitInfo.hitPosition = obs.RayOutputs[0].EndPositionWorld;
+            _rightGunHitInfo.hitTag = obs.RayOutputs[0].HitTagIndex;
+            _rightGunHitInfo.hitGameObject = obs.RayOutputs[0].HitGameObject;
 
-        if (obs.RayOutputs[0].HitTagIndex == 0)
-        {
-            obs.RayOutputs[0].HitGameObject.transform.parent.GetComponent<TargetScript>().Detect();
+            _heliController.LeftGunHitInfo = _leftGunHitInfo;
+            _heliController.RightGunHitInfo = _rightGunHitInfo;
+
+            if (obs.RayOutputs[0].HitTagIndex == 0)
+            {
+                obs.RayOutputs[0].HitGameObject.transform.parent.GetComponent<TargetScript>().Detect();
+            }
         }
     }
 
@@ -275,11 +282,12 @@ public class HeliAgent : Agent, IVehicleAgent
             inCT = false;
             _envController.AgentExitedCT(_team);
         }
-
-        _health = 0;
-        _envController.AgentDied(this);
-        gameObject.tag = "Untagged";
-        _heliController.setDeadState();
+        AddReward(-10.0f);
+        EndEpisode();
+        //_health = 0;
+        //_envController.AgentDied(this);
+        //gameObject.tag = "Untagged";
+        //_heliController.setDeadState();
     }
 
     public void SetMaterial(Material mat = null)

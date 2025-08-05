@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 public class EnvController : MonoBehaviour
 {
-    [Tooltip("Time limit (seconds)")] public int timeLimit = 90;
+    [Tooltip("Time limit (seconds)")] public int timeLimit = 60;
 
     [SerializeField] private CTController m_ControlPoint;
 
