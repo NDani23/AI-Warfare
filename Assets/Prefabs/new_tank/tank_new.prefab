@@ -70,7 +70,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4663960741832866783
 Transform:
   m_ObjectHideFlags: 0
@@ -5207,7 +5207,7 @@ Transform:
   m_GameObject: {fileID: 7244461383855328263}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 4.66}
+  m_LocalPosition: {x: 0, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5368,7 +5368,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &888417030326508693
 Transform:
   m_ObjectHideFlags: 0
@@ -10500,7 +10500,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2557069538603651589, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2575448596332175475, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: m_Layer
@@ -10864,7 +10864,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6773964774625360917, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6874343342762615696, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -11293,7 +11293,6 @@ MonoBehaviour:
   teammateSensor: {fileID: 384638465518604843}
   _healthBar: {fileID: 8468590086183346495}
   demonstrationRecorder: {fileID: 0}
-  inCT: 0
   DiedEvent:
     m_PersistentCalls:
       m_Calls: []

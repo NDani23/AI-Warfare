@@ -257,7 +257,9 @@ public class TankAgent : Agent, IVehicleAgent
             inCT = false;
             _envController.AgentExitedCT(_team);
         }
-        _healthBar.SetActive(true);
+
+        if(m_BehaviorParameters.BehaviorType != BehaviorType.HeuristicOnly)
+            _healthBar.SetActive(true);
 
         //envController.resetCT();
     }

@@ -75,8 +75,8 @@ public class GUIManager : MonoBehaviour
         if (HealthForeground != null) HealthForeground.fillAmount = player.Health / 100;
         TimeSpan timeSpan = TimeSpan.FromSeconds(env.getRemainingTime());
         TimerText.text = timeSpan.ToString(@"mm\:ss");
-        //if(playerRespawnCooldown == 0.0f)
-        //    CooldownForeground.fillAmount = player.getCooldown() / 3.0f;
+        if (playerRespawnCooldown == 0.0f && player is TankAgent)
+            CooldownForeground.fillAmount = player.gameObject.GetComponent<TankAgent>().getCooldown() / 3.0f;
         RedTeamPoints.fillAmount = env.RedTeamPoints / 100.0f;
         YellowTeamPoints.fillAmount = env.YellowTeamPoints / 100.0f;
 
