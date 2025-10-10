@@ -1,13 +1,28 @@
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
+public enum TargetType
+{
+    Wall = 0,
+    Tank = 1,
+    Heli = 2
+}
+
 public class TargetScript : MonoBehaviour
 {
     [SerializeField] private Material MainMaterial;
+    public TargetType targetType;
 
     private TargetPracticeController targetController;
-    public bool isWall = false;
     private bool isFake = false;
+        
+
+    private float m_health = 1;
+    public float Health
+    {
+        get { return m_health;  }
+        set { m_health = value; }
+    }
 
     private float m_rearrangeInterval = 60.0f;
     private float m_rearrangeCooldown = 60.0f;
@@ -65,12 +80,14 @@ public class TargetScript : MonoBehaviour
 
     public void Rearrange(float width, float height, float practiceAreaLenght, float practiceAreaWidth, bool canFloat)
     {
-        float newHeight = 2.6f;
+        if(targetType is TargetType.Tank) canFloat = false;
 
-        if (isWall)
+        float newHeight = canFloat ? Random.Range(height / 2, 300.0f) : 2.6f;
+
+        if (targetType is TargetType.Wall)
         {
             transform.localScale = new Vector3(width, height, 7);
-            newHeight = canFloat? Random.Range(height/2, 300.0f) : height / 2;
+            //newHeight = height / 2;
         }
 
         transform.localPosition = new Vector3(Random.Range(-practiceAreaWidth / 2, practiceAreaWidth / 2),
@@ -87,18 +104,23 @@ public class TargetScript : MonoBehaviour
 
     public void SetMaterial(Material mat = null)
     {
-        if(mat is null)
+        mat = mat is null ? MainMaterial : mat;
+
+        this.gameObject.GetComponent<MeshRenderer>().material = mat;
+
+        if(targetType is not TargetType.Wall)
         {
-            this.gameObject.GetComponent<MeshRenderer>().material = MainMaterial;
-        }
-        else
-        {
-            this.gameObject.GetComponent<MeshRenderer>().material = mat;
+            foreach (var renderer in this.gameObject.GetComponentsInChildren<MeshRenderer>())
+            {
+                renderer.material = mat;
+            }
         }
     }
 
-    public void Hit()
+    public void Hit(float damage)
     {
+        m_detected = true;
+        m_health = Mathf.Max(0, m_health-damage);
         targetController.HandleTargetHit(this);
         m_rearrangeCooldown = m_rearrangeInterval;
     }

@@ -126,14 +126,12 @@ public class HeliAgent : Agent, IVehicleAgent
 
             foreach (var Target in Targets)
             {
-                if(Target.Detected)
+                if(Target.Detected && !Target.isFakeTarget())
                 {
                     Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(Target.transform.localPosition - transform.localPosition));
                     float dist = Vector3.Distance(Target.transform.localPosition, transform.localPosition) / 700.0f;
-                    //float health = agent.GetComponent<IVehicleAgent>().Health * 0.01f;
 
-                    //float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.GetComponent<IVehicleAgent>().AgentType };
-                    float[] Obs = { dir.x, dir.y, dir.z, dist, 1.0f, 0.0f };
+                    float[] Obs = { dir.x, dir.y, dir.z, dist, Target.Health * 0.01f, Target.targetType is TargetType.Heli ? 1.0f : 0.0f };
                     _detectedEnemiesSensor.AppendObservation(Obs);
                 }
             }
@@ -171,7 +169,9 @@ public class HeliAgent : Agent, IVehicleAgent
         _heliController.Pitch = actions.ContinuousActions[0];
         _heliController.Yaw = actions.ContinuousActions[1];
 
-        AddReward((Time.fixedDeltaTime / EnvController.timeLimit) * 10.0f);
+        //AddReward((Time.fixedDeltaTime / EnvController.timeLimit) * 10.0f);
+
+        if (transform.position.y <= 100.0f) AddReward(-(5.0f + (100.0f - transform.position.y)) * (Time.fixedDeltaTime / EnvController.timeLimit));
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -230,11 +230,6 @@ public class HeliAgent : Agent, IVehicleAgent
             _leftGunHitInfo.hitTag = obs.RayOutputs[0].HitTagIndex;
             _leftGunHitInfo.hitGameObject = obs.RayOutputs[0].HitGameObject;
 
-            if (obs.RayOutputs[0].HitTagIndex == 0)
-            {
-                obs.RayOutputs[0].HitGameObject.transform.parent.GetComponent<TargetScript>().Detect();
-            }
-
             spec = _rightAimSensor.GetRayPerceptionInput();
             obs = RayPerceptionSensor.Perceive(spec, false);
             _rightGunHitInfo.hitPosition = obs.RayOutputs[0].EndPositionWorld;
@@ -244,10 +239,6 @@ public class HeliAgent : Agent, IVehicleAgent
             _heliController.LeftGunHitInfo = _leftGunHitInfo;
             _heliController.RightGunHitInfo = _rightGunHitInfo;
 
-            if (obs.RayOutputs[0].HitTagIndex == 0)
-            {
-                obs.RayOutputs[0].HitGameObject.transform.parent.GetComponent<TargetScript>().Detect();
-            }
         }
     }
 

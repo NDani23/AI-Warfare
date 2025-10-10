@@ -213,15 +213,15 @@ public class HeliController : MonoBehaviour
                 if (_rightGunHitInfo.hitTag != -1)
                 {
                     //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                    if(_rightGunHitInfo.hitGameObject is not null)
-                        _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit();
+                    if (_rightGunHitInfo.hitGameObject is not null)
+                        _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
                 }
 
                 if (_leftGunHitInfo.hitTag != -1)
                 {
                     //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
                     if (_leftGunHitInfo.hitGameObject is not null)
-                        _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit();
+                        _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
                 }
 
                 _lastShootTime = Time.time;
