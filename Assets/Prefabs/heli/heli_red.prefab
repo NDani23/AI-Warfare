@@ -8,10 +8,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1299925060788754810, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
-      propertyPath: m_TagString
-      value: RedAgent
-      objectReference: {fileID: 0}
     - target: {fileID: 1639006057581952061, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Layer
       value: 16
@@ -19,10 +15,6 @@ PrefabInstance:
     - target: {fileID: 1801883545344880449, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Layer
       value: 17
-      objectReference: {fileID: 0}
-    - target: {fileID: 2452752077751520955, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2510629832125699754, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Layer
@@ -40,10 +32,6 @@ PrefabInstance:
       propertyPath: DefaultFriendlyMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 3fa8773277c0e7e44a87ae2d0f525889, type: 2}
-    - target: {fileID: 3703769849645382422, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3998644805695371758, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_DetectableTags.Array.size
       value: 2
@@ -80,10 +68,6 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 21861ce258383de4fa72fd32eb33a070, type: 2}
-    - target: {fileID: 5171235038622524106, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5207944250536952521, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Layer
       value: 17
@@ -96,22 +80,6 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 16
       objectReference: {fileID: 0}
-    - target: {fileID: 5930398452818856201, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
-      propertyPath: m_Color.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5930398452818856201, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
-      propertyPath: m_Color.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5930398452818856201, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
-      propertyPath: m_Color.r
-      value: 0.8117647
-      objectReference: {fileID: 0}
-    - target: {fileID: 5930398452818856201, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 6090330496605595991, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

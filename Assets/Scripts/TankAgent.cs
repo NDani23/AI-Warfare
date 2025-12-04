@@ -6,7 +6,6 @@ using Unity.MLAgents.Policies;
 using System.Linq;
 using UnityEngine.Events;
 using Unity.MLAgents.Demonstrations;
-using System;
 
 public class TankAgent : VehicleAgent
 {

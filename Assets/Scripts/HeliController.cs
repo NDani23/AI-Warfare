@@ -1,10 +1,12 @@
 using TMPro;
 using Unity.Mathematics;
+using UnityEditor.Timeline;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UIElements;
+using UnityEngine.WSA;
 
-public class HeliController : MonoBehaviour, IVehicleController
+public class HeliController : MonoBehaviour
 {
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private Transform _rear_rotor;
@@ -14,15 +16,13 @@ public class HeliController : MonoBehaviour, IVehicleController
     [SerializeField] private Transform _machineGunRight;
     [SerializeField] private Transform _leftShootPosition;
     [SerializeField] private Transform _rightShootPosition;
+    [SerializeField] private TrailRenderer _bulletTrail;
     [SerializeField] private GameObject _colliders;
+    [SerializeField] private float _shootDelay = 0.1f;
     [SerializeField] private ParticleSystem ExplodeParticles;
     [SerializeField] private ParticleSystem SmokeParticles;
-    [SerializeField] private ParticleSystem _rightTracerParticles;
-    [SerializeField] private ParticleSystem _leftTracerParticles;
     [SerializeField] private Material BurntMaterial;
     [SerializeField] private Material MainMaterial;
-    [SerializeField] private float _shootDelay = 0.1f;
-    [SerializeField] private float _tracerSpeed = 200.0f;
 
     private HitInfo _leftGunHitInfo;
     private HitInfo _rightGunHitInfo;
@@ -52,15 +52,15 @@ public class HeliController : MonoBehaviour, IVehicleController
     public float pitch_speed;
     public float yaw_speed;
 
-    private float _throttle;
-    public float Throttle
+    private int _throttle;
+    public int Throttle
     {
         get { return _throttle; }
         set { _throttle = value; }
     }
 
-    private float _roll;
-    public float Roll
+    private int _roll;
+    public int Roll
     {
         get { return _roll; }
         set { _roll = value; }
@@ -72,6 +72,11 @@ public class HeliController : MonoBehaviour, IVehicleController
         get { return _pitch; }
         set 
         {
+            //if (value * _pitch >= 0 && Mathf.Abs(value) > Mathf.Abs(_pitch))
+            //    _pitch = Mathf.Lerp(_pitch, value, 1.0f);
+            //else
+            //    _pitch = value;
+
             _pitch = value;
         }
     }
@@ -82,6 +87,11 @@ public class HeliController : MonoBehaviour, IVehicleController
         get { return _yaw; }
         set 
         {
+            //if (value * _yaw >= 0 && Mathf.Abs(value) > Mathf.Abs(_yaw))
+            //    _yaw = Mathf.Lerp(_yaw, value, 1.0f);
+            //else
+            //    _yaw = value;
+
             _yaw = value;
         }
     }
@@ -125,7 +135,7 @@ public class HeliController : MonoBehaviour, IVehicleController
             SmokeParticles.Stop();
         }
 
-        _gunOverHeatStatus = 0.0f;
+
         _rigidbody.linearVelocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
 
@@ -142,6 +152,7 @@ public class HeliController : MonoBehaviour, IVehicleController
         }
     }
 
+    // Update is called once per frame
     void FixedUpdate()
     {
         _rigidbody.AddForce(Physics.gravity * (gravity_magnification - 1), ForceMode.Acceleration);
@@ -154,11 +165,11 @@ public class HeliController : MonoBehaviour, IVehicleController
 
         if(Throttle > 0)
         {
-            _rigidbody.AddForce(transform.up * 10 * gravity_magnification * Mathf.Abs(Throttle), ForceMode.Acceleration);
+            _rigidbody.AddForce(transform.up * 10 * gravity_magnification, ForceMode.Acceleration);
         }
         else if(Throttle < 0)
         {
-            _rigidbody.AddForce(Vector3.down * 7 * gravity_magnification * Mathf.Abs(Throttle), ForceMode.Acceleration);
+            _rigidbody.AddForce(Vector3.down * 7 * gravity_magnification, ForceMode.Acceleration);
         }
 
         _rigidbody.AddTorque(transform.forward * _roll * roll_speed, ForceMode.Acceleration);
@@ -175,7 +186,7 @@ public class HeliController : MonoBehaviour, IVehicleController
             float _gunRotateSpeed = 1000;
             _machineGunLeft.Rotate(-Vector3.forward * _gunRotateSpeed * Time.fixedDeltaTime, Space.Self);
             _machineGunRight.Rotate(-Vector3.forward * _gunRotateSpeed * Time.fixedDeltaTime, Space.Self);
-            _gunOverHeatStatus += Time.fixedDeltaTime / 3.0f;
+            _gunOverHeatStatus += Time.fixedDeltaTime / 3.5f;
             if (_gunOverHeatStatus >= 1.0f)
             {
                 _overHeatCooldown = 5.0f;
@@ -186,18 +197,37 @@ public class HeliController : MonoBehaviour, IVehicleController
 
             if(_lastShootTime + _shootDelay < Time.time)
             {
-                SpawnTracer(_leftShootPosition.position, _leftGunHitInfo.hitPosition, _leftTracerParticles);
-                SpawnTracer(_rightShootPosition.position, _rightGunHitInfo.hitPosition, _rightTracerParticles);
+                //var tracer = Instantiate(_bulletTrail, _leftShootPosition.position, Quaternion.identity, this.transform);
+                //tracer.AddPosition(_leftShootPosition.position);
+                //tracer.transform.position = _leftGunHitInfo.hitPosition;
+
                 if (_leftGunHitInfo.hitTag != -1)
                 {
-                    Debug.Log("Hit!");
-                    _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<VehicleAgent>().Hit(1);
+                    _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
                 }
 
                 if (_rightGunHitInfo.hitTag != -1)
                 {
-                    _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<VehicleAgent>().Hit(1);
+                    _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
                 }
+
+                //var tracer2 = Instantiate(_bulletTrail, _rightShootPosition.position, Quaternion.identity, this.transform);
+                //tracer2.AddPosition(_rightShootPosition.position);
+                //tracer2.transform.position = _rightGunHitInfo.hitPosition;
+
+                //if (_rightGunHitInfo.hitTag != -1)
+                //{
+                //    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                //    if (_rightGunHitInfo.hitGameObject is not null)
+                //        _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
+                //}
+
+                //if (_leftGunHitInfo.hitTag != -1)
+                //{
+                //    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                //    if (_leftGunHitInfo.hitGameObject is not null)
+                //        _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
+                //}
 
                 _lastShootTime = Time.time;
             }
@@ -210,7 +240,7 @@ public class HeliController : MonoBehaviour, IVehicleController
             }
             else
             {
-                _gunOverHeatStatus = Mathf.Max(0.0f, _gunOverHeatStatus - Time.fixedDeltaTime / 4.0f);
+                _gunOverHeatStatus = Mathf.Max(0.0f, _gunOverHeatStatus - Time.fixedDeltaTime / 3.5f);
             }
         }
     }
@@ -239,20 +269,6 @@ public class HeliController : MonoBehaviour, IVehicleController
         }
     }
 
-    private void SpawnTracer(Vector3 from, Vector3 to, ParticleSystem ps)
-    {
-        Vector3 direction = (to - from).normalized;
-
-        float distance = Vector3.Distance(from, to);
-
-        ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams();
-        emitParams.position = from;
-        emitParams.velocity = direction * _tracerSpeed;
-        emitParams.startLifetime = distance / _tracerSpeed;
-
-        ps.Emit(emitParams, 1);
-    }
-
     public void setDeadState()
     {
         _colliders.tag = "Untagged";
@@ -265,6 +281,5 @@ public class HeliController : MonoBehaviour, IVehicleController
     {
         return _gunOverHeatStatus;
     }
-
 
 }
