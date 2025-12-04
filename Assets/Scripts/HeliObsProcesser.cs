@@ -22,52 +22,52 @@ public class HeliObsProcesser : MonoBehaviour
 
     private void Awake()
     {
-        playEnv = GetComponentInParent<EnvController>();
-        _targetPracticeController = GetComponentInParent<TargetPracticeController>();
+        //playEnv = GetComponentInParent<EnvController>();
+        //_targetPracticeController = GetComponentInParent<TargetPracticeController>();
     }
 
     private void Start()
     {
-        foreach (var agent in playEnv.AgentsList)
-        {
-            if (agent.Team == team)
-            {
-                Friendlies.Add(agent);
-            }
-            else
-            {
-                Enemies.Add(agent);
-            }
-        }
+        //foreach (var agent in playEnv.AgentsList)
+        //{
+        //    if (agent.Team == team)
+        //    {
+        //        Friendlies.Add(agent);
+        //    }
+        //    else
+        //    {
+        //        Enemies.Add(agent);
+        //    }
+        //}
     }
 
-    private void OnPreRender()
-    {
-        //foreach (var agent in Enemies)
-        //{
-        //    if (agent.Health > 0)
-        //        agent.SetMaterial(EnemyMaterial);
-        //}
+    //private void OnPreRender()
+    //{
+    //    foreach (var agent in Enemies)
+    //    {
+    //        if (agent.Health > 0)
+    //            agent.SetMaterial(EnemyMaterial);
+    //    }
 
-        //foreach (var agent in Friendlies)
-        //{
-        //    if (agent.Health > 0)
-        //        agent.SetMaterial(FriendlyMaterial);
-        //}
+    //    foreach (var agent in Friendlies)
+    //    {
+    //        if (agent.Health > 0)
+    //            agent.SetMaterial(FriendlyMaterial);
+    //    }
 
-        foreach (var target in _targetPracticeController.GetTargets())
-        {
-            target.SetMaterial(EnemyMaterial);
-        }
+    //    //foreach (var target in _targetPracticeController.GetTargets())
+    //    //{
+    //    //    target.SetMaterial(EnemyMaterial);
+    //    //}
 
-        foreach (var target in _targetPracticeController.GetFakeTargets())
-        {
-            target.SetMaterial(FriendlyMaterial);
-        }
+    //    //foreach (var target in _targetPracticeController.GetFakeTargets())
+    //    //{
+    //    //    target.SetMaterial(FriendlyMaterial);
+    //    //}
 
-        _targetPracticeController.SetPlayerMaterial(FriendlyMaterial);
+    //    //_targetPracticeController.SetPlayerMaterial(FriendlyMaterial);
 
-    }
+    //}
 
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
@@ -81,31 +81,31 @@ public class HeliObsProcesser : MonoBehaviour
         }
     }
 
-    private void OnPostRender()
-    {
-        //foreach (var agent in Enemies)
-        //{
-        //    agent.SetMaterial();
-        //}
+    //private void OnPostRender()
+    //{
+    //    foreach (var agent in Enemies)
+    //    {
+    //        agent.SetMaterial();
+    //    }
 
-        //foreach (var agent in Friendlies)
-        //{
-        //    agent.SetMaterial();
-        //}
+    //    foreach (var agent in Friendlies)
+    //    {
+    //        agent.SetMaterial();
+    //    }
 
-        foreach (var target in _targetPracticeController.GetTargets())
-        {
-            target.SetMaterial();
-        }
+    //    //foreach (var target in _targetPracticeController.GetTargets())
+    //    //{
+    //    //    target.SetMaterial();
+    //    //}
 
-        foreach (var target in _targetPracticeController.GetFakeTargets())
-        {
-            target.SetMaterial();
-        }
+    //    //foreach (var target in _targetPracticeController.GetFakeTargets())
+    //    //{
+    //    //    target.SetMaterial();
+    //    //}
 
-        _targetPracticeController.SetPlayerMaterial();
+    //    //_targetPracticeController.SetPlayerMaterial();
 
-    }
+    //}
 
 
 

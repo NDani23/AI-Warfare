@@ -8,6 +8,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1639006057581952061, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 1801883545344880449, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2510629832125699754, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 3457863037060981203, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 917503
+      objectReference: {fileID: 0}
     - target: {fileID: 3483283565937040360, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: DefaultEnemyMaterial
       value: 
@@ -32,6 +48,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: RedAgent
       objectReference: {fileID: 0}
+    - target: {fileID: 4228535144485041057, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
     - target: {fileID: 4713395377111143109, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_DetectableTags.Array.size
       value: 2
@@ -48,10 +68,18 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 21861ce258383de4fa72fd32eb33a070, type: 2}
+    - target: {fileID: 5207944250536952521, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
     - target: {fileID: 5223576739594432450, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: MainMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 25356ba9fae421f4f84d895490b35e08, type: 2}
+    - target: {fileID: 5536030202747867904, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 6090330496605595991, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -92,6 +120,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6551001859060944875, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 6903705954778870765, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Name
       value: heli_red
@@ -99,6 +131,18 @@ PrefabInstance:
     - target: {fileID: 6903705954778870765, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_TagString
       value: RedAgent
+      objectReference: {fileID: 0}
+    - target: {fileID: 7054242417711879285, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 7452969871700425970, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 7540361399252075956, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Layer
+      value: 17
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

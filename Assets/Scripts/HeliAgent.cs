@@ -60,6 +60,12 @@ public class HeliAgent : Agent, IVehicleAgent
         m_BehaviorParameters = gameObject.GetComponent<BehaviorParameters>();
         _envController = GetComponentInParent<EnvController>();
 
+        _leftGunHitInfo.hitTag = -1;
+        _rightGunHitInfo.hitTag = -1;
+
+        _heliController.LeftGunHitInfo = _leftGunHitInfo;
+        _heliController.RightGunHitInfo = _rightGunHitInfo;
+
         if (m_BehaviorParameters.TeamId == (int)Team.Red)
         {
             _team = Team.Red;
@@ -108,33 +114,33 @@ public class HeliAgent : Agent, IVehicleAgent
 
 
         //Observations about other agents
-        //Dictionary<GameObject, float> detectedEnemies = _team == Team.Red ? _envController.m_DetectedYellowEnemies : _envController.m_DetectedRedEnemies;
-        TargetScript[] Targets = transform.parent.GetComponentsInChildren<TargetScript>();  
+        Dictionary<GameObject, float> detectedEnemies = _team == Team.Red ? _envController.m_DetectedYellowEnemies : _envController.m_DetectedRedEnemies;
+        //TargetScript[] Targets = transform.parent.GetComponentsInChildren<TargetScript>();  
         if (_health != 0)
         {
-            //foreach (var agent in detectedEnemies.Keys.ToList())
-            //{
-            //    Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(agent.transform.localPosition - transform.localPosition));
-            //    float dist = Vector3.Distance(agent.transform.localPosition, transform.localPosition) / 700.0f;
-            //    //float health = agent.GetComponent<IVehicleAgent>().Health * 0.01f;
-
-            //    //float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.GetComponent<IVehicleAgent>().AgentType };
-            //    float[] Obs = { dir.x, dir.y, dir.z, dist, 1.0f, 0.0f };
-            //    _detectedEnemiesSensor.AppendObservation(Obs);
-
-            //}
-
-            foreach (var Target in Targets)
+            foreach (var agent in detectedEnemies.Keys.ToList())
             {
-                if(Target.Detected && !Target.isFakeTarget())
-                {
-                    Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(Target.transform.localPosition - transform.localPosition));
-                    float dist = Vector3.Distance(Target.transform.localPosition, transform.localPosition) / 700.0f;
+                Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(agent.transform.localPosition - transform.localPosition));
+                float dist = Vector3.Distance(agent.transform.localPosition, transform.localPosition) / 700.0f;
+                float health = agent.GetComponent<IVehicleAgent>().Health * 0.01f;
 
-                    float[] Obs = { dir.x, dir.y, dir.z, dist, Target.Health * 0.01f, Target.targetType is TargetType.Heli ? 1.0f : 0.0f };
-                    _detectedEnemiesSensor.AppendObservation(Obs);
-                }
+                //float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.GetComponent<IVehicleAgent>().AgentType };
+                float[] Obs = { dir.x, dir.y, dir.z, dist, health, 1.0f };
+                _detectedEnemiesSensor.AppendObservation(Obs);
+
             }
+
+            //foreach (var Target in Targets)
+            //{
+            //    if(Target.Detected && !Target.isFakeTarget())
+            //    {
+            //        Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(Target.transform.localPosition - transform.localPosition));
+            //        float dist = Vector3.Distance(Target.transform.localPosition, transform.localPosition) / 700.0f;
+
+            //        float[] Obs = { dir.x, dir.y, dir.z, dist, Target.Health * 0.01f, Target.targetType is TargetType.Heli ? 1.0f : 0.0f };
+            //        _detectedEnemiesSensor.AppendObservation(Obs);
+            //    }
+            //}
 
             foreach (var agent in _envController.AgentsList)
             {
@@ -171,7 +177,7 @@ public class HeliAgent : Agent, IVehicleAgent
 
         //AddReward((Time.fixedDeltaTime / EnvController.timeLimit) * 10.0f);
 
-        if (transform.position.y <= 100.0f) AddReward(-(5.0f + (100.0f - transform.position.y)) * (Time.fixedDeltaTime / EnvController.timeLimit));
+        //if (transform.position.y <= 100.0f) AddReward(-(5.0f + (100.0f - transform.position.y)) * (Time.fixedDeltaTime / EnvController.timeLimit));
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -197,7 +203,7 @@ public class HeliAgent : Agent, IVehicleAgent
 
         if (impactRelativeVelocity < 2.0f) return;
 
-        AddReward(-1.0f);
+        AddReward(-0.1f);
 
         _health = Mathf.Max(0.0f, _health - impactRelativeVelocity);
         if (_health <= 0)
@@ -208,8 +214,8 @@ public class HeliAgent : Agent, IVehicleAgent
 
     public void ResetAgent()
     {
-        _heliController.setStartingState((int)_team, memberID);
         _health = 50;
+        _heliController.setStartingState((int)_team, Random.Range(0, 5));
 
         if (inCT)
         {
@@ -238,6 +244,19 @@ public class HeliAgent : Agent, IVehicleAgent
 
             _heliController.LeftGunHitInfo = _leftGunHitInfo;
             _heliController.RightGunHitInfo = _rightGunHitInfo;
+
+            if(_leftGunHitInfo.hitTag == 0)
+            {
+                _envController.EnemyDetected(_leftGunHitInfo.hitGameObject.transform.parent.gameObject, this.Team);
+                //AddReward(0.01f);
+            }
+
+            if (_rightGunHitInfo.hitTag == 0)
+            {
+                _envController.EnemyDetected(_rightGunHitInfo.hitGameObject.transform.parent.gameObject, this.Team);
+                //AddReward(0.01f);
+
+            }
 
         }
     }
@@ -273,10 +292,10 @@ public class HeliAgent : Agent, IVehicleAgent
             inCT = false;
             _envController.AgentExitedCT(_team);
         }
-        AddReward(-10.0f);
-        EndEpisode();
+        //AddReward(-10.0f);
+        //EndEpisode();
         //_health = 0;
-        //_envController.AgentDied(this);
+        _envController.AgentDied(this);
         //gameObject.tag = "Untagged";
         //_heliController.setDeadState();
     }

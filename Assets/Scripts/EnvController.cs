@@ -285,7 +285,7 @@ public class EnvController : MonoBehaviour
 
         //}
         ////agent.ResetAgent();
-        ////ResetEnv(agent.team == Team.Red? Team.Yellow : Team.Red);
+        ResetEnv(agent.Team == Team.Red? Team.Yellow : Team.Red);
 
         //m_DeadAgents.TryAdd(agent, RespawnCooldown);
         ////agent.gameObject.SetActive(false);
@@ -293,6 +293,10 @@ public class EnvController : MonoBehaviour
 
     private void ResetEnv(Team? winningTeam, bool TimeIsUp = false)
     {
+        if (TimeIsUp) Debug.Log("Time up!");
+        else if (winningTeam == Team.Yellow) Debug.Log("Yellow won!");
+        else Debug.Log("Red won!");
+
         //foreach (var agent in AgentsList)
         //{
         //    ////agent.ResetAgent();
@@ -384,7 +388,13 @@ public class EnvController : MonoBehaviour
         /////////////////////////////////////////////////////
         foreach (var agent in AgentsList)
         {
-            agent.gameObject.GetComponent<Agent>().EndEpisode();
+            if (TimeIsUp) agent.gameObject.GetComponent<Agent>().AddReward(0.0f);
+            else if(agent.Team == winningTeam) agent.gameObject.GetComponent<Agent>().AddReward(Mathf.Clamp01(m_ResetTimer / timeLimit + 0.5f));
+            else agent.gameObject.GetComponent<Agent>().AddReward(-1.0f);
+
+            if (TimeIsUp) agent.gameObject.GetComponent<Agent>().EpisodeInterrupted();
+            else agent.gameObject.GetComponent<Agent>().EndEpisode();
+
         }
 
         m_ResetTimer = timeLimit;
