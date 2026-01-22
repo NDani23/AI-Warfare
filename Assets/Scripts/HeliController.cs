@@ -52,15 +52,15 @@ public class HeliController : MonoBehaviour
     public float pitch_speed;
     public float yaw_speed;
 
-    private int _throttle;
-    public int Throttle
+    private float _throttle;
+    public float Throttle
     {
         get { return _throttle; }
         set { _throttle = value; }
     }
 
-    private int _roll;
-    public int Roll
+    private float _roll;
+    public float Roll
     {
         get { return _roll; }
         set { _roll = value; }
@@ -72,11 +72,6 @@ public class HeliController : MonoBehaviour
         get { return _pitch; }
         set 
         {
-            //if (value * _pitch >= 0 && Mathf.Abs(value) > Mathf.Abs(_pitch))
-            //    _pitch = Mathf.Lerp(_pitch, value, 1.0f);
-            //else
-            //    _pitch = value;
-
             _pitch = value;
         }
     }
@@ -87,11 +82,6 @@ public class HeliController : MonoBehaviour
         get { return _yaw; }
         set 
         {
-            //if (value * _yaw >= 0 && Mathf.Abs(value) > Mathf.Abs(_yaw))
-            //    _yaw = Mathf.Lerp(_yaw, value, 1.0f);
-            //else
-            //    _yaw = value;
-
             _yaw = value;
         }
     }
@@ -165,11 +155,11 @@ public class HeliController : MonoBehaviour
 
         if(Throttle > 0)
         {
-            _rigidbody.AddForce(transform.up * 10 * gravity_magnification, ForceMode.Acceleration);
+            _rigidbody.AddForce(transform.up * 10 * gravity_magnification * Mathf.Abs(Throttle), ForceMode.Acceleration);
         }
         else if(Throttle < 0)
         {
-            _rigidbody.AddForce(Vector3.down * 7 * gravity_magnification, ForceMode.Acceleration);
+            _rigidbody.AddForce(Vector3.down * 7 * gravity_magnification * Mathf.Abs(Throttle), ForceMode.Acceleration);
         }
 
         _rigidbody.AddTorque(transform.forward * _roll * roll_speed, ForceMode.Acceleration);
@@ -201,33 +191,33 @@ public class HeliController : MonoBehaviour
                 //tracer.AddPosition(_leftShootPosition.position);
                 //tracer.transform.position = _leftGunHitInfo.hitPosition;
 
-                if (_leftGunHitInfo.hitTag != -1)
-                {
-                    _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                }
+                //if (_leftGunHitInfo.hitTag != -1)
+                //{
+                //    _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                //}
 
-                if (_rightGunHitInfo.hitTag != -1)
-                {
-                    _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                }
+                //if (_rightGunHitInfo.hitTag != -1)
+                //{
+                //    _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                //}
 
                 //var tracer2 = Instantiate(_bulletTrail, _rightShootPosition.position, Quaternion.identity, this.transform);
                 //tracer2.AddPosition(_rightShootPosition.position);
                 //tracer2.transform.position = _rightGunHitInfo.hitPosition;
 
-                //if (_rightGunHitInfo.hitTag != -1)
-                //{
-                //    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                //    if (_rightGunHitInfo.hitGameObject is not null)
-                //        _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
-                //}
+                if (_rightGunHitInfo.hitTag != -1)
+                {
+                    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                    if (_rightGunHitInfo.hitGameObject is not null)
+                        _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
+                }
 
-                //if (_leftGunHitInfo.hitTag != -1)
-                //{
-                //    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                //    if (_leftGunHitInfo.hitGameObject is not null)
-                //        _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
-                //}
+                if (_leftGunHitInfo.hitTag != -1)
+                {
+                    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                    if (_leftGunHitInfo.hitGameObject is not null)
+                        _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
+                }
 
                 _lastShootTime = Time.time;
             }

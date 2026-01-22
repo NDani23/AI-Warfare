@@ -136,7 +136,7 @@ public class TargetPracticeController : MonoBehaviour
     {
         if(target.isFakeTarget())
         {
-            player.gameObject.GetComponent<Agent>().AddReward(-0.2f);
+            player.gameObject.GetComponent<Agent>().AddReward(-0.3f);
         }
         else
         {
