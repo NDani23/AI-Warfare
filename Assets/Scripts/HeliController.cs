@@ -191,33 +191,33 @@ public class HeliController : MonoBehaviour
                 //tracer.AddPosition(_leftShootPosition.position);
                 //tracer.transform.position = _leftGunHitInfo.hitPosition;
 
-                //if (_leftGunHitInfo.hitTag != -1)
-                //{
-                //    _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                //}
+                if (_leftGunHitInfo.hitTag != -1)
+                {
+                    _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                }
 
-                //if (_rightGunHitInfo.hitTag != -1)
-                //{
-                //    _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                //}
+                if (_rightGunHitInfo.hitTag != -1)
+                {
+                    _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                }
 
                 //var tracer2 = Instantiate(_bulletTrail, _rightShootPosition.position, Quaternion.identity, this.transform);
                 //tracer2.AddPosition(_rightShootPosition.position);
                 //tracer2.transform.position = _rightGunHitInfo.hitPosition;
 
-                if (_rightGunHitInfo.hitTag != -1)
-                {
-                    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                    if (_rightGunHitInfo.hitGameObject is not null)
-                        _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
-                }
+                //if (_rightGunHitInfo.hitTag != -1)
+                //{
+                //    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                //    if (_rightGunHitInfo.hitGameObject is not null)
+                //        _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
+                //}
 
-                if (_leftGunHitInfo.hitTag != -1)
-                {
-                    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                    if (_leftGunHitInfo.hitGameObject is not null)
-                        _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
-                }
+                //if (_leftGunHitInfo.hitTag != -1)
+                //{
+                //    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                //    if (_leftGunHitInfo.hitGameObject is not null)
+                //        _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
+                //}
 
                 _lastShootTime = Time.time;
             }
