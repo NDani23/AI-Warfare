@@ -201,6 +201,7 @@ public class HeliAgent : Agent, IVehicleAgent
         _health = Mathf.Max(0.0f, _health - impactRelativeVelocity);
         if (_health <= 0)
         {
+            AddReward(-EnvController.m_ResetTimer / EnvController.timeLimit);
             _envController.ResetEnv(this.Team == Team.Red ? Team.Yellow : Team.Red);
             //setDeadState();
         }
