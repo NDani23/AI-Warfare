@@ -4,7 +4,9 @@ using UnityEngine;
 public class bullet_script : MonoBehaviour
 {
     private TankAgent _parent;
-    private int _damage = 40;
+    //private int _damage = 40;
+    // ONLY FOR HELI TRAINING!
+    private int _damage = 0;
     private EnvController envController;
     private bool destroyed = false;
     [SerializeField] private Transform SparkEmitterPrefab;

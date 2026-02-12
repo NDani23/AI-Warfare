@@ -176,7 +176,7 @@ public class HeliController : MonoBehaviour
             float _gunRotateSpeed = 1000;
             _machineGunLeft.Rotate(-Vector3.forward * _gunRotateSpeed * Time.fixedDeltaTime, Space.Self);
             _machineGunRight.Rotate(-Vector3.forward * _gunRotateSpeed * Time.fixedDeltaTime, Space.Self);
-            _gunOverHeatStatus += Time.fixedDeltaTime / 3.5f;
+            _gunOverHeatStatus += Time.fixedDeltaTime / 5.0f;
             if (_gunOverHeatStatus >= 1.0f)
             {
                 _overHeatCooldown = 5.0f;
@@ -230,7 +230,7 @@ public class HeliController : MonoBehaviour
             }
             else
             {
-                _gunOverHeatStatus = Mathf.Max(0.0f, _gunOverHeatStatus - Time.fixedDeltaTime / 3.5f);
+                _gunOverHeatStatus = Mathf.Max(0.0f, _gunOverHeatStatus - Time.fixedDeltaTime / 3.0f);
             }
         }
     }
@@ -263,8 +263,8 @@ public class HeliController : MonoBehaviour
     {
         _colliders.tag = "Untagged";
         setMaterial();
-        ExplodeParticles.Play();
-        SmokeParticles.Play();
+        //ExplodeParticles.Play();
+        //SmokeParticles.Play();
     }
 
     public float getGunOverheatStatus()

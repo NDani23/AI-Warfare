@@ -28,6 +28,7 @@ public class HeliAgent : Agent, IVehicleAgent
     [SerializeField] private RayPerceptionSensorComponent3D _rightAimSensor;
     [SerializeField] private BufferSensorComponent _detectedEnemiesSensor;
     [SerializeField] private BufferSensorComponent _teammateSensor;
+    [SerializeField] private GameObject HitBoxMeshes;
 
     private Team _team;
     public Team Team => _team;
@@ -200,7 +201,8 @@ public class HeliAgent : Agent, IVehicleAgent
         _health = Mathf.Max(0.0f, _health - impactRelativeVelocity);
         if (_health <= 0)
         {
-            setDeadState();
+            _envController.ResetEnv(this.Team == Team.Red ? Team.Yellow : Team.Red);
+            //setDeadState();
         }
     }
 
@@ -208,6 +210,7 @@ public class HeliAgent : Agent, IVehicleAgent
     {
         _health = 50;
         _heliController.setStartingState((int)_team, Random.Range(0, 5));
+        HitBoxMeshes.SetActive(true);
 
         if (inCT)
         {
@@ -223,9 +226,9 @@ public class HeliAgent : Agent, IVehicleAgent
         if (RegenHealthCooldown != 0) RegenHealthCooldown = Mathf.Max(0, RegenHealthCooldown - Time.fixedDeltaTime);
 
         if (_health == 0) return;
-        if (_health != 100 && RegenHealthCooldown == 0)
+        if (_health != 50 && RegenHealthCooldown == 0)
         {
-            _health = Mathf.Min(30, _health + Time.deltaTime * 5.0f);
+            _health = Mathf.Min(50, _health + Time.deltaTime * 5.0f);
         }
 
         if (_heliController.IsShooting == 1)
@@ -248,6 +251,7 @@ public class HeliAgent : Agent, IVehicleAgent
             if(_leftGunHitInfo.hitTag == 0)
             {
                 _envController.EnemyDetected(_leftGunHitInfo.hitGameObject.transform.parent.gameObject, this.Team);
+                _envController.EnemyDetected(this.gameObject, this.Team == Team.Yellow ? Team.Red : Team.Yellow);
                 //AddReward(0.01f);
             }
 
@@ -274,7 +278,7 @@ public class HeliAgent : Agent, IVehicleAgent
     public void setDeadState()
     {
 
-
+        HitBoxMeshes.SetActive(false);
 
         //DiedEvent.Invoke();
         if (inCT)
@@ -285,9 +289,9 @@ public class HeliAgent : Agent, IVehicleAgent
         //AddReward(-10.0f);
         _envController.AgentDied(this);
         //EndEpisode();
-        //_health = 0;
-        //gameObject.tag = "Untagged";
-        //_heliController.setDeadState();
+        _health = 0;
+        gameObject.tag = "Untagged";
+        _heliController.setDeadState();
     }
 
     public void SetMaterial(Material mat = null)

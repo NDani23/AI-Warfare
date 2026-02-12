@@ -13,12 +13,13 @@ public class TankAgent : VehicleAgent
     [SerializeField] private Transform tankCannon;
     [SerializeField] private GameObject _healthBar;
     [SerializeField] private RayPerceptionSensorComponent3D aimSensor;
+    [SerializeField] private GameObject HitBoxMeshes;
 
     public DemonstrationRecorder? demonstrationRecorder;
     BehaviorParameters m_BehaviorParameters;
     private float _maxHealth = 100.0f;
     public override float MaxHealth => _maxHealth;
-
+    private float RegenHealthCooldown = 0;
     private float DistanceToCT = 1000;
 
     private TankController _tankController;
