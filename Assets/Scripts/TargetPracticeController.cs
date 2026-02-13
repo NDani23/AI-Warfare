@@ -15,6 +15,7 @@ public class TargetPracticeController : MonoBehaviour
     [SerializeField] private bool Active;
     [SerializeField] private Transform targetWallPrefab;
     [SerializeField] private Transform targetTankPrefab;
+    [SerializeField] private Transform targetHeliPrefab;
     [SerializeField] private Transform fakeTargetTankPrefab;
     [SerializeField] private Transform fakeTargetWallPrefab;
     [SerializeField] private CTController m_ControlPoint;
@@ -27,6 +28,11 @@ public class TargetPracticeController : MonoBehaviour
     [SerializeField] private float TargetWidth;
     [SerializeField] private float TargetHeight;
 
+    [SerializeField] private bool UseTargetWall = false;
+
+    [SerializeField] private uint TargetCount = 1;
+    [SerializeField] private uint FakeTargetCount = 1;
+
     [SerializeField] private bool MovingTargets;
     [SerializeField] private float TargetSpeed = 0.5f;
     [SerializeField] private float MoveDistance = 40f;
@@ -37,7 +43,10 @@ public class TargetPracticeController : MonoBehaviour
 
     [SerializeField] private bool AutomaticProgression;
 
+    [SerializeField] private float TargetHealth;
+
     [SerializeField] private Speed ProgressionSpeed = Speed.Normal;
+
 
     private float CTRearrangeCooldown;
     private static float CTRearrangeInterval = 60.0f;
@@ -65,31 +74,35 @@ public class TargetPracticeController : MonoBehaviour
             FloatingTargets = false;
             MovingTargets = false;
             FakeTargets = false;
+            UseTargetWall = true;
             PracticeAreaLength = 600;
             PracticeAreaWidth = 600;
             TargetHeight = 50;
             TargetWidth = 120;
         }
 
-        m_targets = new TargetScript[1];
+        m_targets = new TargetScript[TargetCount];
         for (int i = 0; i < m_targets.Length; i++)
         {
-            Transform newTarget = GameObject.Instantiate(targetWallPrefab, this.transform);
+            Transform newTarget = UseTargetWall ? GameObject.Instantiate(targetWallPrefab, this.transform) : 
+                       (i < m_targets.Length-1) ? GameObject.Instantiate(targetTankPrefab, this.transform) : GameObject.Instantiate(targetHeliPrefab, this.transform);
             m_targets[i] = newTarget.gameObject.GetComponent<TargetScript>();
             m_targets[i].setController(this, false);
             m_targets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
+            m_targets[i].Health = TargetHealth;
         }
 
 
         if(FakeTargets)
         {
-            m_fakeTargets = new TargetScript[1];
+            m_fakeTargets = new TargetScript[FakeTargetCount];
             for (int i = 0; i < m_fakeTargets.Length; i++)
             {
-                Transform newFakeTarget = GameObject.Instantiate(fakeTargetWallPrefab, this.transform);
+                Transform newFakeTarget = UseTargetWall ? GameObject.Instantiate(fakeTargetWallPrefab, this.transform) : GameObject.Instantiate(fakeTargetTankPrefab, this.transform);
                 m_fakeTargets[i] = newFakeTarget.gameObject.GetComponent<TargetScript>();
                 m_fakeTargets[i].setController(this, true);
                 m_fakeTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
+                m_targets[i].Health = TargetHealth;
             }
         }
 
@@ -123,17 +136,26 @@ public class TargetPracticeController : MonoBehaviour
     {
         if(target.isFakeTarget())
         {
-            target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
-            return;
+            player.gameObject.GetComponent<Agent>().AddReward(-0.3f);
         }
-
-        if (AutomaticProgression)
+        else
         {
-            HandleProgression();
+            //hitCount++;
+            player.gameObject.GetComponent<Agent>().AddReward(target.targetType is TargetType.Heli ? 0.2f : 0.1f);
+            if (AutomaticProgression)
+            {
+                HandleProgression();
+            }
         }
 
-        target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
-        hitCount++;
+        if (target.Health == 0)
+        {
+            target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
+            target.Health = TargetHealth;
+            target.Detected = false;
+            if (!target.isFakeTarget()) player.gameObject.GetComponent<Agent>().AddReward(target.targetType is TargetType.Heli ? 10.0f : 5.0f);
+
+        }
     }
 
     private void HandleProgression()
@@ -155,6 +177,7 @@ public class TargetPracticeController : MonoBehaviour
                 m_targets[i] = newTarget.gameObject.GetComponent<TargetScript>();
                 m_targets[i].setController(this, false);
                 m_targets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
+                m_targets[i].Health = TargetHealth;
             }
 
             FakeTargets = true;
@@ -165,6 +188,7 @@ public class TargetPracticeController : MonoBehaviour
                 m_fakeTargets[i] = newFakeTarget.gameObject.GetComponent<TargetScript>();
                 m_fakeTargets[i].setController(this, true);
                 m_fakeTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
+                m_targets[i].Health = TargetHealth;
             }
         }
 
@@ -190,6 +214,7 @@ public class TargetPracticeController : MonoBehaviour
                 m_targets[i] = newTarget.gameObject.GetComponent<TargetScript>();
                 m_targets[i].setController(this, false);
                 m_targets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
+                m_targets[i].Health = TargetHealth;
             }
 
             m_fakeTargets = new TargetScript[3];
@@ -199,6 +224,7 @@ public class TargetPracticeController : MonoBehaviour
                 m_fakeTargets[i] = newFakeTarget.gameObject.GetComponent<TargetScript>();
                 m_fakeTargets[i].setController(this, true);
                 m_fakeTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
+                m_targets[i].Health = TargetHealth;
             }
 
         }
@@ -220,6 +246,7 @@ public class TargetPracticeController : MonoBehaviour
     public void RequestRearrange(TargetScript target)
     {
         target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
+        target.Health = TargetHealth;
     }
 
     //private void handleCTStateChanged()

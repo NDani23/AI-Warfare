@@ -53,6 +53,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.7389212, y: 1.1057787, z: 9.790066}
   m_Center: {x: 0.0000023841858, y: -1.2373261, z: 0.049096107}
+--- !u!1 &2494566906192294325
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8173269885074000917}
+  m_Layer: 0
+  m_Name: HitBoxMeshes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8173269885074000917
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2494566906192294325}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8996156850819002772}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2662563392695213180
 GameObject:
   m_ObjectHideFlags: 0
@@ -10900,7 +10931,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7422908537114401422, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 123.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7422908537114401422, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       propertyPath: m_LocalPosition.z
@@ -11014,6 +11045,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7422908537114401422, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       insertIndex: -1
       addedObject: {fileID: 888417030326508693}
+    - targetCorrespondingSourceObject: {fileID: 7422908537114401422, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8173269885074000917}
     - targetCorrespondingSourceObject: {fileID: 5374168019216485970, guid: 20380558fa91e7443a0fd088789b1764, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8616993794192867648}
@@ -11292,6 +11326,7 @@ MonoBehaviour:
   detectedEnemiesSensor: {fileID: 5787601114699799351}
   teammateSensor: {fileID: 384638465518604843}
   _healthBar: {fileID: 8468590086183346495}
+  HitBoxMeshes: {fileID: 2494566906192294325}
   demonstrationRecorder: {fileID: 0}
   DiedEvent:
     m_PersistentCalls:

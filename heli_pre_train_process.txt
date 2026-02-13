@@ -1,0 +1,28 @@
+1. phase: (for about 5 mil. steps)
+- Target size: 40 (3 enemy 2 friendly)
+- +10 for staying alive
+- -10 for dying
+- -1 for collision enter
+- -0.2 for shooting friendly
+- +0.2 for shooting enemy
+- +5.0 for killing enemy
+
+2. phase: (from 5 to 7-8 mil. steps)
+- Target size: 20 (3 enemy 2 friendly)
+- No reward for staying alive
+
+3. phase: (from 8 to 10 mil. steps)
+- Target size: 10 (4 enemy 3 friendly)
+
+4. phase: (from 10 to 15 mil. steps)
+- Switch to vehicle targets (gameplay size) -> 5 enemy 4 friendly
+- +0.1 for shooting enemy tank
+- +0.2 for shooting enemy heli
+- +5.0 for killing enemy tank
+- +10.0 for killing enemy heli
+
+5. phase: (after 15 mil)
+- Self-play 1v1 heli fight
+- constant learning rate (little bit higher than what it was at 15 mil. steps)
+- -1.0 for loosing
+- +1.0 - time/timelimit for winning

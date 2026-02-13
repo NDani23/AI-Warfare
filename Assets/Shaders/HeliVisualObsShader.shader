@@ -64,12 +64,12 @@ Shader "Custom/MLAgentsHeliObs"
                     
                 // Convert to grayscale using luminance
                 float gray = dot(col.rgb, float3(0.299, 0.587, 0.114));
-                gray *= 0.75;
+                gray *= 0.85;
 
                 //float gray = (col.r + col.g) * 0.35;
                 
                 // Output grayscale color, preserve alpha
-                return fixed4(gray, gray, gray, 1);
+                return fixed4(0, 0, gray, 1);
             }
             ENDCG
         }

@@ -10,7 +10,6 @@ using Unity.VisualScripting;
 using NUnit.Framework;
 using System.Text;
 using Unity.MLAgents.Demonstrations;
-using Unity.Sentis;
 
 
 
@@ -24,12 +23,12 @@ public class TankAgent : Agent, IVehicleAgent
     [SerializeField] private BufferSensorComponent detectedEnemiesSensor;
     [SerializeField] private BufferSensorComponent teammateSensor;
     [SerializeField] private GameObject _healthBar;
+    [SerializeField] private GameObject HitBoxMeshes;
 
     public DemonstrationRecorder? demonstrationRecorder;
 
     BehaviorParameters m_BehaviorParameters;
     RayPerceptionSensorComponent3D aimSensor = null;
-    //BufferSensorComponent detectedEnemiesBufferSensor = null;
 
     private float RegenHealthCooldown = 0;
 
@@ -217,12 +216,12 @@ public class TankAgent : Agent, IVehicleAgent
     public void FixedUpdate()
     {
         if (_health == 0.0f) return;
-        if (RegenHealthCooldown != 0) RegenHealthCooldown = Mathf.Max(0, RegenHealthCooldown - Time.fixedDeltaTime);
+        //if (RegenHealthCooldown != 0) RegenHealthCooldown = Mathf.Max(0, RegenHealthCooldown - Time.fixedDeltaTime);
 
-        if(_health != 100 && RegenHealthCooldown == 0)
-        {
-            _health = Mathf.Min(100, _health + Time.fixedDeltaTime * 10.0f);
-        }
+        //if(_health != 100 && RegenHealthCooldown == 0)
+        //{
+        //    _health = Mathf.Min(100, _health + Time.fixedDeltaTime * 10.0f);
+        //}
 
         RayPerceptionInput spec = aimSensor.GetRayPerceptionInput();
         RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec, false);
@@ -249,6 +248,7 @@ public class TankAgent : Agent, IVehicleAgent
         //RespawnEvent.Invoke();
         _health = 100.0f;
         //this.memberID = UnityEngine.Random.Range(0, 5);
+        HitBoxMeshes.SetActive(true);
 
         gameObject.tag = _team == Team.Red ? "RedAgent" : "YellowAgent";
         tankController.setStartingState((int)_team, memberID);
@@ -279,7 +279,7 @@ public class TankAgent : Agent, IVehicleAgent
 
         _healthBar.SetActive(false);
         tankController.setDeadState();
-        
+        HitBoxMeshes.SetActive(false);
 
         //DiedEvent.Invoke();
         if (inCT)

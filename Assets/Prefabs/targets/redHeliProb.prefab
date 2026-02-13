@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &2398898695260711360
+--- !u!1001 &7048641964216275231
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -8,10 +8,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1639006057581952061, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
-      propertyPath: m_Layer
-      value: 16
-      objectReference: {fileID: 0}
     - target: {fileID: 1801883545344880449, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Layer
       value: 17
@@ -19,10 +15,6 @@ PrefabInstance:
     - target: {fileID: 2510629832125699754, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Layer
       value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 3457863037060981203, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 917503
       objectReference: {fileID: 0}
     - target: {fileID: 3483283565937040360, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: DefaultEnemyMaterial
@@ -126,7 +118,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6903705954778870765, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Name
-      value: heli_red
+      value: redHeliProb
       objectReference: {fileID: 0}
     - target: {fileID: 6903705954778870765, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_TagString
@@ -136,16 +128,49 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 16
       objectReference: {fileID: 0}
-    - target: {fileID: 7452969871700425970, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
-      propertyPath: m_Layer
-      value: 17
-      objectReference: {fileID: 0}
     - target: {fileID: 7540361399252075956, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Layer
       value: 17
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedComponents:
+    - {fileID: 5223576739594432450, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    - {fileID: 3611134794975383717, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    - {fileID: 2640464162299084759, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    - {fileID: 4841696427924709451, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    - {fileID: 9084466223548633011, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    - {fileID: 6618767515980235466, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    - {fileID: 4436334009465684431, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    - {fileID: 3850879546965484101, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    - {fileID: 4713395377111143109, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    - {fileID: 3998644805695371758, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    m_RemovedGameObjects:
+    - {fileID: 6195158224142182473, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    - {fileID: 2406457811010763477, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    - {fileID: 7657872047692413737, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    - {fileID: 6803902558670272121, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+    - {fileID: 1650649604413852554, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6903705954778870765, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4105877341937806332}
   m_SourcePrefab: {fileID: 100100000, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+--- !u!1 &4476346549765546738 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6903705954778870765, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+  m_PrefabInstance: {fileID: 7048641964216275231}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4105877341937806332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4476346549765546738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e421eb89d3b90a48a81f2737f30aad1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MainMaterial: {fileID: 2100000, guid: 3fa8773277c0e7e44a87ae2d0f525889, type: 2}
+  targetType: 2

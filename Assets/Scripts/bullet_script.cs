@@ -4,7 +4,9 @@ using UnityEngine;
 public class bullet_script : MonoBehaviour
 {
     private TankAgent _parent;
-    private int _damage = 40;
+    //private int _damage = 40;
+    // ONLY FOR HELI TRAINING!
+    private int _damage = 0;
     private EnvController envController;
     private bool destroyed = false;
     [SerializeField] private Transform SparkEmitterPrefab;
@@ -36,8 +38,8 @@ public class bullet_script : MonoBehaviour
         if ((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Red) ||
           (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Yellow))
        {
-            Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
-            emitter.position = collision.transform.position;
+            //Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
+            //emitter.position = collision.transform.position;
 
             if (_parent.Team == Team.Red)
                 envController.EnemyDetected(_parent.gameObject, Team.Yellow);
@@ -52,11 +54,11 @@ public class bullet_script : MonoBehaviour
        else if((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Yellow) ||
                (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Red))
        {
-            if (_parent.GetComponent<BehaviorParameters>().BehaviorType != BehaviorType.Default)
-            {
-                Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
-                emitter.position = collision.transform.position;
-            }
+            //if (_parent.GetComponent<BehaviorParameters>().BehaviorType != BehaviorType.Default)
+            //{
+            //    Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
+            //    emitter.position = collision.transform.position;
+            //}
             //_parent.AddReward(-0.1f);
             collision.gameObject.GetComponent<IVehicleAgent>().Hit(_damage);
         }
