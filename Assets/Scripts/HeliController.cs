@@ -140,7 +140,6 @@ public class HeliController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         _rigidbody.AddForce(Physics.gravity * (gravity_magnification - 1), ForceMode.Acceleration);
@@ -203,20 +202,6 @@ public class HeliController : MonoBehaviour
                 //tracer2.AddPosition(_rightShootPosition.position);
                 //tracer2.transform.position = _rightGunHitInfo.hitPosition;
 
-                //if (_rightGunHitInfo.hitTag != -1)
-                //{
-                //    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                //    if (_rightGunHitInfo.hitGameObject is not null)
-                //        _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
-                //}
-
-                //if (_leftGunHitInfo.hitTag != -1)
-                //{
-                //    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                //    if (_leftGunHitInfo.hitGameObject is not null)
-                //        _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
-                //}
-
                 _lastShootTime = Time.time;
             }
         }
@@ -261,8 +246,8 @@ public class HeliController : MonoBehaviour
     {
         _colliders.tag = "Untagged";
         setMaterial();
-        //ExplodeParticles.Play();
-        //SmokeParticles.Play();
+        ExplodeParticles.Play();
+        SmokeParticles.Play();
     }
 
     public float getGunOverheatStatus()

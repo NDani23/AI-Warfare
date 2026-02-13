@@ -166,7 +166,6 @@ public class EnvController : MonoBehaviour
                     //m_YellowAgentGroup.AddGroupReward(-1.0f);
                     //ResetEnv(Team.Red);
                     capturing = false;
-                    Debug.Log("CAPTURED!");
                 }
 
                 //if (capturing)
