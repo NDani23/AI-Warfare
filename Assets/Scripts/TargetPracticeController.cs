@@ -57,14 +57,14 @@ public class TargetPracticeController : MonoBehaviour
     private int hitCount = 0;
     private int captureCount = 0;
 
-    private IVehicleAgent player;
+    private VehicleAgent player;
 
     // Start is called before the first frame update
     void Start()
     {
         if(!Active) return;
 
-        if (playerSerialized is IVehicleAgent vehicleAgent)
+        if (playerSerialized is VehicleAgent vehicleAgent)
         {
             player = vehicleAgent;
         }

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UIElements;
 
-public class HeliController : MonoBehaviour
+public class HeliController : MonoBehaviour, IVehicleController
 {
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private Transform _rear_rotor;
@@ -190,12 +190,12 @@ public class HeliController : MonoBehaviour
 
                 if (_leftGunHitInfo.hitTag != -1)
                 {
-                    _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                    _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<VehicleAgent>().Hit(1);
                 }
 
                 if (_rightGunHitInfo.hitTag != -1)
                 {
-                    _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                    _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<VehicleAgent>().Hit(1);
                 }
 
                 //var tracer2 = Instantiate(_bulletTrail, _rightShootPosition.position, Quaternion.identity, this.transform);

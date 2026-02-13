@@ -1,9 +1,7 @@
 using UnityEngine;
-using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
-using Unity.VisualScripting;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,44 +18,29 @@ public struct HitInfo
     public Vector3 hitPosition;
     public GameObject? hitGameObject;
 }
-public class HeliAgent : Agent, IVehicleAgent
+public class HeliAgent : VehicleAgent
 {
-    [SerializeField] private HeliController _heliController;
-    [SerializeField] private int memberID;
     [SerializeField] private RayPerceptionSensorComponent3D _leftAimSensor;
     [SerializeField] private RayPerceptionSensorComponent3D _rightAimSensor;
     [SerializeField] private BufferSensorComponent _detectedEnemiesSensor;
     [SerializeField] private BufferSensorComponent _teammateSensor;
-    [SerializeField] private GameObject HitBoxMeshes;
 
-    private Team _team;
-    public Team Team => _team;
+    private HeliController _heliController;
 
-    private bool inCT = false;
-    public bool InCT
-    {
-        get => inCT;
-        set => inCT = value;
-    }
-
-    private AgentType _agentType = AgentType.Heli;
-    public AgentType AgentType => _agentType;
-
-    private float _health = 40;
-    public float Health => _health;
-    private EnvController _envController;
-    public EnvController EnvController => _envController;
-    public GameObject GameObject => gameObject;
-    public int MemberID => memberID;
     BehaviorParameters m_BehaviorParameters;
-    private float RegenHealthCooldown = 0;
     private Vector3 _mousePosDelta = Vector3.zero;
     private HitInfo _leftGunHitInfo;
     private HitInfo _rightGunHitInfo;
 
+    private float _maxHealth = 40.0f;
+    public override float MaxHealth => _maxHealth;
 
     public override void Initialize()
     {
+        _vehicleController = this.gameObject.GetComponent<HeliController>();
+        _heliController = (HeliController)_vehicleController;
+
+        _health = MaxHealth;
         m_BehaviorParameters = gameObject.GetComponent<BehaviorParameters>();
         _envController = GetComponentInParent<EnvController>();
 
@@ -76,19 +59,10 @@ public class HeliAgent : Agent, IVehicleAgent
             _team = Team.Yellow;
         }
     }
+
     public override void OnEpisodeBegin()
     {
         ResetAgent();
-    }
-
-    public void Hit(int damage)
-    {
-        _health = Mathf.Max(_health - damage, 0);
-        RegenHealthCooldown = 10.0f;
-        if (_health <= 0)
-        {
-            setDeadState();
-        }
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -114,9 +88,9 @@ public class HeliAgent : Agent, IVehicleAgent
             {
                 Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(agent.transform.localPosition - transform.localPosition));
                 float dist = Vector3.Distance(agent.transform.localPosition, transform.localPosition) / 700.0f;
-                float health = agent.GetComponent<IVehicleAgent>().Health * 0.01f;
+                float health = agent.GetComponent<VehicleAgent>().Health * 0.01f;
 
-                float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.GetComponent<IVehicleAgent>().AgentType };
+                float[] Obs = { dir.x, dir.y, dir.z, dist, health, 1 };
                 _detectedEnemiesSensor.AppendObservation(Obs);
 
             }
@@ -136,7 +110,6 @@ public class HeliAgent : Agent, IVehicleAgent
                 float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.AgentType };
                 _teammateSensor.AppendObservation(Obs);
             }
-
 
         }
     }
@@ -182,27 +155,12 @@ public class HeliAgent : Agent, IVehicleAgent
         }
     }
 
-    public void ResetAgent()
-    {
-        _health = 40;
-        _heliController.setStartingState((int)_team, Random.Range(0, 5));
-        HitBoxMeshes.SetActive(true);
-
-        if (inCT)
-        {
-            inCT = false;
-            _envController.AgentExitedCT(_team);
-        }
-
-        gameObject.tag = _team == Team.Red ? "RedAgent" : "YellowAgent";
-    }
-
     private void FixedUpdate()
     {
-        if (RegenHealthCooldown != 0) RegenHealthCooldown = Mathf.Max(0, RegenHealthCooldown - Time.fixedDeltaTime);
+        if (_regenHealthCooldown != 0) _regenHealthCooldown = Mathf.Max(0, _regenHealthCooldown - Time.fixedDeltaTime);
 
         if (_health == 0) return;
-        if (_health != 50 && RegenHealthCooldown == 0)
+        if (_health != 50 && _regenHealthCooldown == 0)
         {
             _health = Mathf.Min(50, _health + Time.deltaTime * 5.0f);
         }
@@ -243,32 +201,4 @@ public class HeliAgent : Agent, IVehicleAgent
     {
         _mousePosDelta += Input.mousePositionDelta;
     }
-
-    public Vector2 GetScreenSpaceAimPos()
-    {
-        return _heliController.GetScreenSpaceAimPos();
-    }
-
-    public void setDeadState()
-    {
-
-        HitBoxMeshes.SetActive(false);
-
-        //DiedEvent.Invoke();
-        if (inCT)
-        {
-            inCT = false;
-            _envController.AgentExitedCT(_team);
-        }
-        _envController.AgentDied(this);
-        _health = 0;
-        gameObject.tag = "Untagged";
-        _heliController.setDeadState();
-    }
-
-    public void SetMaterial(Material mat = null)
-    {
-        _heliController.setMaterial(mat);
-    }
-
 }

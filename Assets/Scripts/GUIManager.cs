@@ -25,7 +25,7 @@ public class GUIManager : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Text RespawnCooldownText;
     [SerializeField] private EnvController env;
 
-    private IVehicleAgent player;
+    private VehicleAgent player;
 
     public UnityEvent PausedEvent;
 
@@ -43,7 +43,7 @@ public class GUIManager : MonoBehaviour
         env.YellowWonEvent.AddListener(YellowWonHandler);
         env.TieEvent.AddListener(TieHandler);
         PausedEvent.AddListener(PauseGameHandler);
-        if (playerSerialized is IVehicleAgent vehicleAgent)
+        if (playerSerialized is VehicleAgent vehicleAgent)
         {
             player = vehicleAgent;
         }

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6736906841398154857}
   - component: {fileID: 855850341843491925}
-  m_Layer: 0
+  m_Layer: 23
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -207,6 +207,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 8fc8f7c620b620e47b026af2dfd40158, type: 3}
       propertyPath: m_Name
       value: tank_bullet
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8fc8f7c620b620e47b026af2dfd40158, type: 3}
+      propertyPath: m_Layer
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8fc8f7c620b620e47b026af2dfd40158, type: 3}
       propertyPath: m_TagString

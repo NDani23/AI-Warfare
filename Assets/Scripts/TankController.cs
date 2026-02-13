@@ -5,7 +5,7 @@ using Unity.MLAgents.Policies;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class TankController : MonoBehaviour
+public class TankController : MonoBehaviour, IVehicleController
 {
     [SerializeField] private Transform tankTower;
     [SerializeField] private Transform tankCannon;
@@ -24,7 +24,6 @@ public class TankController : MonoBehaviour
     [SerializeField] private Material BurntMaterial;
     [SerializeField] private Material MainMaterial;
     [SerializeField] private Material WheelMaterial;
-
 
     [SerializeField] private Transform bulletPrefab;
 
@@ -249,6 +248,11 @@ public class TankController : MonoBehaviour
     public Transform getCannonTransform()
     {
         return tankCannon.transform;
+    }
+
+    public Vector2 GetScreenSpaceAimPos()
+    {
+        return Camera.main.WorldToScreenPoint(GetAimPos());
     }
 
     public void setMaterial(Material mat = null)

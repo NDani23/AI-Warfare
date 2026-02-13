@@ -590,6 +590,10 @@ PrefabInstance:
       propertyPath: 'm_DetectableTags.Array.data[2]'
       value: ControllPoint
       objectReference: {fileID: 0}
+    - target: {fileID: 8499898430172688371, guid: d8142bb4dbd564f489c626f90fa0dc97, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b5fad96fc71d2ff4ab4cf5290f7c7156, type: 2}
     - target: {fileID: 8616252851933621038, guid: d8142bb4dbd564f489c626f90fa0dc97, type: 3}
       propertyPath: m_Name
       value: tank_yellow
