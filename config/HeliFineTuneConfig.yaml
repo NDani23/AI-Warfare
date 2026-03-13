@@ -3,16 +3,16 @@ behaviors:
     trainer_type: ppo
     hyperparameters:
       batch_size: 4096
-      buffer_size: 81920
+      buffer_size: 40960
       learning_rate: 0.0002
       beta: 0.002
       epsilon: 0.15
       lambd: 0.95
       num_epoch: 3
-      learning_rate_schedule: constant
+      learning_rate_schedule: linear
     network_settings:
       normalize: false
-      hidden_units: 516 # Change to 512 in the future
+      hidden_units: 516
       num_layers: 2
       vis_encode_type: simple
       memory:
@@ -25,12 +25,5 @@ behaviors:
     keep_checkpoints: 5
     checkpoint_interval: 1000000
     max_steps: 20000000
-    time_horizon: 900
+    time_horizon: 600
     summary_freq: 30000
-    self_play:
-      save_steps: 150000
-      team_change: 750000
-      swap_steps: 10000
-      window: 25
-      play_against_latest_model_ratio: 0.5
-      initial_elo: 1200.0

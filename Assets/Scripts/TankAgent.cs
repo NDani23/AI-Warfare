@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEngine.Events;
 using Unity.MLAgents.Demonstrations;
 
-public class TankAgent : VehicleAgent
+public class TankAgent : VehicleAgent, ITargetable
 {
     [SerializeField] private Rigidbody tankRB;
     [SerializeField] private Transform tankCannon;

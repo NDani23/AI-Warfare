@@ -1,5 +1,6 @@
 using TMPro;
 using Unity.Mathematics;
+using UnityEditor.PackageManager.Requests;
 using UnityEditor.Timeline;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -193,31 +194,20 @@ public class HeliController : MonoBehaviour
 
                 if (_leftGunHitInfo.hitTag != -1)
                 {
-                    _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                    _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<ITargetable>().Hit(1);
                 }
 
                 if (_rightGunHitInfo.hitTag != -1)
                 {
-                    _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
+                    _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<ITargetable>().Hit(1);
                 }
 
                 //var tracer2 = Instantiate(_bulletTrail, _rightShootPosition.position, Quaternion.identity, this.transform);
                 //tracer2.AddPosition(_rightShootPosition.position);
                 //tracer2.transform.position = _rightGunHitInfo.hitPosition;
 
-                //if (_rightGunHitInfo.hitTag != -1)
-                //{
-                //    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                //    if (_rightGunHitInfo.hitGameObject is not null)
-                //        _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
-                //}
-
-                //if (_leftGunHitInfo.hitTag != -1)
-                //{
-                //    //_rightGunHitInfo.hitGameObject.transform.parent.GetComponent<IVehicleAgent>().Hit(1);
-                //    if (_leftGunHitInfo.hitGameObject is not null)
-                //        _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<TargetScript>().Hit(1);
-                //}
+                //if (_rightGunHitInfo.hitTag == -1 && _leftGunHitInfo.hitTag == -1) _agent.AddReward(-0.0005f);
+                //else if (_rightGunHitInfo.hitTag == 0 && _leftGunHitInfo.hitTag == 0) _agent.AddReward(0.0005f);
 
                 _lastShootTime = Time.time;
             }
