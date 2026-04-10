@@ -33,10 +33,12 @@ public class HeliAgent : VehicleAgent
     private HitInfo _rightGunHitInfo;
 
     private float _maxHealth = 40.0f;
+    private int isShooting = 0;
     public override float MaxHealth => _maxHealth;
 
     public override void Initialize()
     {
+        _agentType = AgentType.Heli;
         _vehicleController = this.gameObject.GetComponent<HeliController>();
         _heliController = (HeliController)_vehicleController;
 
@@ -117,7 +119,7 @@ public class HeliAgent : VehicleAgent
     public override void OnActionReceived(ActionBuffers actions)
     {
         if (_health == 0) return;
-        _heliController.IsShooting = actions.DiscreteActions[0];
+        isShooting = actions.DiscreteActions[0];
 
         _heliController.Pitch = actions.ContinuousActions[0];
         _heliController.Yaw = actions.ContinuousActions[1];
@@ -160,12 +162,12 @@ public class HeliAgent : VehicleAgent
         if (_regenHealthCooldown != 0) _regenHealthCooldown = Mathf.Max(0, _regenHealthCooldown - Time.fixedDeltaTime);
 
         if (_health == 0) return;
-        if (_health != 50 && _regenHealthCooldown == 0)
+        if (_health != MaxHealth && _regenHealthCooldown == 0)
         {
-            _health = Mathf.Min(50, _health + Time.deltaTime * 5.0f);
+            _health = Mathf.Min(MaxHealth, _health + Time.deltaTime * 5.0f);
         }
 
-        if (_heliController.IsShooting == 1)
+        if (isShooting == 1)
         {
             RayPerceptionInput spec = _leftAimSensor.GetRayPerceptionInput();
             RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec, false);
@@ -195,10 +197,17 @@ public class HeliAgent : VehicleAgent
             }
 
         }
+
+        _heliController.IsShooting = isShooting;
     }
 
     public void Update()
     {
         _mousePosDelta += Input.mousePositionDelta;
+    }
+
+    public float getOverHeatStatus()
+    {
+        return _heliController.getGunOverheatStatus();
     }
 }

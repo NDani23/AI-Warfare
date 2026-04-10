@@ -96,13 +96,21 @@ public class EnvController : MonoBehaviour
         foreach (var agent in m_DetectedRedEnemies.Keys.ToList())
         {
             m_DetectedRedEnemies[agent] = m_DetectedRedEnemies[agent] - Time.fixedDeltaTime;
-            if(m_DetectedRedEnemies[agent] <= 0.0f) m_DetectedRedEnemies.Remove(agent);
+            if (m_DetectedRedEnemies[agent] <= 0.0f)
+            {
+                m_DetectedRedEnemies.Remove(agent);
+                agent.GetComponent<VehicleAgent>().setDetectedState(false);
+            }
         }
 
         foreach (var agent in m_DetectedYellowEnemies.Keys.ToList())
         {
             m_DetectedYellowEnemies[agent] = m_DetectedYellowEnemies[agent] - Time.fixedDeltaTime;
-            if (m_DetectedYellowEnemies[agent] <= 0.0f) m_DetectedYellowEnemies.Remove(agent);
+            if (m_DetectedYellowEnemies[agent] <= 0.0f)
+            {
+                m_DetectedYellowEnemies.Remove(agent);
+                agent.GetComponent<VehicleAgent>().setDetectedState(false);
+            }
         }
 
         foreach (var agent in m_DeadAgents.Keys.ToList())
@@ -457,6 +465,7 @@ public class EnvController : MonoBehaviour
 
     public void EnemyDetected(GameObject agent, Team team)
     {
+        agent.GetComponent<VehicleAgent>()?.setDetectedState(true);
 
         if (team == Team.Yellow)
         {

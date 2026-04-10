@@ -14,13 +14,15 @@ public class HeliController : MonoBehaviour, IVehicleController
     [SerializeField] private Transform _machineGunRight;
     [SerializeField] private Transform _leftShootPosition;
     [SerializeField] private Transform _rightShootPosition;
-    [SerializeField] private TrailRenderer _bulletTrail;
     [SerializeField] private GameObject _colliders;
-    [SerializeField] private float _shootDelay = 0.1f;
     [SerializeField] private ParticleSystem ExplodeParticles;
     [SerializeField] private ParticleSystem SmokeParticles;
+    [SerializeField] private ParticleSystem _rightTracerParticles;
+    [SerializeField] private ParticleSystem _leftTracerParticles;
     [SerializeField] private Material BurntMaterial;
     [SerializeField] private Material MainMaterial;
+    [SerializeField] private float _shootDelay = 0.1f;
+    [SerializeField] private float _tracerSpeed = 200.0f;
 
     private HitInfo _leftGunHitInfo;
     private HitInfo _rightGunHitInfo;
@@ -123,7 +125,7 @@ public class HeliController : MonoBehaviour, IVehicleController
             SmokeParticles.Stop();
         }
 
-
+        _gunOverHeatStatus = 0.0f;
         _rigidbody.linearVelocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
 
@@ -173,7 +175,7 @@ public class HeliController : MonoBehaviour, IVehicleController
             float _gunRotateSpeed = 1000;
             _machineGunLeft.Rotate(-Vector3.forward * _gunRotateSpeed * Time.fixedDeltaTime, Space.Self);
             _machineGunRight.Rotate(-Vector3.forward * _gunRotateSpeed * Time.fixedDeltaTime, Space.Self);
-            _gunOverHeatStatus += Time.fixedDeltaTime / 5.0f;
+            _gunOverHeatStatus += Time.fixedDeltaTime / 3.0f;
             if (_gunOverHeatStatus >= 1.0f)
             {
                 _overHeatCooldown = 5.0f;
@@ -184,12 +186,11 @@ public class HeliController : MonoBehaviour, IVehicleController
 
             if(_lastShootTime + _shootDelay < Time.time)
             {
-                //var tracer = Instantiate(_bulletTrail, _leftShootPosition.position, Quaternion.identity, this.transform);
-                //tracer.AddPosition(_leftShootPosition.position);
-                //tracer.transform.position = _leftGunHitInfo.hitPosition;
-
+                SpawnTracer(_leftShootPosition.position, _leftGunHitInfo.hitPosition, _leftTracerParticles);
+                SpawnTracer(_rightShootPosition.position, _rightGunHitInfo.hitPosition, _rightTracerParticles);
                 if (_leftGunHitInfo.hitTag != -1)
                 {
+                    Debug.Log("Hit!");
                     _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<VehicleAgent>().Hit(1);
                 }
 
@@ -197,10 +198,6 @@ public class HeliController : MonoBehaviour, IVehicleController
                 {
                     _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<VehicleAgent>().Hit(1);
                 }
-
-                //var tracer2 = Instantiate(_bulletTrail, _rightShootPosition.position, Quaternion.identity, this.transform);
-                //tracer2.AddPosition(_rightShootPosition.position);
-                //tracer2.transform.position = _rightGunHitInfo.hitPosition;
 
                 _lastShootTime = Time.time;
             }
@@ -213,7 +210,7 @@ public class HeliController : MonoBehaviour, IVehicleController
             }
             else
             {
-                _gunOverHeatStatus = Mathf.Max(0.0f, _gunOverHeatStatus - Time.fixedDeltaTime / 3.0f);
+                _gunOverHeatStatus = Mathf.Max(0.0f, _gunOverHeatStatus - Time.fixedDeltaTime / 4.0f);
             }
         }
     }
@@ -242,6 +239,20 @@ public class HeliController : MonoBehaviour, IVehicleController
         }
     }
 
+    private void SpawnTracer(Vector3 from, Vector3 to, ParticleSystem ps)
+    {
+        Vector3 direction = (to - from).normalized;
+
+        float distance = Vector3.Distance(from, to);
+
+        ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams();
+        emitParams.position = from;
+        emitParams.velocity = direction * _tracerSpeed;
+        emitParams.startLifetime = distance / _tracerSpeed;
+
+        ps.Emit(emitParams, 1);
+    }
+
     public void setDeadState()
     {
         _colliders.tag = "Untagged";
@@ -254,5 +265,6 @@ public class HeliController : MonoBehaviour, IVehicleController
     {
         return _gunOverHeatStatus;
     }
+
 
 }

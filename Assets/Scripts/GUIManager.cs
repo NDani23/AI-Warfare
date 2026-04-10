@@ -1,20 +1,23 @@
+using Google.Protobuf.WellKnownTypes;
 using System;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.Events;
 using Unity.MLAgents;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+public enum GUIMode
+{
+    Commander,
+    Tank,
+    Heli
+}
 
 public class GUIManager : MonoBehaviour
 {
     [SerializeField] private Texture2D aimCursor;
-    [SerializeField] private Agent playerSerialized;
     [SerializeField] private UnityEngine.UI.Image AimPointerImage;
-    [SerializeField] private UnityEngine.UI.Image CooldownForeground;
     [SerializeField] private UnityEngine.UI.Image RedState;
     [SerializeField] private UnityEngine.UI.Image YellowState;
-    [SerializeField] private UnityEngine.UI.Text HealthText;
     [SerializeField] private UnityEngine.UI.Text TimerText;
-    [SerializeField] private UnityEngine.UI.Image HealthForeground;
     [SerializeField] private UnityEngine.UI.Image RedTeamPoints;
     [SerializeField] private UnityEngine.UI.Image YellowTeamPoints;
     [SerializeField] private UnityEngine.UI.Image DeadPanel;
@@ -24,8 +27,19 @@ public class GUIManager : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Image TiePanel;
     [SerializeField] private UnityEngine.UI.Text RespawnCooldownText;
     [SerializeField] private EnvController env;
+    [SerializeField] private GameManager gameManager;
+    [SerializeField] private CameraController GameCamera;
+    [SerializeField] private TankHUD tankHUD;
+    [SerializeField] private HeliHUD heliHUD;
 
-    private VehicleAgent player;
+    private GUIMode _GUIMode = GUIMode.Commander;
+
+    private VehicleAgent? playerVehicle;
+
+    public VehicleAgent PlayerVehicle
+    {
+        get { return playerVehicle; }
+    }
 
     public UnityEvent PausedEvent;
 
@@ -36,22 +50,16 @@ public class GUIManager : MonoBehaviour
     void Start()
     {
         CursorHotspot = new Vector2(aimCursor.width / 2.0f, aimCursor.height / 2.0f);
-        Cursor.SetCursor(aimCursor, CursorHotspot, CursorMode.Auto);
+        //Cursor.SetCursor(aimCursor, CursorHotspot, CursorMode.Auto);
         //player.DiedEvent.AddListener(PlayerDiedHandler);
         //player.RespawnEvent.AddListener(PlayerRespawnHandler);
         env.RedWonEvent.AddListener(RedWonHandler);
         env.YellowWonEvent.AddListener(YellowWonHandler);
         env.TieEvent.AddListener(TieHandler);
+        gameManager.ControlModeChangedEvent.AddListener(handleControlModeChanged);
         PausedEvent.AddListener(PauseGameHandler);
-        if (playerSerialized is VehicleAgent vehicleAgent)
-        {
-            player = vehicleAgent;
-        }
 
-        if(player is HeliAgent)
-        {
-            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        }
+        playerVehicle = null;
     }
 
     void Update()
@@ -69,14 +77,10 @@ public class GUIManager : MonoBehaviour
         }
 
 
-        AimPointerImage.transform.position = player.GetScreenSpaceAimPos();
-        int playerHealth = (int)player.Health;
-        HealthText.text = playerHealth.ToString() + "%";
-        if (HealthForeground != null) HealthForeground.fillAmount = player.Health / 100;
+        //AimPointerImage.transform.position = player.GetScreenSpaceAimPos();
+
         TimeSpan timeSpan = TimeSpan.FromSeconds(env.getRemainingTime());
         TimerText.text = timeSpan.ToString(@"mm\:ss");
-        if (playerRespawnCooldown == 0.0f && player is TankAgent)
-            CooldownForeground.fillAmount = player.gameObject.GetComponent<TankAgent>().getCooldown() / 3.0f;
         RedTeamPoints.fillAmount = env.RedTeamPoints / 100.0f;
         YellowTeamPoints.fillAmount = env.YellowTeamPoints / 100.0f;
 
@@ -100,18 +104,6 @@ public class GUIManager : MonoBehaviour
         {
             PausedEvent.Invoke();
         }
-    }
-
-    void PlayerDiedHandler()
-    {
-        DeadPanel.gameObject.SetActive(true);
-        playerRespawnCooldown = EnvController.RespawnCooldown;
-        CooldownForeground.fillAmount = 1.0f;
-    }
-
-    void PlayerRespawnHandler()
-    {
-        DeadPanel.gameObject.SetActive(false);
     }
 
     void RedWonHandler()
@@ -150,5 +142,49 @@ public class GUIManager : MonoBehaviour
         Cursor.SetCursor(aimCursor, CursorHotspot, CursorMode.Auto);
         PausePanel.gameObject.SetActive(false);
         //inputController.gameObject.SetActive(true);
+    }
+
+    private void handleControlModeChanged(bool isPlayerControlled)
+    {
+        //if (isPlayerControlled)
+        //{
+        //    if (_GUIMode == GUIMode.Heli)
+        //        heliHUD.enableControlHUD();
+        //    else if (_GUIMode == GUIMode.Tank)
+        //        tankHUD.enableControlHUD();
+        //}
+        //else
+        //{
+        //    if (_GUIMode == GUIMode.Heli)
+        //        heliHUD.disableControlHUD();
+        //    else if (_GUIMode == GUIMode.Tank)
+        //        tankHUD.disableControlHUD();
+        //}
+    }
+
+    public void SwitchGUIMode(VehicleAgent vehicleInFocus)
+    {
+
+        if (vehicleInFocus == null)
+        {
+            _GUIMode = GUIMode.Commander;
+            tankHUD.gameObject.SetActive(false);
+            heliHUD.gameObject.SetActive(false);
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        }
+        else if (vehicleInFocus.AgentType == AgentType.Tank)
+        {
+            _GUIMode = GUIMode.Tank;
+            tankHUD.gameObject.SetActive(true);
+            heliHUD.gameObject.SetActive(false);
+            tankHUD.Agent = (TankAgent)vehicleInFocus;
+        }
+        else if (vehicleInFocus.AgentType == AgentType.Heli)
+        {
+            _GUIMode = GUIMode.Heli;
+            tankHUD.gameObject.SetActive(false);
+            heliHUD.gameObject.SetActive(true);
+            heliHUD.Agent = (HeliAgent)vehicleInFocus;
+        }
     }
 }

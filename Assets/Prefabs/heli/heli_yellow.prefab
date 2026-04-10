@@ -88,6 +88,30 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 17
       objectReference: {fileID: 0}
+    - target: {fileID: 5930398452818856201, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5930398452818856201, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5930398452818856201, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.g
+      value: 0.7372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 5930398452818856201, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.r
+      value: 0.8862745
+      objectReference: {fileID: 0}
+    - target: {fileID: 5930398452818856201, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_DrawMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5930398452818856201, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 6090330496605595991, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

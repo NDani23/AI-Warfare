@@ -1,3 +1,4 @@
+using NUnit;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -16,6 +17,9 @@ public class CTController : MonoBehaviour
     [SerializeField] private Material RedMaterial;
     [SerializeField] private Material YellowMaterial;
 
+    [SerializeField] private UnityEngine.UI.Image RedState;
+    [SerializeField] private UnityEngine.UI.Image YellowState;
+
     private EnvController m_envController;
 
     //public UnityEvent StateChangedEvent;
@@ -25,6 +29,25 @@ public class CTController : MonoBehaviour
     private void Start()
     {
         m_envController = GetComponentInParent<EnvController>();
+    }
+
+    private void Update()
+    {
+        if (m_envController.getStateNum() > 0)
+        {
+            YellowState.fillAmount = m_envController.getStateNum() / 10.0f;
+            RedState.fillAmount = 0;
+        }
+        else if (m_envController.getStateNum() < 0)
+        {
+            RedState.fillAmount = Mathf.Abs(m_envController.getStateNum()) / 10.0f;
+            YellowState.fillAmount = 0;
+        }
+        else
+        {
+            YellowState.fillAmount = 0;
+            RedState.fillAmount = 0;
+        }
     }
 
     private void OnTriggerEnter(Collider other)

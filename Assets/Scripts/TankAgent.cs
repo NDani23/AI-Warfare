@@ -11,7 +11,6 @@ public class TankAgent : VehicleAgent
 {
     [SerializeField] private Rigidbody tankRB;
     [SerializeField] private Transform tankCannon;
-    [SerializeField] private Transform DeadTankPrefab;
     [SerializeField] private BufferSensorComponent detectedEnemiesSensor;
     [SerializeField] private BufferSensorComponent teammateSensor;
     [SerializeField] private GameObject _healthBar;
@@ -21,7 +20,7 @@ public class TankAgent : VehicleAgent
     BehaviorParameters m_BehaviorParameters;
     RayPerceptionSensorComponent3D aimSensor = null;
 
-    private float _maxHealth = 40.0f;
+    private float _maxHealth = 100.0f;
     public override float MaxHealth => _maxHealth;
 
     private float DistanceToCT = 1000;
@@ -33,6 +32,7 @@ public class TankAgent : VehicleAgent
 
     public override void Initialize()
     {
+        _agentType = AgentType.Tank;
         _vehicleController = this.gameObject.GetComponent<TankController>();
         _tankController = (TankController)_vehicleController;
 
@@ -116,7 +116,7 @@ public class TankAgent : VehicleAgent
                     float health = agent.GetComponent<VehicleAgent>().Health * 0.01f;
 
                     float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.GetComponent<VehicleAgent>().AgentType };
-                    detectedEnemiesSensor.AppendObservation(Obs);
+                    //detectedEnemiesSensor.AppendObservation(Obs);
     
                 }
 
@@ -133,7 +133,7 @@ public class TankAgent : VehicleAgent
                     float health = agent.Health * 0.01f;
 
                     float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.AgentType };
-                    teammateSensor.AppendObservation(Obs);
+                    //teammateSensor.AppendObservation(Obs);
                 }
                 
             
@@ -145,6 +145,10 @@ public class TankAgent : VehicleAgent
         if (_health == 0.0f)
             return;
 
+        if (!_isPlayerControlled)
+        {
+            _tankController.AimDirection = null;
+        }
 
         _tankController.Throttle = actions.DiscreteActions[0] - 1;
 
