@@ -112,11 +112,13 @@ public class HeliController : MonoBehaviour
     }
     void Start()
     {
+        _rigidbody.maxAngularVelocity = 50.0f;
     }
 
     public void setStartingState(int teamID, int memberID)
     {
 
+        _gunOverHeatStatus = 0.0f;
         _colliders.tag = _agent.Team == Team.Red ? "RedAgent" : "YellowAgent";
         setMaterial();
 
@@ -133,13 +135,13 @@ public class HeliController : MonoBehaviour
         if (teamID == (int)Team.Red)
         {
             transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-            transform.localPosition = new Vector3((200 - 100 * memberID) + UnityEngine.Random.Range(-40.0f, 40.0f), UnityEngine.Random.Range(10.0f, 200.0f), -300);
+            transform.localPosition = new Vector3(UnityEngine.Random.Range(-290.0f, 290.0f), UnityEngine.Random.Range(10.0f, 200.0f), -300);
         }
         else
         {
 
             transform.localRotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
-            transform.localPosition = new Vector3((200 - 100 * memberID) + UnityEngine.Random.Range(-40.0f, 40.0f), UnityEngine.Random.Range(10.0f, 200.0f), 300);
+            transform.localPosition = new Vector3(UnityEngine.Random.Range(-290.0f, 290.0f), UnityEngine.Random.Range(10.0f, 200.0f), 300);
         }
     }
 
@@ -172,21 +174,28 @@ public class HeliController : MonoBehaviour
 
     void HandleShooting()
     {
+        if(_overHeatCooldown != 0.0f)
+        {
+            _overHeatCooldown = Mathf.Max(0.0f, _overHeatCooldown - Time.fixedDeltaTime);
+            return;
+        }
+
         if (_isShooting == 1)
         {
             float _gunRotateSpeed = 1000;
             _machineGunLeft.Rotate(-Vector3.forward * _gunRotateSpeed * Time.fixedDeltaTime, Space.Self);
             _machineGunRight.Rotate(-Vector3.forward * _gunRotateSpeed * Time.fixedDeltaTime, Space.Self);
-            _gunOverHeatStatus += Time.fixedDeltaTime / 5.0f;
+            _gunOverHeatStatus += Time.fixedDeltaTime / 3.0f;
             if (_gunOverHeatStatus >= 1.0f)
             {
+                Debug.Log("Overheat!");
                 _overHeatCooldown = 5.0f;
                 _isShooting = 0;
                 _gunOverHeatStatus = 1.0f;
                 //_agent.AddReward(-1.0f);
             }
 
-            if(_lastShootTime + _shootDelay < Time.time)
+            if(_lastShootTime + _shootDelay < Time.fixedTime)
             {
                 //var tracer = Instantiate(_bulletTrail, _leftShootPosition.position, Quaternion.identity, this.transform);
                 //tracer.AddPosition(_leftShootPosition.position);
@@ -209,19 +218,14 @@ public class HeliController : MonoBehaviour
                 //if (_rightGunHitInfo.hitTag == -1 && _leftGunHitInfo.hitTag == -1) _agent.AddReward(-0.0005f);
                 //else if (_rightGunHitInfo.hitTag == 0 && _leftGunHitInfo.hitTag == 0) _agent.AddReward(0.0005f);
 
-                _lastShootTime = Time.time;
+                _lastShootTime = Time.fixedTime;
             }
         }
         else
         {
-            if (_overHeatCooldown != 0.0f)
-            {
-                _overHeatCooldown = Mathf.Max(0.0f, _overHeatCooldown - Time.fixedDeltaTime);
-            }
-            else
-            {
-                _gunOverHeatStatus = Mathf.Max(0.0f, _gunOverHeatStatus - Time.fixedDeltaTime / 3.0f);
-            }
+
+            _gunOverHeatStatus = Mathf.Max(0.0f, _gunOverHeatStatus - Time.fixedDeltaTime / 4.5f);
+
         }
     }
 

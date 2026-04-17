@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 public class EnvController : MonoBehaviour
 {
-    [Tooltip("Time limit (seconds)")] public int timeLimit = 120;
+    [Tooltip("Time limit (seconds)")] public int timeLimit = 90;
 
     [SerializeField] private CTController m_ControlPoint;
 
@@ -27,6 +27,10 @@ public class EnvController : MonoBehaviour
 
     public float RedTeamPoints = 0.0f;
     public float YellowTeamPoints = 0.0f;
+
+    private int m_MatchTotalKills = 0;
+    private int m_MatchTankKills = 0;
+    private int m_MatchHeliKills = 0;
 
     public CTState ctState = CTState.Neutral;
 
@@ -92,6 +96,7 @@ public class EnvController : MonoBehaviour
         {
             Team? winnerTeam = RedTeamPoints > YellowTeamPoints ? Team.Red : (YellowTeamPoints > RedTeamPoints ? Team.Yellow : null);
             ResetEnv(winnerTeam, true);
+            return;
         }
         //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -110,7 +115,7 @@ public class EnvController : MonoBehaviour
         foreach (var agent in m_DeadAgents.Keys.ToList())
         {
             m_DeadAgents[agent] = m_DeadAgents[agent] - Time.fixedDeltaTime;
-            if (m_DeadAgents[agent] <= 0.0f && agent.AgentType == AgentType.Heli)
+            if (m_DeadAgents[agent] <= 0.0f)
             {
                 m_DeadAgents.Remove(agent);
                 agent.ResetAgent();
@@ -266,30 +271,24 @@ public class EnvController : MonoBehaviour
         if (m_DeadAgents.ContainsKey(agent)) return;
         m_DeadAgents.TryAdd(agent, RespawnCooldown);
 
+        RegisterKillForStats(agent.AgentType);
+
+        //float timeMultiplier = (m_ResetTimer / timeLimit) + 1.0f;
+
         if (agent.Team == Team.Red)
         {
 
-            //YellowTeamPoints += 5;
-            //AddRewardToTeamMembers(Team.Yellow, 0.05f);
-            //AddRewardToTeamMembers(Team.Red, -0.01f);
-            //m_YellowAgentGroup.AddGroupReward(0.05f);
-            //m_RedAgentGroup.AddGroupReward(-0.05f);
-            //ResetEnv(Team.Yellow);
             m_DetectedRedEnemies.Remove(agent.gameObject);
+            AddRewardToTeamMembers(Team.Yellow, agent.AgentType == AgentType.Tank ? 0.1f : 0.2f);
+            AddRewardToTeamMembers(Team.Red, agent.AgentType == AgentType.Tank ? -0.1f : -0.2f);
             AddPointToTeam(Team.Yellow, 1);
 
         }
         else if (agent.Team == Team.Yellow)
         {
-           // RedTeamPoints += 5;
-            //AddRewardToTeamMembers(Team.Yellow, -0.1f);
-            //AddRewardToTeamMembers(Team.Red, 0.05f);
-            //m_YellowAgentGroup.AddGroupReward(-0.1f);
-            //m_RedAgentGroup.AddGroupReward(0.05f);
-            //m_YellowAgentGroup.AddGroupReward(-0.05f);
-            //ResetEnv(Team.Red);
             m_DetectedYellowEnemies.Remove(agent.gameObject);
-
+            AddRewardToTeamMembers(Team.Red, agent.AgentType == AgentType.Tank ? 0.1f : 0.2f);
+            AddRewardToTeamMembers(Team.Yellow, agent.AgentType == AgentType.Tank ? -0.1f : -0.2f);
             AddPointToTeam(Team.Red, 1);
         }
 
@@ -302,172 +301,48 @@ public class EnvController : MonoBehaviour
 
     public void AddPointToTeam(Team team, int point)
     {
-        AddRewardToTeamMembers(team == Team.Red ? Team.Red : Team.Yellow, (float)point * 0.2f);
-        AddRewardToTeamMembers(team == Team.Red ? Team.Yellow : Team.Red, -(float)point * 0.2f);
+        // float timeMultiplier = (m_ResetTimer / timeLimit) + 1.0f;
+        // AddRewardToTeamMembers(team == Team.Red ? Team.Red : Team.Yellow, (float)point * 0.1f * timeMultiplier);
+        // AddRewardToTeamMembers(team == Team.Red ? Team.Yellow : Team.Red, -(float)point * 0.1f * timeMultiplier);
+
+        // AddRewardToTeamMembers(team == Team.Red ? Team.Red : Team.Yellow, (float)point * 0.1f);
+        // AddRewardToTeamMembers(team == Team.Red ? Team.Yellow : Team.Red, -(float)point * 0.1f);
 
         if (team == Team.Red)
         {
             RedTeamPoints += point;
-            if (RedTeamPoints >= 5)
-                ResetEnv(Team.Red, false);
+            if (RedTeamPoints >= 4)
+               ResetEnv(Team.Red, false);
         }
         else
         {
             YellowTeamPoints += point;
-            if (YellowTeamPoints >= 5)
-                ResetEnv(Team.Yellow, false);
+            if (YellowTeamPoints >= 4)
+               ResetEnv(Team.Yellow, false);
         }
+
     }
 
     public void ResetEnv(Team? winningTeam, bool TimeIsUp = false)
     {
-        //else if (winningTeam == Team.Yellow) Debug.Log("Yellow won!");
-        //else Debug.Log("Red won!");
+        WriteMatchKillStats();
 
-        //if (TimeIsUp) Debug.Log("Time up!");
-        //else if (RedTeamPoints >= 7 || YellowTeamPoints >= 7) Debug.Log("All kills!");
-        //else Debug.Log("Collided!");
-
-        switch (winningTeam)
+        if (winningTeam is null)
         {
-            case Team.Red:
-                Debug.Log("Red won!");
-                break;
-            case Team.Yellow:
-                Debug.Log("Yellow won!");
-                break;
-            default:
-                Debug.Log("Tie!");
-                break;
+            AddRewardToTeamMembers(Team.Red, 0.0f);
+            AddRewardToTeamMembers(Team.Yellow, 0.0f);
         }
-
-
-        //foreach (var agent in AgentsList)
-        //{
-        //    ////agent.ResetAgent();
-        //    ////agent.gameObject.SetActive(true);
-        //    ////if (agent.team == Team.Red)
-        //    ////{
-        //    ////    //m_RedAgentGroup.RegisterAgent(agent);
-        //    ////}
-        //    ////else
-        //    ////{
-        //    ////    //m_YellowAgentGroup.RegisterAgent(agent);
-        //    ////}
-
-        //    if (winningTeam is null)
-        //    {
-        //        //YellowWonEvent.Invoke();
-        //        //m_YellowAgentGroup.AddGroupReward(1.0f);
-        //        //gameEnded = true;
-        //        //m_YellowAgentGroup.EndGroupEpisode();
-        //        //m_RedAgentGroup.EndGroupEpisode();
-        //        //ResetEnv();
-        //        agent.gameObject.GetComponent<Agent>().AddReward(0.0f);
-        //        agent.gameObject.GetComponent<Agent>().EpisodeInterrupted();
-        //    }
-        //    else
-        //    {
-        //        float pointDiffReward = winningTeam == Team.Yellow ? YellowTeamPoints - RedTeamPoints : RedTeamPoints - YellowTeamPoints;
-        //        pointDiffReward *= 0.005f;
-        //        float timePenalty = 1.0f - Mathf.Clamp01(m_ResetTimer / timeLimit + 0.5f);
-        //        float reward = 0.5f - timePenalty + pointDiffReward;
-        //        if (agent.Team == winningTeam)
-        //        {
-        //            agent.gameObject.GetComponent<Agent>().AddReward(reward);
-        //        }
-        //        else
-        //        {
-        //            agent.gameObject.GetComponent<Agent>().AddReward(-reward);
-        //        }
-        //        agent.gameObject.GetComponent<Agent>().EndEpisode();
-
-        //    }
-
-
-        //    //Debug.Log(agent.GetCumulativeReward());
-        //}
-
-        //UnityEditor.EditorApplication.isPlaying = false;
-
-
-        //if (winningTeam is null)
-        //{
-        //    m_YellowAgentGroup.AddGroupReward(0.0f);
-        //    m_RedAgentGroup.AddGroupReward(0.0f);
-        //    Debug.Log("Tie!");
-        //}
-        //else
-        //{
-        //    float pointDiffReward = winningTeam == Team.Yellow ? YellowTeamPoints - RedTeamPoints : RedTeamPoints - YellowTeamPoints;
-
-        //    if (winningTeam == Team.Red)
-        //        Debug.Log("Red won!");
-        //    else if (winningTeam == Team.Yellow)
-        //        Debug.Log("Yellow won!");
-
-        //    pointDiffReward *= 0.005f;
-        //    float timePenalty = 1.0f - Mathf.Clamp01(m_ResetTimer / timeLimit + 0.5f);
-        //    //float reward = 1.0f - timePenalty + pointDiffReward;
-        //    float reward = 0.5f + pointDiffReward;
-        //    m_YellowAgentGroup.AddGroupReward(winningTeam == Team.Red ? -reward : reward);
-        //    m_RedAgentGroup.AddGroupReward(winningTeam == Team.Red ? reward : -reward);
-        //    //m_YellowAgentGroup.AddGroupReward(winningTeam == Team.Red ? -1.0f : 1.0f);
-        //    //m_RedAgentGroup.AddGroupReward(winningTeam == Team.Red ? 1.0f : -1.0f);
-        //}
-
-        ////m_YellowAgentGroup.EndGroupEpisode();
-        ////m_RedAgentGroup.EndGroupEpisode();
-
-        //if (TimeIsUp)
-        //{
-        //    m_YellowAgentGroup.GroupEpisodeInterrupted();
-        //    m_RedAgentGroup.GroupEpisodeInterrupted();
-        //}
-        //else
-        //{
-        //    m_YellowAgentGroup.EndGroupEpisode();
-        //    m_RedAgentGroup.EndGroupEpisode();
-        //}
-
-        /////////////////////////////////////////////////////
+        else
+        {
+            //float pointDiff = winningTeam == Team.Yellow ? YellowTeamPoints - RedTeamPoints : RedTeamPoints - YellowTeamPoints;
+            float timeBonus = Mathf.Clamp01(m_ResetTimer / ((float)timeLimit / 2.0f));
+            AddRewardToTeamMembers(Team.Red, winningTeam == Team.Red ? 0.5f + timeBonus : -0.5f - timeBonus);
+            AddRewardToTeamMembers(Team.Yellow, winningTeam == Team.Yellow ? 0.5f + timeBonus : -0.5f - timeBonus);
+        }
 
         foreach (var agent in AgentsList)
         {
-            //float agentPoints = getTeamPoints(agent.Team);
-            //float enemyPoints = getTeamPoints(agent.Team == Team.Yellow ? Team.Red : Team.Yellow);
-
-            //if(!TimeIsUp && (RedTeamPoints < 7 && YellowTeamPoints < 7))
-            //{
-            //    agent.gameObject.GetComponent<Agent>().SetReward(agent.Team == winningTeam ? 1.0f : -1.0f);
-            //}
-            //else if (winningTeam is null)
-            //{
-            //    //float pointDifference = agentPoints - enemyPoints;
-            //    //agent.gameObject.GetComponent<Agent>().AddReward(pointDifference / 7.0f);
-            //    agent.gameObject.GetComponent<Agent>().AddReward(0.0f);
-            //}
-
-
-            if (winningTeam is null)
-            {
-                agent.gameObject.GetComponent<Agent>().AddReward(0.0f);
-            }
-            else
-            {
-                //float timeReward = (m_ResetTimer / (float)timeLimit) * 0.5f;
-                //float pointDiffReward = (getTeamPoints(agent.Team) - getTeamPoints(agent.Team == Team.Red ? Team.Yellow : Team.Red)) * 0.1f;
-                //agent.gameObject.GetComponent<Agent>().AddReward(agent.Team == winningTeam ? timeReward + pointDiffReward : -timeReward + pointDiffReward);
-                float pointToAdd = (m_ResetTimer / (float)timeLimit);
-                agent.gameObject.GetComponent<Agent>().AddReward(agent.Team == winningTeam ? pointToAdd : -pointToAdd);
-                //agent.gameObject.GetComponent<Agent>().AddReward(agent.Team == winningTeam ? 1.0f : -1.0f);
-            }
-
-        }
-
-        foreach(var agent in AgentsList)
-        {
-            if (TimeIsUp)
+            if(TimeIsUp)
                 agent.gameObject.GetComponent<Agent>().EpisodeInterrupted();
             else
                 agent.gameObject.GetComponent<Agent>().EndEpisode();
@@ -484,6 +359,9 @@ public class EnvController : MonoBehaviour
         m_ControlPoint.ChangeState(ctState);
         RedTeamPoints = 0.0f;
         YellowTeamPoints = 0.0f;
+        m_MatchTotalKills = 0;
+        m_MatchTankKills = 0;
+        m_MatchHeliKills = 0;
     }
 
     public Vector3 GetCTPosition()
@@ -607,5 +485,27 @@ public class EnvController : MonoBehaviour
                 agent.gameObject.GetComponent<Agent>().AddReward(reward);
             }
         }
+    }
+
+    private void RegisterKillForStats(AgentType agentType)
+    {
+        m_MatchTotalKills++;
+
+        if (agentType == AgentType.Tank)
+        {
+            m_MatchTankKills++;
+        }
+        else if (agentType == AgentType.Heli)
+        {
+            m_MatchHeliKills++;
+        }
+    }
+
+    private void WriteMatchKillStats()
+    {
+        var statsRecorder = Academy.Instance.StatsRecorder;
+        statsRecorder.Add("Match/Kills/Total", m_MatchTotalKills, StatAggregationMethod.Average);
+        statsRecorder.Add("Match/Kills/Tank", m_MatchTankKills, StatAggregationMethod.Average);
+        statsRecorder.Add("Match/Kills/Heli", m_MatchHeliKills, StatAggregationMethod.Average);
     }
 }

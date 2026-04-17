@@ -11356,7 +11356,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: fa527615e2fbae64a9b5b4ca162b4c3c, type: 3}
   m_InferenceDevice: 2
   m_BehaviorType: 0
   m_BehaviorName: TankControll

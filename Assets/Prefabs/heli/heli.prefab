@@ -11470,7 +11470,7 @@ MonoBehaviour:
   m_RaysPerDirection: 0
   m_MaxRayDegrees: 0
   m_SphereCastRadius: 0
-  m_RayLength: 400
+  m_RayLength: 300
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294442995
@@ -11575,7 +11575,7 @@ MonoBehaviour:
   m_RaysPerDirection: 0
   m_MaxRayDegrees: 0
   m_SphereCastRadius: 0
-  m_RayLength: 400
+  m_RayLength: 300
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294442995
