@@ -13,7 +13,6 @@ public class TankAgent : VehicleAgent, ITargetable
     [SerializeField] private Transform tankCannon;
     [SerializeField] private GameObject _healthBar;
     [SerializeField] private RayPerceptionSensorComponent3D aimSensor;
-    [SerializeField] private GameObject HitBoxMeshes;
 
     public DemonstrationRecorder? demonstrationRecorder;
     BehaviorParameters m_BehaviorParameters;

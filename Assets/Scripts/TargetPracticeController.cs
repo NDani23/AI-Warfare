@@ -53,7 +53,7 @@ public class TargetPracticeController : MonoBehaviour
     private int hitCount = 0;
     private int captureCount = 0;
 
-    private IVehicleAgent player;
+    private VehicleAgent player;
 
     void Start()
     {

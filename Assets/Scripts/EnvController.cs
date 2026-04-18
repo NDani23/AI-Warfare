@@ -14,7 +14,7 @@ public class EnvController : MonoBehaviour
 
     public static int RespawnCooldown = 15;
 
-    public List<IVehicleAgent> AgentsList = new List<IVehicleAgent>();
+    public List<VehicleAgent> AgentsList = new List<VehicleAgent>();
 
     //public SimpleMultiAgentGroup m_RedAgentGroup;
     //public SimpleMultiAgentGroup m_YellowAgentGroup;
@@ -23,7 +23,7 @@ public class EnvController : MonoBehaviour
 
     public Dictionary<GameObject,float> m_DetectedRedEnemies;
     public Dictionary<GameObject, float> m_DetectedYellowEnemies;
-    public Dictionary<IVehicleAgent, float> m_DeadAgents;
+    public Dictionary<VehicleAgent, float> m_DeadAgents;
 
     public float RedTeamPoints = 0.0f;
     public float YellowTeamPoints = 0.0f;
@@ -52,8 +52,8 @@ public class EnvController : MonoBehaviour
     {
         m_DetectedRedEnemies = new Dictionary<GameObject, float>();
         m_DetectedYellowEnemies = new Dictionary<GameObject, float>();
-        m_DeadAgents = new Dictionary<IVehicleAgent, float>();
-        AgentsList = this.GetComponentsInChildren<IVehicleAgent>().ToList();
+        m_DeadAgents = new Dictionary<VehicleAgent, float>();
+        AgentsList = this.GetComponentsInChildren<VehicleAgent>().ToList();
     }
 
 
@@ -63,26 +63,17 @@ public class EnvController : MonoBehaviour
         //m_RedAgentGroup = new SimpleMultiAgentGroup();
         //m_YellowAgentGroup = new SimpleMultiAgentGroup();
 
-        //foreach (var agent in AgentsListSerialized)
+        //foreach (var agent in AgentsList)
         //{
-
-        //    if (agent is IVehicleAgent vehicleAgent)
+        //    if (agent.Team == Team.Red)
         //    {
-        //        AgentsList.Add(vehicleAgent);
+        //        m_RedAgentGroup.RegisterAgent((Agent)agent);
+        //    }
+        //    else
+        //    {
+        //        m_YellowAgentGroup.RegisterAgent((Agent)agent);
         //    }
         //}
-
-    //    foreach (var agent in AgentsList)
-    //    {
-    //        if (agent.Team == Team.Red)
-    //        {
-    //            m_RedAgentGroup.RegisterAgent((Agent)agent);
-    //        }
-    //        else
-    //        {
-    //            m_YellowAgentGroup.RegisterAgent((Agent)agent);
-    //        }
-    //    }
     }
 
     void FixedUpdate()
@@ -266,7 +257,7 @@ public class EnvController : MonoBehaviour
         //}
     }
 
-    public void AgentDied(IVehicleAgent agent)
+    public void AgentDied(VehicleAgent agent)
     {
         if (m_DeadAgents.ContainsKey(agent)) return;
         m_DeadAgents.TryAdd(agent, RespawnCooldown);
