@@ -44,7 +44,7 @@ public class TankController : MonoBehaviour, IVehicleController
     public float HorizontalAimInput { get; set; }
     public float VerticalAimInput { get; set; }
     public int FireInput { get; set; }
-    public Vector3? AimDirection { get; set; }
+    public Vector3 aimDirection { get; set; }
     private GameObject Bullet;
     public float coolDownTime { get; set; }
 
@@ -58,8 +58,7 @@ public class TankController : MonoBehaviour, IVehicleController
         Bullet.GetComponent<bullet_script>().SetShooter(tankAgent);
         Bullet.SetActive(false);
 
-        AimDirection = null;
-
+        aimDirection = tankCannon.forward;
 
         coolDownTime = 3.0f;
     }
@@ -104,6 +103,8 @@ public class TankController : MonoBehaviour, IVehicleController
 
         tankCannon.localRotation = Quaternion.Euler(0, 0, 0);
         tankTower.localRotation = Quaternion.Euler(0, 0, 0);
+
+        aimDirection = tankCannon.forward;
     }
 
     public float getTowerRotation()
@@ -134,7 +135,7 @@ public class TankController : MonoBehaviour, IVehicleController
         }
 
 
-        if (_rigidbody.angularVelocity.magnitude < 0.8f)
+        if (_rigidbody.angularVelocity.magnitude < 0.7f)
         {
 
             _rigidbody.AddRelativeTorque((Vector3.up * Steer * turnSpeed), ForceMode.Acceleration);
@@ -146,29 +147,13 @@ public class TankController : MonoBehaviour, IVehicleController
             }
         }
 
-        float aimCurve = 1.0f;
+        float currentPitch = tankCannon.localEulerAngles.x;
+        if (currentPitch > 180f) currentPitch -= 360f;
+        currentPitch += -VerticalAimInput * cannonRotationSpeed * Time.fixedDeltaTime;
+        tankCannon.localRotation = Quaternion.Euler(Mathf.Clamp(currentPitch, -25f, 5f), 0f, 0f);
 
-        if (AimDirection != null)
-        {
-            var aimDirection = Input.mousePosition;
-            aimDirection.z = 500.0f;
-            aimDirection = Camera.main.ScreenToWorldPoint(aimDirection);
-            towerTargetPosition = aimDirection;
-            HandleCannon(towerTargetPosition);
-            aimCurve = Mathf.Sqrt(Mathf.Abs(Input.mousePosition.x / Screen.width * 2 - 1.0f));
-        }
-        else
-        {
-            towerTargetPosition = tankTower.position + tankTower.forward;
-            towerTargetPosition = RotatePointAroundPivot(towerTargetPosition, tankTower.position, tankTower.up * HorizontalAimInput);
+        tankTower.Rotate(Vector3.up * (towerRotationSpeed * HorizontalAimInput * Time.fixedDeltaTime));
 
-            tankCannon.localRotation = new Quaternion(Mathf.Clamp(tankCannon.localRotation.x + -0.1f * VerticalAimInput * (cannonRotationSpeed * 0.1f) * Time.fixedDeltaTime, -0.15f, 0.01f),
-                                                      0.0f,
-                                                      0.0f,
-                                                      tankCannon.localRotation.w);
-            tankTower.Rotate(Vector3.up * (towerRotationSpeed * HorizontalAimInput * Time.fixedDeltaTime));
-        }
-        HandleTower(towerTargetPosition, aimCurve);
         HandleShooting();
 
 
@@ -186,33 +171,30 @@ public class TankController : MonoBehaviour, IVehicleController
         DirtParticles1.startSpeed = _rigidbody.linearVelocity.magnitude;
         DirtParticles2.startSpeed = _rigidbody.linearVelocity.magnitude;
 
-
         coolDownTime = Mathf.Max(0, coolDownTime - Time.fixedDeltaTime);
     }
 
-    private void HandleTower(Vector3 targetPosition, float aimCurve)
+    private void RotateTower(Vector3 targetDirection, float aimCurve)
     {
-        Vector3 directionToTarget = Vector3.ProjectOnPlane(targetPosition - tankTower.position, tankTower.up);
+        Vector3 directionToTarget = Vector3.ProjectOnPlane(targetDirection, tankTower.up);
         Quaternion towerTargetDirection = Quaternion.LookRotation(directionToTarget, tankTower.up);
-
         Quaternion from = Quaternion.LookRotation(tankTower.forward, tankTower.up);
 
         tankTower.rotation = Quaternion.RotateTowards(from, towerTargetDirection, (aimCurve * towerRotationSpeed) * Time.fixedDeltaTime);
     }
 
-    private void HandleCannon(Vector3 targetPosition)
+    private void RotateCannon(Vector3 targetDirection)
     {
-        Vector3 directionToTarget = Vector3.ProjectOnPlane(targetPosition - tankCannon.position, tankTower.right);
+        Vector3 directionToTarget = Vector3.ProjectOnPlane(targetDirection, tankTower.right);
         Quaternion towerTargetDirection = Quaternion.LookRotation(directionToTarget, tankTower.right);
 
         Quaternion from = Quaternion.LookRotation(tankCannon.forward, tankTower.right);
 
         tankCannon.rotation = Quaternion.RotateTowards(from, towerTargetDirection, cannonRotationSpeed * Time.fixedDeltaTime);
 
-        tankCannon.localRotation = new Quaternion(Mathf.Clamp(tankCannon.localRotation.x, -0.1f, 0.01f),
-                                          0.0f,
-                                          0.0f,
-                                          tankCannon.localRotation.w);
+        float currentPitch = tankCannon.localEulerAngles.x;
+        if (currentPitch > 180f) currentPitch -= 360f;
+        tankCannon.localRotation = Quaternion.Euler(Mathf.Clamp(currentPitch, -20f, 5f), 0f, 0f);
 
     }
     private Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angles)
@@ -237,7 +219,7 @@ public class TankController : MonoBehaviour, IVehicleController
     public Vector3 GetAimPos()
     {
 
-        return tankCannon.position + tankCannon.forward * 500.0f;
+        return tankCannon.position + tankCannon.forward * 300.0f;
     }
 
     public Transform getTowerTransform()
@@ -263,13 +245,14 @@ public class TankController : MonoBehaviour, IVehicleController
             {
                 this.GetComponent<MeshRenderer>().material = MainMaterial;
                 tankTower.gameObject.GetComponent<MeshRenderer>().material = MainMaterial;
+                tankCannon.gameObject.GetComponent<MeshRenderer>().material = MainMaterial;
             }
             else
             {
                 this.GetComponent<MeshRenderer>().material = BurntMaterial;
                 tankTower.gameObject.GetComponent<MeshRenderer>().material = BurntMaterial;
+                tankCannon.gameObject.GetComponent<MeshRenderer>().material = BurntMaterial;
             }
-            tankCannon.gameObject.GetComponent<MeshRenderer>().material = BurntMaterial;
 
 
             foreach (var wheel in wheels)

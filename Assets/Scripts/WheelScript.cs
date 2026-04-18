@@ -29,8 +29,7 @@ public class WheelScript : MonoBehaviour
     void Update()
     {
         wheelCollider.GetWorldPose(out Vector3 pos, out Quaternion rot);
-        //wheelTransform.position = new Vector3(pos.x, pos.y + 0.1f, pos.z);
-        wheelTransform.position = pos;
+        wheelTransform.position = new Vector3(pos.x, pos.y + 0.1f, pos.z);
         wheelTransform.rotation = rot;
     }
 

@@ -6,11 +6,12 @@ TagManager:
   tags:
   - Bullet
   - Target
-  - YellowTank
-  - RedTank
   - YellowAgent
   - RedAgent
   - ControllPoint
+  - RedSpawnArea
+  - YellowSpawnArea
+  - MoveToTarget
   layers:
   - Default
   - TransparentFX
@@ -36,9 +37,9 @@ TagManager:
   - HideFromVisObs
   - Icon
   - Effect
-  - 
-  - 
-  - 
+  - GridLayer
+  - Obstacles
+  - Ground
   - 
   - 
   - 

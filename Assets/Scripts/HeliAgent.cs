@@ -24,6 +24,7 @@ public class HeliAgent : VehicleAgent
     [SerializeField] private RayPerceptionSensorComponent3D _rightAimSensor;
     [SerializeField] private BufferSensorComponent _detectedEnemiesSensor;
     [SerializeField] private BufferSensorComponent _teammateSensor;
+    [SerializeField] private Transform _gridTag;
 
     private HeliController _heliController;
 
@@ -199,6 +200,7 @@ public class HeliAgent : VehicleAgent
         }
 
         _heliController.IsShooting = isShooting;
+        _gridTag.position = new Vector3(transform.position.x, 3.0f, transform.position.z);
     }
 
     public void Update()

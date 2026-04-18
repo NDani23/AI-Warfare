@@ -6,20 +6,17 @@ using Unity.MLAgents.Policies;
 using System.Linq;
 using UnityEngine.Events;
 using Unity.MLAgents.Demonstrations;
+using System;
 
 public class TankAgent : VehicleAgent
 {
     [SerializeField] private Rigidbody tankRB;
     [SerializeField] private Transform tankCannon;
-    [SerializeField] private BufferSensorComponent detectedEnemiesSensor;
-    [SerializeField] private BufferSensorComponent teammateSensor;
     [SerializeField] private GameObject _healthBar;
+    [SerializeField] private RayPerceptionSensorComponent3D aimSensor;
 
     public DemonstrationRecorder? demonstrationRecorder;
-
     BehaviorParameters m_BehaviorParameters;
-    RayPerceptionSensorComponent3D aimSensor = null;
-
     private float _maxHealth = 100.0f;
     public override float MaxHealth => _maxHealth;
 
@@ -40,25 +37,7 @@ public class TankAgent : VehicleAgent
         m_BehaviorParameters = gameObject.GetComponent<BehaviorParameters>();
         _envController = GetComponentInParent<EnvController>();
 
-        if (m_BehaviorParameters.TeamId == (int)Team.Red)
-        {
-            _team = Team.Red;
-        }
-        else if (m_BehaviorParameters.TeamId == (int)Team.Yellow)
-        {
-            _team = Team.Yellow;
-        }
-
-        var c = GetComponentsInChildren<RayPerceptionSensorComponent3D>();
-        for (int i = 0; i < c.Length; i++)
-        {
-            if (c[i].SensorName == "AimSensor")
-            {
-                aimSensor = c[i];
-                break;
-            }
-
-        }
+        _team = m_BehaviorParameters.TeamId == (int)Team.Red ? Team.Red : Team.Yellow;
     }
 
     public override void OnEpisodeBegin()
@@ -68,76 +47,15 @@ public class TankAgent : VehicleAgent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(Vector3.Dot(transform.forward, tankRB.linearVelocity) / 30.0f);
-        sensor.AddObservation(_tankController.coolDownTime / 3.0f);
-        sensor.AddObservation(_health / 100.0f);
-        sensor.AddObservation(transform.InverseTransformVector(tankCannon.forward));
-        if(_health == 0)
-        {
-            sensor.AddObservation(Vector3.zero);
-            sensor.AddObservation(0.0f);
-        }
-        else
-        {
-            sensor.AddObservation(Vector3.Normalize(transform.InverseTransformVector(_envController.GetCTPosition() - transform.localPosition)));
-            DistanceToCT = Vector3.Distance(_envController.GetCTPosition(), transform.localPosition) / 700.0f;
-            sensor.AddObservation(DistanceToCT);
-        }
-
-        sensor.AddObservation(0);
-        sensor.AddObservation(_envController.m_ResetTimer / (float)_envController.timeLimit);
-
-        if (_team == Team.Red)
-        {
-            sensor.AddObservation(_envController.RedTeamPoints * 0.01f);
-            sensor.AddObservation(_envController.YellowTeamPoints * 0.01f);
-        }
-        else
-        {
-            sensor.AddObservation(_envController.YellowTeamPoints * 0.01f);
-            sensor.AddObservation(_envController.RedTeamPoints * 0.01f);
-        }
-
-        float stateNum = _team == Team.Red ? -1 * _envController.getStateNum() : _envController.getStateNum();
-        //float stateNum = team == Team.Red ? (envController.RedTeamPoints - envController.YellowTeamPoints) * 0.01f : (envController.YellowTeamPoints - envController.RedTeamPoints) * 0.01f;
-
-        sensor.AddObservation(stateNum /= 10);
-
-        Dictionary<GameObject, float> detectedEnemies = _team == Team.Red ? _envController.m_DetectedYellowEnemies : _envController.m_DetectedRedEnemies;
-
-        //BufferSensor
-
-        if(_health != 0)
-        {
-                foreach (var agent in detectedEnemies.Keys.ToList())
-                {
-                    Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(agent.transform.localPosition - transform.localPosition));
-                    float dist = Vector3.Distance(agent.transform.localPosition, transform.localPosition) / 700.0f;
-                    float health = agent.GetComponent<VehicleAgent>().Health * 0.01f;
-
-                    float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.GetComponent<VehicleAgent>().AgentType };
-                    //detectedEnemiesSensor.AppendObservation(Obs);
-    
-                }
-
-                foreach (var agent in _envController.AgentsList)
-                {
-                    if (agent.Team != this._team || agent.MemberID == this.memberID)
-                        continue;
-
-                    if (agent.Health == 0)
-                        continue;
-
-                    Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(agent.gameObject.transform.localPosition - transform.localPosition));
-                    float dist = Vector3.Distance(agent.gameObject.transform.localPosition, transform.localPosition) / 700.0f;
-                    float health = agent.Health * 0.01f;
-
-                    float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.AgentType };
-                    //teammateSensor.AppendObservation(Obs);
-                }
-                
-            
-        }
+        sensor.AddObservation(Vector3.Dot(transform.forward, tankRB.linearVelocity) / 40.0f); // Forward velocity
+        sensor.AddObservation(transform.InverseTransformDirection(tankRB.angularVelocity).y); // Angular velocity (turn speed)
+        sensor.AddObservation(_tankController.coolDownTime / 3.0f); // Shoot cooldown time
+        sensor.AddObservation(_health * 0.01f); // Health
+        sensor.AddObservation(transform.InverseTransformVector(tankCannon.forward)); // Cannon forward direction relative to the tank body
+        sensor.AddObservation(_envController.m_ResetTimer / (float)_envController.timeLimit); // Remaining time of the episode
+        sensor.AddObservation(_team == Team.Red ? _envController.RedTeamPoints * 0.01f : _envController.YellowTeamPoints * 0.01f); // Team score
+        sensor.AddObservation(_team == Team.Red ? _envController.YellowTeamPoints * 0.01f : _envController.RedTeamPoints * 0.01f); // Enemy team score
+        sensor.AddObservation(Vector3.zero); // Placeholder for target direction
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -145,29 +63,20 @@ public class TankAgent : VehicleAgent
         if (_health == 0.0f)
             return;
 
-        if (!_isPlayerControlled)
-        {
-            _tankController.AimDirection = null;
-        }
-
         _tankController.Throttle = actions.DiscreteActions[0] - 1;
-
+        
         if (actions.DiscreteActions[1] - 1 == 0 || (actions.DiscreteActions[1] - 1) * _tankController.Steer < 0)
         {
             _tankController.Steer = 0;
         }
         else
         {
-            _tankController.Steer = Mathf.Lerp(_tankController.Steer, actions.DiscreteActions[1] - 1, 0.1f);
+            _tankController.Steer = Mathf.Lerp(_tankController.Steer, actions.DiscreteActions[1] - 1, 0.075f);
         }
 
-
-        _tankController.HorizontalAimInput = actions.ContinuousActions[0];
-        _tankController.VerticalAimInput = actions.DiscreteActions[3] - 1;
         _tankController.FireInput = actions.DiscreteActions[2];
-
-        //_tankController.HorizontalAimInput = 1.0f;
-        //_tankController.Steer = 1;
+        _tankController.HorizontalAimInput = actions.ContinuousActions[0];
+        _tankController.VerticalAimInput = actions.ContinuousActions[1];
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -175,13 +84,13 @@ public class TankAgent : VehicleAgent
         if(_health == 0.0f) return;
         ActionSegment<int> discreteActions = actionsOut.DiscreteActions;
 
-        var aimDirection = Input.mousePosition;
-        aimDirection.z = 500.0f;
-
-        _tankController.AimDirection = Camera.main.ScreenToWorldPoint(aimDirection);
         discreteActions[0] = Input.GetKey(KeyCode.W) ? 2 : (Input.GetKey(KeyCode.S) ? 0 : 1);
         discreteActions[1] = Input.GetKey(KeyCode.D) ? 2 : (Input.GetKey(KeyCode.A) ? 0 : 1);
-        discreteActions[2] = Input.GetMouseButton(0) || Input.GetKeyDown("space") ? 1 : 0;
+        discreteActions[2] = Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space) ? 1 : 0;
+
+        ActionSegment<float> continuousActions = actionsOut.ContinuousActions;
+        continuousActions[0] = Input.GetKey(KeyCode.LeftArrow) ? -1 : (Input.GetKey(KeyCode.RightArrow) ? 1 : 0); // Horizontal aim
+        continuousActions[1] = Input.GetKey(KeyCode.UpArrow) ? 1 : (Input.GetKey(KeyCode.DownArrow) ? -1 : 0); // Vertical aim
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -191,7 +100,6 @@ public class TankAgent : VehicleAgent
             //AddReward(-0.01f);
         }
     }
-
 
     public void FixedUpdate()
     {
@@ -210,6 +118,17 @@ public class TankAgent : VehicleAgent
             _envController.EnemyDetected(obs.RayOutputs[0].HitGameObject.transform.parent.gameObject, this._team);
         }
     }
+
+    // public void Update()
+    // {
+    //     if (_tankController.aimDirection != Vector3.zero && m_BehaviorParameters.BehaviorType == BehaviorType.HeuristicOnly)
+    //     {
+
+    //         Quaternion targetRotation = Quaternion.LookRotation(_tankController.aimDirection);
+    //         cameraPivot.transform.rotation = Quaternion.Slerp(cameraPivot.transform.rotation, targetRotation, 0.05f);
+    //         //cameraPivot.transform.rotation = Quaternion.LookRotation(_tankController.aimDirection);
+    //     }
+    // }
 
     public float getCooldown()
     {

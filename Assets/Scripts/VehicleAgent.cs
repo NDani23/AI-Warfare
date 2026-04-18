@@ -34,6 +34,7 @@ public abstract class VehicleAgent : Agent
     public Team Team => _team;
 
     protected bool _detected = false;
+    public bool Detected => _detected;
 
     protected bool _selected = false;
 

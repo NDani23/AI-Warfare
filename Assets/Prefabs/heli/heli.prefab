@@ -219,6 +219,59 @@ Transform:
   - {fileID: 1552330663957344026}
   m_Father: {fileID: 8656246402104379303}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1299925060788754810
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6440548496584004991}
+  - component: {fileID: 3552553247105728961}
+  m_Layer: 24
+  m_Name: grid_tag
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6440548496584004991
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1299925060788754810}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6090330496605595991}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &3552553247105728961
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1299925060788754810}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1426322841439908022
 GameObject:
   m_ObjectHideFlags: 0
@@ -21202,6 +21255,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5680090295672139018}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6440548496584004991}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
       insertIndex: -1
@@ -21299,6 +21355,7 @@ MonoBehaviour:
   _rightAimSensor: {fileID: 3998644805695371758}
   _detectedEnemiesSensor: {fileID: 6618767515980235466}
   _teammateSensor: {fileID: 4436334009465684431}
+  _gridTag: {fileID: 6440548496584004991}
 --- !u!114 &4841696427924709451
 MonoBehaviour:
   m_ObjectHideFlags: 0
