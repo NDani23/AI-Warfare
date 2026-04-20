@@ -44,7 +44,7 @@ public class bullet_script : MonoBehaviour
             else
                 envController.EnemyDetected(_parent.gameObject, Team.Red);
             //_parent.AddReward(0.1f);
-            collision.gameObject.GetComponent<VehicleAgent>().Hit(_damage);
+            collision.gameObject.GetComponent<ITargetable>().Hit(_damage);
             //if(collision.gameObject.GetComponent<TankAgent>().getHealth() == 0)
             //    _parent.AddReward(0.3f);
 
@@ -58,7 +58,7 @@ public class bullet_script : MonoBehaviour
             //    emitter.position = collision.transform.position;
             //}
             //_parent.AddReward(-0.1f);
-            collision.gameObject.GetComponent<VehicleAgent>().Hit(_damage);
+            collision.gameObject.GetComponent<ITargetable>().Hit(_damage);
         }
        else
        {

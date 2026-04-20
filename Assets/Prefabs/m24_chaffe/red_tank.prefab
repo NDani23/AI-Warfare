@@ -212,6 +212,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.8117647
       objectReference: {fileID: 0}
+    - target: {fileID: 6016058013149104462, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
     - target: {fileID: 6755125427376759154, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: m_TagString
       value: RedAgent
@@ -219,6 +223,14 @@ PrefabInstance:
     - target: {fileID: 7562925608524321102, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: m_TagString
       value: RedAgent
+      objectReference: {fileID: 0}
+    - target: {fileID: 7786885521457520912, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 7814527802299802244, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8069131851121064974, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: m_TagString

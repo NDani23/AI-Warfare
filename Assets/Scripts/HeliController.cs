@@ -7,7 +7,7 @@ using UnityEngine.Pool;
 using UnityEngine.UIElements;
 using UnityEngine.WSA;
 
-public class HeliController : MonoBehaviour
+public class HeliController : MonoBehaviour, IVehicleController
 {
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private Transform _rear_rotor;
@@ -16,14 +16,16 @@ public class HeliController : MonoBehaviour
     [SerializeField] private Transform _machineGunLeft;
     [SerializeField] private Transform _machineGunRight;
     [SerializeField] private Transform _leftShootPosition;
-    [SerializeField] private Transform _rightShootPosition;
-    [SerializeField] private TrailRenderer _bulletTrail;
+    [SerializeField] private Transform _rightShootPosition;    
     [SerializeField] private GameObject _colliders;
     [SerializeField] private float _shootDelay = 0.1f;
     [SerializeField] private ParticleSystem ExplodeParticles;
     [SerializeField] private ParticleSystem SmokeParticles;
     [SerializeField] private Material BurntMaterial;
     [SerializeField] private Material MainMaterial;
+    [SerializeField] private ParticleSystem _rightTracerParticles;
+    [SerializeField] private ParticleSystem _leftTracerParticles;
+    [SerializeField] private float _tracerSpeed = 200.0f;
 
     private HitInfo _leftGunHitInfo;
     private HitInfo _rightGunHitInfo;
@@ -188,19 +190,16 @@ public class HeliController : MonoBehaviour
             _gunOverHeatStatus += Time.fixedDeltaTime / 3.0f;
             if (_gunOverHeatStatus >= 1.0f)
             {
-                Debug.Log("Overheat!");
                 _overHeatCooldown = 5.0f;
                 _isShooting = 0;
                 _gunOverHeatStatus = 1.0f;
-                //_agent.AddReward(-1.0f);
             }
 
             if(_lastShootTime + _shootDelay < Time.fixedTime)
             {
-                //var tracer = Instantiate(_bulletTrail, _leftShootPosition.position, Quaternion.identity, this.transform);
-                //tracer.AddPosition(_leftShootPosition.position);
-                //tracer.transform.position = _leftGunHitInfo.hitPosition;
-
+                SpawnTracer(_leftShootPosition.position, _leftGunHitInfo.hitPosition, _leftTracerParticles);
+                SpawnTracer(_rightShootPosition.position, _rightGunHitInfo.hitPosition, _rightTracerParticles);
+                
                 if (_leftGunHitInfo.hitTag != -1)
                 {
                     _leftGunHitInfo.hitGameObject.transform.parent.GetComponent<ITargetable>().Hit(1);
@@ -211,21 +210,12 @@ public class HeliController : MonoBehaviour
                     _rightGunHitInfo.hitGameObject.transform.parent.GetComponent<ITargetable>().Hit(1);
                 }
 
-                //var tracer2 = Instantiate(_bulletTrail, _rightShootPosition.position, Quaternion.identity, this.transform);
-                //tracer2.AddPosition(_rightShootPosition.position);
-                //tracer2.transform.position = _rightGunHitInfo.hitPosition;
-
-                //if (_rightGunHitInfo.hitTag == -1 && _leftGunHitInfo.hitTag == -1) _agent.AddReward(-0.0005f);
-                //else if (_rightGunHitInfo.hitTag == 0 && _leftGunHitInfo.hitTag == 0) _agent.AddReward(0.0005f);
-
                 _lastShootTime = Time.fixedTime;
             }
         }
         else
         {
-
             _gunOverHeatStatus = Mathf.Max(0.0f, _gunOverHeatStatus - Time.fixedDeltaTime / 4.5f);
-
         }
     }
 
@@ -253,12 +243,26 @@ public class HeliController : MonoBehaviour
         }
     }
 
+    private void SpawnTracer(Vector3 from, Vector3 to, ParticleSystem ps)
+    {
+        Vector3 direction = (to - from).normalized;
+
+        float distance = Vector3.Distance(from, to);
+
+        ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams();
+        emitParams.position = from;
+        emitParams.velocity = direction * _tracerSpeed;
+        emitParams.startLifetime = distance / _tracerSpeed;
+
+        ps.Emit(emitParams, 1);
+    }
+
     public void setDeadState()
     {
         _colliders.tag = "Untagged";
         setMaterial();
-        //ExplodeParticles.Play();
-        //SmokeParticles.Play();
+        ExplodeParticles.Play();
+        SmokeParticles.Play();
     }
 
     public float getGunOverheatStatus()

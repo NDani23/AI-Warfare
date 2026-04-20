@@ -74,6 +74,16 @@ public class EnvController : MonoBehaviour
         //        m_YellowAgentGroup.RegisterAgent((Agent)agent);
         //    }
         //}
+
+        foreach (var agent in AgentsList)
+        {
+            if (agent.AgentType == AgentType.Tank)
+            {
+                agent.gameObject.GetComponent<TankAgent>().SetGoToPoint(new Vector3(Random.Range(-340, 340), 3, Random.Range(-340, 340)));
+            }
+           
+               
+        }
     }
 
     void FixedUpdate()
@@ -417,29 +427,30 @@ public class EnvController : MonoBehaviour
         else return YellowTeamPoints;
     }
 
-    public void EnemyDetected(GameObject agent, Team team)
+    public void EnemyDetected(GameObject target, Team team)
     {
+        target.GetComponent<VehicleAgent>()?.setDetectedState(true);
 
         if (team == Team.Yellow)
         {
-            if(m_DetectedRedEnemies.ContainsKey(agent))
+            if(m_DetectedRedEnemies.ContainsKey(target))
             {
-                m_DetectedRedEnemies[agent] = 10.0f;
+                m_DetectedRedEnemies[target] = 10.0f;
             }
             else
             {
-                m_DetectedRedEnemies.TryAdd(agent, 10.0f);
+                m_DetectedRedEnemies.TryAdd(target, 10.0f);
             }
         }
         else
         {
-            if (m_DetectedYellowEnemies.ContainsKey(agent))
+            if (m_DetectedYellowEnemies.ContainsKey(target))
             {
-                m_DetectedYellowEnemies[agent] = 10.0f;
+                m_DetectedYellowEnemies[target] = 10.0f;
             }
             else
             {
-                m_DetectedYellowEnemies.TryAdd(agent, 10.0f);
+                m_DetectedYellowEnemies.TryAdd(target, 10.0f);
             }
         }
     }

@@ -13,6 +13,7 @@ public class TankAgent : VehicleAgent, ITargetable
     [SerializeField] private Transform tankCannon;
     [SerializeField] private GameObject _healthBar;
     [SerializeField] private RayPerceptionSensorComponent3D aimSensor;
+    [SerializeField] private MoveToMarkerMarkerController _moveToMarker;
 
     public DemonstrationRecorder? demonstrationRecorder;
     BehaviorParameters m_BehaviorParameters;
@@ -25,12 +26,14 @@ public class TankAgent : VehicleAgent, ITargetable
 
     public UnityEvent DiedEvent;
     public UnityEvent RespawnEvent;
+    private GameObject _target;
 
     public override void Initialize()
     {
         _agentType = AgentType.Tank;
         _vehicleController = this.gameObject.GetComponent<TankController>();
         _tankController = (TankController)_vehicleController;
+        _target = null;
 
         _health = MaxHealth;
         m_BehaviorParameters = gameObject.GetComponent<BehaviorParameters>();
@@ -41,7 +44,7 @@ public class TankAgent : VehicleAgent, ITargetable
 
     public override void OnEpisodeBegin()
     {
-        ResetAgent();
+        ResetTank();
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -54,7 +57,7 @@ public class TankAgent : VehicleAgent, ITargetable
         sensor.AddObservation(_envController.m_ResetTimer / (float)_envController.timeLimit); // Remaining time of the episode
         sensor.AddObservation(_team == Team.Red ? _envController.RedTeamPoints * 0.01f : _envController.YellowTeamPoints * 0.01f); // Team score
         sensor.AddObservation(_team == Team.Red ? _envController.YellowTeamPoints * 0.01f : _envController.RedTeamPoints * 0.01f); // Enemy team score
-        sensor.AddObservation(Vector3.zero); // Placeholder for target direction
+        sensor.AddObservation(_target != null ? Vector3.Normalize(transform.InverseTransformVector(_target.gameObject.transform.localPosition - transform.localPosition)) : Vector3.zero); // Direction to currently targeted enemy
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -103,34 +106,47 @@ public class TankAgent : VehicleAgent, ITargetable
     public void FixedUpdate()
     {
         if (_health == 0.0f) return;
-        //if (_regenHealthCooldown != 0) _regenHealthCooldown = Mathf.Max(0, _regenHealthCooldown - Time.fixedDeltaTime);
+        if (_regenHealthCooldown != 0) _regenHealthCooldown = Mathf.Max(0, _regenHealthCooldown - Time.fixedDeltaTime);
 
-        //if(_health != 100 && _regenHealthCooldown == 0)
-        //{
-        //    _health = Mathf.Min(100, _health + Time.fixedDeltaTime * 10.0f);
-        //}
+        if(_health != _maxHealth && _regenHealthCooldown == 0)
+        {
+           _health = Mathf.Min(_maxHealth, _health + Time.fixedDeltaTime * 10.0f);
+        }
 
         RayPerceptionInput spec = aimSensor.GetRayPerceptionInput();
         RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec, false);
-        if (obs.RayOutputs[0].HitTagIndex == 0)
+        if (obs.RayOutputs[0].HitTagIndex == 1)
         {
             _envController.EnemyDetected(obs.RayOutputs[0].HitGameObject.transform.parent.gameObject, this._team);
         }
     }
 
-    // public void Update()
-    // {
-    //     if (_tankController.aimDirection != Vector3.zero && m_BehaviorParameters.BehaviorType == BehaviorType.HeuristicOnly)
-    //     {
-
-    //         Quaternion targetRotation = Quaternion.LookRotation(_tankController.aimDirection);
-    //         cameraPivot.transform.rotation = Quaternion.Slerp(cameraPivot.transform.rotation, targetRotation, 0.05f);
-    //         //cameraPivot.transform.rotation = Quaternion.LookRotation(_tankController.aimDirection);
-    //     }
-    // }
-
     public float getCooldown()
     {
         return _tankController.coolDownTime;
+    }
+
+    public void SetTarget(GameObject target)
+    {
+        if (_target.GetComponent<ITargetable>() == null) return;
+        _target = target;
+    }
+
+    public void SetGoToPoint(Vector3 envSpacePoint)
+    {
+        if (Mathf.Abs(envSpacePoint.x) > 340 || Mathf.Abs(envSpacePoint.z) > 340) return;
+        _moveToMarker.gameObject.SetActive(true);
+        _moveToMarker.SetEnvSpacePosition(envSpacePoint);
+    }
+
+    public void ClearGoToMarker()
+    {
+        _moveToMarker.gameObject.SetActive(false);
+    }
+
+    private void ResetTank()
+    {
+        _target = null;
+        ResetAgent();
     }
 }

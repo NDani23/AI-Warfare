@@ -1,9 +1,7 @@
 using UnityEngine;
-using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
-using Unity.VisualScripting;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,25 +18,32 @@ public struct HitInfo
     public Vector3 hitPosition;
     public GameObject? hitGameObject;
 }
-public class HeliAgent : VehicleAgent, ITargetable
+public class HeliAgent : VehicleAgent
 {
-    [SerializeField] private HeliController _heliController;
     [SerializeField] private RayPerceptionSensorComponent3D _leftAimSensor;
     [SerializeField] private RayPerceptionSensorComponent3D _rightAimSensor;
     [SerializeField] private BufferSensorComponent _detectedEnemiesSensor;
     [SerializeField] private BufferSensorComponent _teammateSensor;
+    [SerializeField] private Transform _gridTag;
 
-    private float _maxHealth = 40.0f;
-    public override float MaxHealth => _maxHealth;
+    private HeliController _heliController;
+
     BehaviorParameters m_BehaviorParameters;
-    private float RegenHealthCooldown = 0;
     private Vector3 _mousePosDelta = Vector3.zero;
     private HitInfo _leftGunHitInfo;
     private HitInfo _rightGunHitInfo;
 
+    private float _maxHealth = 40.0f;
+    private int isShooting = 0;
+    public override float MaxHealth => _maxHealth;
 
     public override void Initialize()
     {
+        _agentType = AgentType.Heli;
+        _vehicleController = this.gameObject.GetComponent<HeliController>();
+        _heliController = (HeliController)_vehicleController;
+
+        _health = MaxHealth;
         m_BehaviorParameters = gameObject.GetComponent<BehaviorParameters>();
         _envController = GetComponentInParent<EnvController>();
 
@@ -57,6 +62,7 @@ public class HeliAgent : VehicleAgent, ITargetable
             _team = Team.Yellow;
         }
     }
+
     public override void OnEpisodeBegin()
     {
         ResetAgent();
@@ -73,7 +79,7 @@ public class HeliAgent : VehicleAgent, ITargetable
         sensor.AddObservation(_heliController.getGunOverheatStatus());
 
         //Gameplay related observations
-        sensor.AddObservation(_health / 40.0f);
+        sensor.AddObservation(_health / _maxHealth);
         sensor.AddObservation(_envController.m_ResetTimer / (float)_envController.timeLimit); //remaining time
 
 
@@ -85,10 +91,11 @@ public class HeliAgent : VehicleAgent, ITargetable
             {
                 Vector3 dir = Vector3.Normalize(transform.InverseTransformDirection(agent.transform.localPosition - transform.localPosition));
                 float dist = Vector3.Distance(agent.transform.localPosition, transform.localPosition) / 700.0f;
-                float health = agent.GetComponent<ITargetable>().Health * 0.01f;
+                float health = agent.GetComponent<VehicleAgent>().Health * 0.01f;
 
-                float[] Obs = { dir.x, dir.y, dir.z, dist, health, (int)agent.GetComponent<ITargetable>().AgentType };
+                float[] Obs = { dir.x, dir.y, dir.z, dist, health, 1 };
                 _detectedEnemiesSensor.AppendObservation(Obs);
+
             }
 
             foreach (var agent in _envController.AgentsList)
@@ -107,23 +114,18 @@ public class HeliAgent : VehicleAgent, ITargetable
                 _teammateSensor.AppendObservation(Obs);
             }
 
-
         }
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
         if (_health == 0) return;
-        _heliController.IsShooting = actions.DiscreteActions[0];
+        isShooting = actions.DiscreteActions[0];
 
         _heliController.Pitch = actions.ContinuousActions[0];
         _heliController.Yaw = actions.ContinuousActions[1];
         _heliController.Roll = actions.ContinuousActions[2];
         _heliController.Throttle = actions.ContinuousActions[3];
-
-        //AddReward((Time.fixedDeltaTime / EnvController.timeLimit) * 1.0f);
-
-        //if (transform.position.y <= 100.0f) AddReward(-(5.0f + (100.0f - transform.position.y)) * (Time.fixedDeltaTime / EnvController.timeLimit));
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -149,27 +151,24 @@ public class HeliAgent : VehicleAgent, ITargetable
 
         if (impactRelativeVelocity < 2.0f) return;
 
-        //AddReward(-1.0f);
-
         _health = Mathf.Max(0.0f, _health - impactRelativeVelocity);
         if (_health <= 0)
         {
-            //AddReward(-0.1f);
             setDeadState();
         }
     }
 
     private void FixedUpdate()
     {
-        if (RegenHealthCooldown != 0) RegenHealthCooldown = Mathf.Max(0, RegenHealthCooldown - Time.fixedDeltaTime);
+        if (_regenHealthCooldown != 0) _regenHealthCooldown = Mathf.Max(0, _regenHealthCooldown - Time.fixedDeltaTime);
 
         if (_health == 0) return;
-        if (_health != _maxHealth && RegenHealthCooldown == 0)
+        if (_health != MaxHealth && _regenHealthCooldown == 0)
         {
-            _health = Mathf.Min(_maxHealth, _health + Time.deltaTime * 5.0f);
+            _health = Mathf.Min(MaxHealth, _health + Time.deltaTime * 5.0f);
         }
 
-        if (_heliController.IsShooting == 1)
+        if (isShooting == 1)
         {
             RayPerceptionInput spec = _leftAimSensor.GetRayPerceptionInput();
             RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec, false);
@@ -186,21 +185,22 @@ public class HeliAgent : VehicleAgent, ITargetable
             _heliController.LeftGunHitInfo = _leftGunHitInfo;
             _heliController.RightGunHitInfo = _rightGunHitInfo;
 
-            if (_leftGunHitInfo.hitTag == 0)
+            if(_leftGunHitInfo.hitTag == 0)
             {
                 _envController.EnemyDetected(_leftGunHitInfo.hitGameObject.transform.parent.gameObject, this.Team);
                 _envController.EnemyDetected(this.gameObject, this.Team == Team.Yellow ? Team.Red : Team.Yellow);
-                //AddReward(0.01f);
             }
 
-            //if (_rightGunHitInfo.hitTag == 0)
-            //{
-            //    _envController.EnemyDetected(_rightGunHitInfo.hitGameObject.transform.parent.gameObject, this.Team);
-            //    //AddReward(0.01f);
+            if (_rightGunHitInfo.hitTag == 0)
+            {
+                _envController.EnemyDetected(_rightGunHitInfo.hitGameObject.transform.parent.gameObject, this.Team);
 
-            //}
+            }
 
         }
+
+        _heliController.IsShooting = isShooting;
+        _gridTag.position = new Vector3(transform.position.x, 3.0f, transform.position.z);
     }
 
     public void Update()

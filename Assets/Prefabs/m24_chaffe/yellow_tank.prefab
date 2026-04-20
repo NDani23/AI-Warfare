@@ -89,10 +89,6 @@ PrefabInstance:
       value: RedAgent
       objectReference: {fileID: 0}
     - target: {fileID: 1795333538170643937, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
-      propertyPath: m_ShowGizmos
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1795333538170643937, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: m_DebugColors.Array.size
       value: 6
       objectReference: {fileID: 0}
@@ -192,6 +188,10 @@ PrefabInstance:
       propertyPath: 'm_DetectableTags.Array.data[1]'
       value: RedAgent
       objectReference: {fileID: 0}
+    - target: {fileID: 3264797018920176968, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
     - target: {fileID: 3919269808249996814, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: m_Color.b
       value: 0
@@ -204,6 +204,14 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.8862745
       objectReference: {fileID: 0}
+    - target: {fileID: 4411352311256959212, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 5382089302841173822, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
     - target: {fileID: 6755125427376759154, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: m_TagString
       value: YellowAgent
@@ -212,9 +220,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: YellowAgent
       objectReference: {fileID: 0}
+    - target: {fileID: 7814527802299802244, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8069131851121064974, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: m_TagString
       value: YellowAgent
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308976378044619990, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
+      propertyPath: m_Layer
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 8429521182699806171, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
