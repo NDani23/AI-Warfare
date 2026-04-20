@@ -16,10 +16,12 @@ public class TargetPracticeController : MonoBehaviour
     [SerializeField] private Transform redWallPrefab;
     [SerializeField] private Transform redTankPrefab;
     [SerializeField] private Transform redHeliPrefab;
-    [SerializeField] private Transform yellowTargetTankPrefab;
-    [SerializeField] private Transform yellowTargetWallPrefab;
+    [SerializeField] private Transform yellowTankPrefab;
+    [SerializeField] private Transform yellowWallPrefab;
+    [SerializeField] private Transform yellowHeliPrefab;
     [SerializeField] private CTController m_ControlPoint;
     [SerializeField] private EnvController m_EnvController;
+    [SerializeField] private GameObject GoToMarker;
 
     [SerializeField] private float PracticeAreaWidth;
     [SerializeField] private float PracticeAreaLength;
@@ -28,7 +30,6 @@ public class TargetPracticeController : MonoBehaviour
     [SerializeField] private float TargetHeight;
 
     [SerializeField] private bool UseTargetWall = false;
-
     [SerializeField] private uint RedTargetCount = 1;
     [SerializeField] private uint YellowTargetCount = 1;
 
@@ -43,6 +44,7 @@ public class TargetPracticeController : MonoBehaviour
     [SerializeField] private float TargetHealth;
 
     [SerializeField] private Speed ProgressionSpeed = Speed.Normal;
+
 
     private float CTRearrangeCooldown;
     private static float CTRearrangeInterval = 60.0f;
@@ -75,9 +77,8 @@ public class TargetPracticeController : MonoBehaviour
         m_redTargets = new TargetScript[RedTargetCount];
         for (int i = 0; i < m_redTargets.Length; i++)
         {
-            //Transform newTarget = UseTargetWall ? GameObject.Instantiate(targetWallPrefab, this.transform) : 
-            //           (i < m_redTargets.Length-1) ? GameObject.Instantiate(targetTankPrefab, this.transform) : GameObject.Instantiate(targetHeliPrefab, this.transform);
-            Transform newTarget = GameObject.Instantiate(redTankPrefab, this.transform);
+            Transform newTarget = UseTargetWall ? GameObject.Instantiate(redWallPrefab, this.transform) : 
+                      (i < m_redTargets.Length-1) ? GameObject.Instantiate(redTankPrefab, this.transform) : GameObject.Instantiate(redHeliPrefab, this.transform);
             m_redTargets[i] = newTarget.gameObject.GetComponent<TargetScript>();
             m_redTargets[i].setController(this, Team.Red);
             m_redTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
@@ -86,8 +87,8 @@ public class TargetPracticeController : MonoBehaviour
         m_yellowTargets = new TargetScript[YellowTargetCount];
         for (int i = 0; i < m_yellowTargets.Length; i++)
         {
-            //Transform newFakeTarget = UseTargetWall ? GameObject.Instantiate(yellowTargetWallPrefab, this.transform) : GameObject.Instantiate(yellowTargetWallPrefab, this.transform);
-            Transform newTarget = GameObject.Instantiate(yellowTargetTankPrefab, this.transform);
+            Transform newTarget = UseTargetWall ? GameObject.Instantiate(yellowWallPrefab, this.transform) : 
+                      (i < m_redTargets.Length-1) ? GameObject.Instantiate(yellowTankPrefab, this.transform) : GameObject.Instantiate(yellowHeliPrefab, this.transform);
             m_yellowTargets[i] = newTarget.gameObject.GetComponent<TargetScript>();
             m_yellowTargets[i].setController(this, Team.Yellow);
             m_yellowTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
@@ -121,7 +122,7 @@ public class TargetPracticeController : MonoBehaviour
         if (target.Health == 0)
         {
             target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
-            m_EnvController.AddPointToTeam(target.Team == Team.Red ? Team.Yellow : Team.Red, target.AgentType == AgentType.Tank ? 1 : 2);
+            m_EnvController.AddPointToTeam(target.Team == Team.Red ? Team.Yellow : Team.Red, target.TargetType == TargetType.Tank ? 1 : 2);
         }
     }
 

@@ -14,16 +14,18 @@ public class EnvController : MonoBehaviour
 
     public static int RespawnCooldown = 15;
 
-    public List<VehicleAgent> AgentsList = new List<VehicleAgent>();
+    private List<VehicleAgent> agentsList = new List<VehicleAgent>();
+
+    public List<VehicleAgent> AgentsList => agentsList;
 
     //public SimpleMultiAgentGroup m_RedAgentGroup;
     //public SimpleMultiAgentGroup m_YellowAgentGroup;
 
     public float m_ResetTimer = 5;
 
-    public Dictionary<GameObject,float> m_DetectedRedEnemies;
-    public Dictionary<GameObject, float> m_DetectedYellowEnemies;
-    public Dictionary<VehicleAgent, float> m_DeadAgents;
+    public Dictionary<GameObject,float> m_DetectedRedEnemies = new Dictionary<GameObject, float>();
+    public Dictionary<GameObject, float> m_DetectedYellowEnemies = new Dictionary<GameObject, float>();
+    public Dictionary<VehicleAgent, float> m_DeadAgents = new Dictionary<VehicleAgent, float>();
 
     public float RedTeamPoints = 0.0f;
     public float YellowTeamPoints = 0.0f;
@@ -50,10 +52,7 @@ public class EnvController : MonoBehaviour
     private int winBalance = 0;
     private void Awake()
     {
-        m_DetectedRedEnemies = new Dictionary<GameObject, float>();
-        m_DetectedYellowEnemies = new Dictionary<GameObject, float>();
-        m_DeadAgents = new Dictionary<VehicleAgent, float>();
-        AgentsList = this.GetComponentsInChildren<VehicleAgent>().ToList();
+        agentsList = this.GetComponentsInChildren<VehicleAgent>().ToList();
     }
 
 
@@ -74,16 +73,6 @@ public class EnvController : MonoBehaviour
         //        m_YellowAgentGroup.RegisterAgent((Agent)agent);
         //    }
         //}
-
-        foreach (var agent in AgentsList)
-        {
-            if (agent.AgentType == AgentType.Tank)
-            {
-                agent.gameObject.GetComponent<TankAgent>().SetGoToPoint(new Vector3(Random.Range(-340, 340), 3, Random.Range(-340, 340)));
-            }
-           
-               
-        }
     }
 
     void FixedUpdate()
@@ -104,13 +93,21 @@ public class EnvController : MonoBehaviour
         foreach (var agent in m_DetectedRedEnemies.Keys.ToList())
         {
             m_DetectedRedEnemies[agent] = m_DetectedRedEnemies[agent] - Time.fixedDeltaTime;
-            if(m_DetectedRedEnemies[agent] <= 0.0f) m_DetectedRedEnemies.Remove(agent);
+            if(m_DetectedRedEnemies[agent] <= 0.0f)
+            {
+                agent.GetComponent<ITargetable>()?.setDetectedState(false);
+                m_DetectedRedEnemies.Remove(agent);
+            }
         }
 
         foreach (var agent in m_DetectedYellowEnemies.Keys.ToList())
         {
             m_DetectedYellowEnemies[agent] = m_DetectedYellowEnemies[agent] - Time.fixedDeltaTime;
-            if (m_DetectedYellowEnemies[agent] <= 0.0f) m_DetectedYellowEnemies.Remove(agent);
+            if (m_DetectedYellowEnemies[agent] <= 0.0f)
+            {
+                agent.GetComponent<ITargetable>()?.setDetectedState(false);
+                m_DetectedYellowEnemies.Remove(agent);
+            }
         }
 
         foreach (var agent in m_DeadAgents.Keys.ToList())
@@ -341,7 +338,7 @@ public class EnvController : MonoBehaviour
             AddRewardToTeamMembers(Team.Yellow, winningTeam == Team.Yellow ? 0.5f + timeBonus : -0.5f - timeBonus);
         }
 
-        foreach (var agent in AgentsList)
+        foreach (var agent in agentsList)
         {
             if(TimeIsUp)
                 agent.gameObject.GetComponent<Agent>().EpisodeInterrupted();
@@ -349,6 +346,7 @@ public class EnvController : MonoBehaviour
                 agent.gameObject.GetComponent<Agent>().EndEpisode();
         }
 
+        //GameEnded.Invoke();
         m_ResetTimer = timeLimit;
         m_DetectedRedEnemies.Clear();
         m_DetectedYellowEnemies.Clear();
@@ -357,7 +355,7 @@ public class EnvController : MonoBehaviour
         yellowAgentsOnCT = 0;
         capturing = false;
         ctState = CTState.Neutral;
-        m_ControlPoint.ChangeState(ctState);
+        m_ControlPoint?.ChangeState(ctState);
         RedTeamPoints = 0.0f;
         YellowTeamPoints = 0.0f;
         m_MatchTotalKills = 0;
@@ -429,28 +427,28 @@ public class EnvController : MonoBehaviour
 
     public void EnemyDetected(GameObject target, Team team)
     {
-        target.GetComponent<VehicleAgent>()?.setDetectedState(true);
+        target.GetComponent<ITargetable>()?.setDetectedState(true);
 
         if (team == Team.Yellow)
         {
             if(m_DetectedRedEnemies.ContainsKey(target))
             {
-                m_DetectedRedEnemies[target] = 10.0f;
+                m_DetectedRedEnemies[target] = 15.0f;
             }
             else
             {
-                m_DetectedRedEnemies.TryAdd(target, 10.0f);
+                m_DetectedRedEnemies.TryAdd(target, 15.0f);
             }
         }
         else
         {
             if (m_DetectedYellowEnemies.ContainsKey(target))
             {
-                m_DetectedYellowEnemies[target] = 10.0f;
+                m_DetectedYellowEnemies[target] = 15.0f;
             }
             else
             {
-                m_DetectedYellowEnemies.TryAdd(target, 10.0f);
+                m_DetectedYellowEnemies.TryAdd(target, 15.0f);
             }
         }
     }
@@ -480,7 +478,7 @@ public class EnvController : MonoBehaviour
 
     private void AddRewardToTeamMembers(Team team, float reward)
     {
-        foreach(var agent in AgentsList)
+        foreach(var agent in agentsList)
         {
             if(agent.Team == team)
             {

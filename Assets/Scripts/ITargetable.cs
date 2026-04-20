@@ -8,7 +8,9 @@ using System.Threading.Tasks;
 public interface ITargetable
 {
     float Health { get; }
-    AgentType AgentType { get; }
+    bool Detected {get; }
     public void Hit(int damage);
+
+    public void setDetectedState(bool detected);
 }
 
