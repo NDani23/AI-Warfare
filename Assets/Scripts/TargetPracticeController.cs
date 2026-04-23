@@ -44,13 +44,16 @@ public class TargetPracticeController : MonoBehaviour
     [SerializeField] private float TargetHealth;
 
     [SerializeField] private Speed ProgressionSpeed = Speed.Normal;
-
+    [SerializeField] private bool PlaceObstacles = false;
+    [SerializeField] private int ObstacleCount = 10;
+    [SerializeField] private List<GameObject> ObstaclePrefabs = new List<GameObject>();
 
     private float CTRearrangeCooldown;
     private static float CTRearrangeInterval = 60.0f;
 
     private TargetScript[] m_redTargets;
     private TargetScript[] m_yellowTargets;
+    private GameObject[] m_obstacles;
 
     private int hitCount = 0;
     private int captureCount = 0;
@@ -62,6 +65,9 @@ public class TargetPracticeController : MonoBehaviour
         if(!Active) return;
 
         m_EnvController.GameEnded.AddListener(RearrangeTargets);
+
+        if(PlaceObstacles)
+            m_EnvController.GameEnded.AddListener(RepositionObstacles);
 
         if (AutomaticProgression)
         {
@@ -94,8 +100,18 @@ public class TargetPracticeController : MonoBehaviour
             m_yellowTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
         }
 
-        //RearrangeCT();
-        //CTRearrangeCooldown = CTRearrangeInterval;
+        if (PlaceObstacles && ObstaclePrefabs.Count > 0)
+        {
+            m_obstacles = new GameObject[ObstacleCount];
+            for (int i = 0; i < ObstacleCount; i++)
+            {
+                m_obstacles[i] = GameObject.Instantiate(ObstaclePrefabs[i % ObstaclePrefabs.Count], this.transform);
+            }
+        }
+
+        if(PlaceObstacles)
+            RepositionObstacles();
+
     }
 
     // Update is called once per frame
@@ -255,5 +271,15 @@ public class TargetPracticeController : MonoBehaviour
     public float GetTargetHealth()
     {
         return TargetHealth;
+    }
+
+    private void RepositionObstacles()
+    {
+        foreach (GameObject obstacle in m_obstacles)
+        {
+            float xPos = Random.Range(-PracticeAreaWidth / 2, PracticeAreaWidth / 2);
+            float zPos = Random.Range(-PracticeAreaLength / 2, PracticeAreaLength / 2);
+            obstacle.transform.localPosition =  new Vector3(xPos, 0, zPos);
+        }
     }
 }
