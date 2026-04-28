@@ -43,11 +43,22 @@ public class bullet_script : MonoBehaviour
                 envController.EnemyDetected(_parent.gameObject, Team.Yellow);
             else
                 envController.EnemyDetected(_parent.gameObject, Team.Red);
-            //_parent.AddReward(0.1f);
-            collision.gameObject.GetComponent<ITargetable>().Hit(_damage);
-            //if(collision.gameObject.GetComponent<TankAgent>().getHealth() == 0)
-            //    _parent.AddReward(0.3f);
 
+            float reward = collision.collider.gameObject.transform.parent.gameObject == _parent.Target ? 1.0f : 0.1f;
+            _parent.AddReward(reward);
+
+            collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Hit(_damage);
+
+
+            if(reward == 1.0f)
+            {
+                Debug.Log("Hit marked!");
+                _parent.SetNewTarget();
+            }
+            else
+            {
+                Debug.Log("Hit unmarked!");
+            }
         }
        else if((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Yellow) ||
                (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Red))
@@ -57,12 +68,14 @@ public class bullet_script : MonoBehaviour
             //    Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
             //    emitter.position = collision.transform.position;
             //}
-            //_parent.AddReward(-0.1f);
-            collision.gameObject.GetComponent<ITargetable>().Hit(_damage);
+            _parent.AddReward(-2.0f);
+            Debug.Log("Friendly fire!");
+            //Debug.Log("Reward: " + -2.0f);
+            collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Hit(_damage);
         }
        else
        {
-           //_parent.AddReward(-0.0005f);
+           _parent.AddReward(-0.05f);
        }
 
         this.gameObject.SetActive(false);

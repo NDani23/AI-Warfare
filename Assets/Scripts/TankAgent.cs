@@ -27,6 +27,7 @@ public class TankAgent : VehicleAgent, ITargetable
     public UnityEvent DiedEvent;
     public UnityEvent RespawnEvent;
     private GameObject _target;
+    public GameObject Target => _target;
 
     public override void Initialize()
     {
@@ -99,7 +100,7 @@ public class TankAgent : VehicleAgent, ITargetable
     {
         if (collision.gameObject.tag != "Bullet")
         {
-            //AddReward(-0.01f);
+            //AddReward(-1.0f);
         }
     }
 
@@ -119,6 +120,9 @@ public class TankAgent : VehicleAgent, ITargetable
         {
             _envController.EnemyDetected(obs.RayOutputs[0].HitGameObject.transform.parent.gameObject, this._team);
         }
+
+        //Existential penalty
+        AddReward(-(Time.fixedDeltaTime /_envController.timeLimit * 2.5f));
     }
 
     public float getCooldown()
@@ -147,6 +151,19 @@ public class TankAgent : VehicleAgent, ITargetable
     private void ResetTank()
     {
         _target = null;
+        SetNewTarget();
         ResetAgent();
+    }
+
+    //Only for training
+    public void SetNewTarget()
+    {
+        TargetPracticeController targetPracticeController = GetComponentInParent<TargetPracticeController>();
+        if (targetPracticeController == null) return;
+
+        var possibleTargets = _team == Team.Red ? targetPracticeController.m_yellowTargets : targetPracticeController.m_redTargets;
+
+        _target = possibleTargets[Random.Range(0, possibleTargets.Length)].gameObject;
+        _target.GetComponent<ITargetable>()?.setDetectedState(true);
     }
 }

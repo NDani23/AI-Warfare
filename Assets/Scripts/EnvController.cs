@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 public class EnvController : MonoBehaviour
 {
-    [Tooltip("Time limit (seconds)")] public int timeLimit = 90;
+    [Tooltip("Time limit (seconds)")] public int timeLimit = 60;
 
     [SerializeField] private CTController m_ControlPoint;
 
@@ -323,30 +323,37 @@ public class EnvController : MonoBehaviour
 
     public void ResetEnv(Team? winningTeam, bool TimeIsUp = false)
     {
-        WriteMatchKillStats();
+        //WriteMatchKillStats();
 
-        if (winningTeam is null)
-        {
-            AddRewardToTeamMembers(Team.Red, 0.0f);
-            AddRewardToTeamMembers(Team.Yellow, 0.0f);
-        }
-        else
-        {
-            //float pointDiff = winningTeam == Team.Yellow ? YellowTeamPoints - RedTeamPoints : RedTeamPoints - YellowTeamPoints;
-            float timeBonus = Mathf.Clamp01(m_ResetTimer / ((float)timeLimit / 2.0f));
-            AddRewardToTeamMembers(Team.Red, winningTeam == Team.Red ? 0.5f + timeBonus : -0.5f - timeBonus);
-            AddRewardToTeamMembers(Team.Yellow, winningTeam == Team.Yellow ? 0.5f + timeBonus : -0.5f - timeBonus);
-        }
+        // if (winningTeam is null)
+        // {
+        //     AddRewardToTeamMembers(Team.Red, 0.0f);
+        //     AddRewardToTeamMembers(Team.Yellow, 0.0f);
+        // }
+        // else
+        // {
+        //     //float pointDiff = winningTeam == Team.Yellow ? YellowTeamPoints - RedTeamPoints : RedTeamPoints - YellowTeamPoints;
+        //     float timeBonus = Mathf.Clamp01(m_ResetTimer / ((float)timeLimit / 2.0f));
+        //     AddRewardToTeamMembers(Team.Red, winningTeam == Team.Red ? 0.5f + timeBonus : -0.5f - timeBonus);
+        //     AddRewardToTeamMembers(Team.Yellow, winningTeam == Team.Yellow ? 0.5f + timeBonus : -0.5f - timeBonus);
+        // }
 
+        // foreach (var agent in agentsList)
+        // {
+        //     if(TimeIsUp)
+        //         agent.gameObject.GetComponent<Agent>().EpisodeInterrupted();
+        //     else
+        //         agent.gameObject.GetComponent<Agent>().EndEpisode();
+        // }
+
+        
         foreach (var agent in agentsList)
         {
-            if(TimeIsUp)
-                agent.gameObject.GetComponent<Agent>().EpisodeInterrupted();
-            else
-                agent.gameObject.GetComponent<Agent>().EndEpisode();
+            agent.gameObject.GetComponent<Agent>().EndEpisode();
         }
 
-        //GameEnded.Invoke();
+
+        GameEnded.Invoke();
         m_ResetTimer = timeLimit;
         m_DetectedRedEnemies.Clear();
         m_DetectedYellowEnemies.Clear();

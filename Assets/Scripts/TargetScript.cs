@@ -80,7 +80,7 @@ public class TargetScript : MonoBehaviour, ITargetable
 
         if(targetType is TargetType.Tank) canFloat = false;
 
-        float newHeight = canFloat ? Random.Range(height / 2, 100.0f) : 2.6f;
+        float newHeight = canFloat ? Random.Range(0.0f, 50.0f) : 2.6f;
 
         if (targetType is TargetType.Wall)
         {

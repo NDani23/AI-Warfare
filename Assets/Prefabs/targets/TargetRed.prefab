@@ -356,7 +356,6 @@ GameObject:
   - component: {fileID: 715787399913756562}
   - component: {fileID: 394407883562202709}
   - component: {fileID: 2767890443254131511}
-  - component: {fileID: 2588925699280142152}
   m_Layer: 15
   m_Name: TargetRed
   m_TagString: RedAgent
@@ -449,30 +448,3 @@ MonoBehaviour:
   MainMaterial: {fileID: 2100000, guid: 3fa8773277c0e7e44a87ae2d0f525889, type: 2}
   _gridTag: {fileID: 5008843091380810525}
   targetType: 0
---- !u!54 &2588925699280142152
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8836681430506879166}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0

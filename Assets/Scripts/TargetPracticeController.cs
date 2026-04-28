@@ -51,8 +51,8 @@ public class TargetPracticeController : MonoBehaviour
     private float CTRearrangeCooldown;
     private static float CTRearrangeInterval = 60.0f;
 
-    private TargetScript[] m_redTargets;
-    private TargetScript[] m_yellowTargets;
+    public TargetScript[] m_redTargets;
+    public TargetScript[] m_yellowTargets;
     private GameObject[] m_obstacles;
 
     private int hitCount = 0;
@@ -64,7 +64,7 @@ public class TargetPracticeController : MonoBehaviour
     {
         if(!Active) return;
 
-        m_EnvController.GameEnded.AddListener(RearrangeTargets);
+       // m_EnvController.GameEnded.AddListener(RearrangeTargets);
 
         if(PlaceObstacles)
             m_EnvController.GameEnded.AddListener(RepositionObstacles);
@@ -138,7 +138,7 @@ public class TargetPracticeController : MonoBehaviour
         if (target.Health == 0)
         {
             target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
-            m_EnvController.AddPointToTeam(target.Team == Team.Red ? Team.Yellow : Team.Red, target.TargetType == TargetType.Tank ? 1 : 2);
+            //m_EnvController.AddPointToTeam(target.Team == Team.Red ? Team.Yellow : Team.Red, target.TargetType == TargetType.Tank ? 1 : 2);
         }
     }
 
@@ -261,6 +261,7 @@ public class TargetPracticeController : MonoBehaviour
 
     public void RearrangeTargets()
     {
+        Debug.Log("REARRANGE");
         foreach (TargetScript target in m_redTargets) 
             target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
 
@@ -275,11 +276,47 @@ public class TargetPracticeController : MonoBehaviour
 
     private void RepositionObstacles()
     {
+        Physics.SyncTransforms();
+
+        int layersToCheck = ~LayerMask.GetMask("Ground");
+
         foreach (GameObject obstacle in m_obstacles)
         {
-            float xPos = Random.Range(-PracticeAreaWidth / 2, PracticeAreaWidth / 2);
-            float zPos = Random.Range(-PracticeAreaLength / 2, PracticeAreaLength / 2);
-            obstacle.transform.localPosition =  new Vector3(xPos, 0, zPos);
+            for(int i = 0; i < 100; i++)
+            {
+                float xPos = Random.Range(-PracticeAreaWidth / 2, PracticeAreaWidth / 2);
+                float zPos = Random.Range(-PracticeAreaLength / 2, PracticeAreaLength / 2);
+                Vector3 localCandidatePos = new Vector3(xPos, 0, zPos);
+                Vector3 worldCandidatePos = obstacle.transform.parent.TransformPoint(localCandidatePos);
+
+                if(!Physics.CheckSphere(worldCandidatePos, GetComplexPrefabRadius(obstacle), layersToCheck))
+                {
+                    obstacle.transform.localPosition =  localCandidatePos;
+                    obstacle.transform.localRotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
+                    break;
+                }
+            }
         }
+    }
+
+    private float GetComplexPrefabRadius(GameObject prefab)
+    {
+        Collider[] allColliders = prefab.GetComponentsInChildren<Collider>();
+
+        if (allColliders.Length == 0)
+        {
+            return 0f;
+        }
+
+        Bounds totalBounds = allColliders[0].bounds;
+
+        for (int i = 1; i < allColliders.Length; i++)
+        {
+            totalBounds.Encapsulate(allColliders[i].bounds);
+        }
+
+        float maxRadius = Mathf.Max(totalBounds.extents.x, totalBounds.extents.z);
+
+        return maxRadius;
     }
 }

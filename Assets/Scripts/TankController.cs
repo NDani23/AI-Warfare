@@ -87,19 +87,29 @@ public class TankController : MonoBehaviour, IVehicleController
 
         coolDownTime = 3.0f;
 
-        if (teamID == (int)Team.Red)
-        {
-            transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-            transform.localPosition = new Vector3((200 - 100 * memberID) + Random.Range(-40.0f, 40.0f), 3f, -300);
-        }
-        else
-        {
+        // if (teamID == (int)Team.Red)
+        // {
+        //     transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+        //     transform.localPosition = new Vector3((200 - 100 * memberID) + Random.Range(-40.0f, 40.0f), 3f, -300);
+        // }
+        // else
+        // {
 
-            transform.localRotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
-            transform.localPosition = new Vector3((200 - 100 * memberID) + Random.Range(-40.0f, 40.0f), 3f, 300);
+        //     transform.localRotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
+        //     transform.localPosition = new Vector3((200 - 100 * memberID) + Random.Range(-40.0f, 40.0f), 3f, 300);
+        // }
+
+        Physics.SyncTransforms();
+        Vector3 localCandidatePos = new Vector3(Random.Range(-300, 300), 3.0f, Random.Range(-300, 300));
+        for(int i = 0; i < 100; i++)
+        {
+            if(!Physics.CheckSphere(this.transform.parent.TransformPoint(localCandidatePos), 10.0f, ~LayerMask.GetMask("Ground")))
+                break;
+            localCandidatePos = new Vector3(Random.Range(-300, 300), 3.0f, Random.Range(-300, 300));
         }
 
-        //transform.localPosition = new Vector3(Random.Range(-300.0f, 300.0f), 3f, Random.Range(-300.0f, 300.0f));
+        transform.localRotation = Quaternion.Euler(new Vector3(0f, Random.Range(0.0f, 360.0f), 0f));
+        transform.localPosition = localCandidatePos;
 
         tankCannon.localRotation = Quaternion.Euler(0, 0, 0);
         tankTower.localRotation = Quaternion.Euler(0, 0, 0);
