@@ -6,9 +6,9 @@ public class HeliHUD : MonoBehaviour, IVehicleUI
     [SerializeField] private UnityEngine.UI.Image HealthForeground;
     [SerializeField] private UnityEngine.UI.Image CooldownForeground;
 
-    private HeliAgent _agent;
+    private HeliManager _agent;
 
-    public HeliAgent Agent
+    public HeliManager Agent
     {
         get => _agent;
         set => _agent = value;

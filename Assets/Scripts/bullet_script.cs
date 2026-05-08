@@ -3,9 +3,10 @@ using UnityEngine;
 
 public class bullet_script : MonoBehaviour
 {
-    private TankAgent _parent;
+    private TankManager _parent;
     private int _damage = 40;
     private EnvController envController;
+    private TargetPracticeController _targetPracticeController;
     private bool destroyed = false;
     [SerializeField] private Transform SparkEmitterPrefab;
 
@@ -13,9 +14,10 @@ public class bullet_script : MonoBehaviour
     {
         envController = GetComponentInParent<EnvController>();
     }
-    public void SetShooter(TankAgent parent)
+    public void SetShooter(TankManager parent)
     {
         _parent = parent;
+        _targetPracticeController = _parent != null ? _parent.EnvController.GetComponent<TargetPracticeController>() : null;
     }
 
     public void Shoot(Vector3 pos, Quaternion rot, Vector3 dir, float force)
@@ -34,8 +36,8 @@ public class bullet_script : MonoBehaviour
         destroyed = true;
 
         if ((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Red) ||
-          (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Yellow))
-       {
+            (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Yellow))
+        {
             //Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
             //emitter.position = collision.transform.position;
 
@@ -44,39 +46,44 @@ public class bullet_script : MonoBehaviour
             else
                 envController.EnemyDetected(_parent.gameObject, Team.Red);
 
-            float reward = collision.collider.gameObject.transform.parent.gameObject == _parent.Target ? 1.0f : 0.1f;
-            _parent.AddReward(reward);
+            bool isTargetHit = collision.collider.gameObject.transform.parent.gameObject == _parent.GetTarget() ? true : false;
 
             collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Hit(_damage);
 
-
-            if(reward == 1.0f)
+            if(isTargetHit)
             {
                 Debug.Log("Hit marked!");
-                _parent.SetNewTarget();
+                _parent.AddReward(1.0f);
+                _parent.AddRewardToShooter(0.5f);
+                _targetPracticeController?.HandleMarkedTargetHit(_parent);
+            }
+            else if(_parent.GetTarget() == null)
+            {
+                 _parent.AddRewardToShooter(0.1f);
+                Debug.Log("Hit unmarked!");
             }
             else
             {
+                _parent.AddRewardToShooter(0.05f);
                 Debug.Log("Hit unmarked!");
             }
         }
-       else if((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Yellow) ||
+        else if((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Yellow) ||
                (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Red))
-       {
+        {
             //if (_parent.GetComponent<BehaviorParameters>().BehaviorType != BehaviorType.Default)
             //{
             //    Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
             //    emitter.position = collision.transform.position;
             //}
-            _parent.AddReward(-2.0f);
+            _parent.AddRewardToShooter(-0.5f);
             Debug.Log("Friendly fire!");
-            //Debug.Log("Reward: " + -2.0f);
             collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Hit(_damage);
         }
-       else
-       {
-           _parent.AddReward(-0.05f);
-       }
+        else
+        {
+           _parent.AddRewardToShooter(-0.01f);
+        }
 
         this.gameObject.SetActive(false);
     }

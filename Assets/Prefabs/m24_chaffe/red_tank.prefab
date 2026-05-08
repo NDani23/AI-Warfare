@@ -162,7 +162,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1795333538170643937, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: 'm_DetectableTags.Array.data[3]'
-      value: MoveToTarget
+      value: CommandTarget
       objectReference: {fileID: 0}
     - target: {fileID: 1795333538170643937, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: 'm_DetectableTags.Array.data[4]'

@@ -21267,10 +21267,10 @@ PrefabInstance:
       addedObject: {fileID: 2640464162299084759}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4841696427924709451}
+      addedObject: {fileID: 4786721448616941797}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3611134794975383717}
+      addedObject: {fileID: 4841696427924709451}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9084466223548633011}
@@ -21340,22 +21340,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 708a5bbc841a5e34cb122df81b273198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agentParameters:
-    maxStep: 0
-  hasUpgradedFromAgentParameters: 1
-  MaxStep: 0
   HitBoxMeshes: {fileID: 2452752077751520955}
   MinimapIcon: {fileID: 5171235038622524106}
   SelectedIcon: {fileID: 500901212058286793}
   DeadStateIcon: {fileID: 7863204569985114219}
   GameCameraAnchor: {fileID: 1426322841439908022}
   VehicleUI: {fileID: 0}
-  memberID: 1
+  memberID: 0
   _leftAimSensor: {fileID: 4713395377111143109}
   _rightAimSensor: {fileID: 3998644805695371758}
   _detectedEnemiesSensor: {fileID: 6618767515980235466}
   _teammateSensor: {fileID: 4436334009465684431}
   _gridTag: {fileID: 6440548496584004991}
+--- !u!114 &4786721448616941797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6903705954778870765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4888feb707b36b445a9dbcd5ac5ee0cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4841696427924709451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21387,21 +21395,6 @@ MonoBehaviour:
   m_UseChildActuators: 1
   m_DeterministicInference: 1
   m_ObservableAttributeHandling: 0
---- !u!114 &3611134794975383717
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6903705954778870765}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DecisionPeriod: 5
-  DecisionStep: 0
-  TakeActionsBetweenDecisions: 1
 --- !u!54 &9084466223548633011
 Rigidbody:
   m_ObjectHideFlags: 0

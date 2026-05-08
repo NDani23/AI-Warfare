@@ -1,4 +1,3 @@
-using Unity.MLAgents;
 using UnityEngine;
 
 public enum Team
@@ -7,13 +6,13 @@ public enum Team
     Yellow = 1
 }
 
-public enum AgentType
+public enum VehicleType
 {
     Tank = 0,
     Heli = 1
 }
 
-public abstract class VehicleAgent : Agent
+public abstract class VehicleManager : MonoBehaviour
 {
     [SerializeField] protected GameObject HitBoxMeshes;
     [SerializeField] protected GameObject MinimapIcon;
@@ -40,8 +39,8 @@ public abstract class VehicleAgent : Agent
 
     protected float _regenHealthCooldown = 0;
 
-    protected AgentType _agentType = AgentType.Tank;
-    public AgentType AgentType => _agentType;
+    protected VehicleType _vehicleType = VehicleType.Tank;
+    public VehicleType VehicleType => _vehicleType;
 
     protected EnvController _envController;
     public EnvController EnvController => _envController;
@@ -59,7 +58,10 @@ public abstract class VehicleAgent : Agent
     protected bool _isPlayerControlled = false;
     public bool IsPlayerControlled => _isPlayerControlled;
 
-    public void SetPlayerControl(bool control)
+    public abstract void AddReward(float reward);
+    public abstract void EndEpisode();
+
+    public virtual void SetPlayerControl(bool control)
     {
         _isPlayerControlled = control;
         var bp = GetComponent<Unity.MLAgents.Policies.BehaviorParameters>();
@@ -97,7 +99,7 @@ public abstract class VehicleAgent : Agent
         }
     }
 
-    public void ResetAgent()
+    public void ResetVehicle()
     {
         _health = MaxHealth;
         _vehicleController.setStartingState((int)_team, memberID);
@@ -107,7 +109,7 @@ public abstract class VehicleAgent : Agent
         if (_inCT)
         {
             _inCT = false;
-            _envController.AgentExitedCT(_team);
+            _envController.VehicleExitedCT(_team);
         }
         UpdateIconsVisibility();
     }
@@ -125,9 +127,9 @@ public abstract class VehicleAgent : Agent
         if (_inCT)
         {
             _inCT = false;
-            _envController.AgentExitedCT(_team);
+            _envController.VehicleExitedCT(_team);
         }
-        _envController.AgentDied(this);
+        _envController.VehicleDied(this);
         _health = 0;
         gameObject.tag = "Untagged";
         UpdateIconsVisibility();

@@ -10,6 +10,12 @@ enum Speed
     Fast
 }
 
+enum TrainingCommandMode
+{
+    GoTo = 0,
+    KillTarget = 1
+}
+
 public class TargetPracticeController : MonoBehaviour
 {
     [SerializeField] private bool Active;
@@ -28,6 +34,7 @@ public class TargetPracticeController : MonoBehaviour
 
     [SerializeField] private float TargetWidth;
     [SerializeField] private float TargetHeight;
+    [SerializeField] private TrainingCommandMode CommandToTrain = TrainingCommandMode.KillTarget;
 
     [SerializeField] private bool UseTargetWall = false;
     [SerializeField] private uint RedTargetCount = 1;
@@ -58,11 +65,24 @@ public class TargetPracticeController : MonoBehaviour
     private int hitCount = 0;
     private int captureCount = 0;
 
-    private VehicleAgent player;
+    private VehicleManager player;
+
+    private GoToTrainerController _goToTrainerController;
+    private TrainingCommandMode _currentCommandMode;
 
     void Start()
     {
         if(!Active) return;
+
+        if (GoToMarker != null)
+        {
+            _goToTrainerController = GoToMarker.GetComponent<GoToTrainerController>();
+        }
+
+        if (m_EnvController != null)
+        {
+            m_EnvController.GameEnded.AddListener(HandleEpisodeEnded);
+        }
 
        // m_EnvController.GameEnded.AddListener(RearrangeTargets);
 
@@ -79,6 +99,8 @@ public class TargetPracticeController : MonoBehaviour
             TargetHeight = 50;
             TargetWidth = 120;
         }
+
+        _currentCommandMode = CommandToTrain;
 
         m_redTargets = new TargetScript[RedTargetCount];
         for (int i = 0; i < m_redTargets.Length; i++)
@@ -112,6 +134,8 @@ public class TargetPracticeController : MonoBehaviour
         if(PlaceObstacles)
             RepositionObstacles();
 
+        ApplyCommandsToAllTanks();
+
     }
 
     // Update is called once per frame
@@ -140,6 +164,93 @@ public class TargetPracticeController : MonoBehaviour
             target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
             //m_EnvController.AddPointToTeam(target.Team == Team.Red ? Team.Yellow : Team.Red, target.TargetType == TargetType.Tank ? 1 : 2);
         }
+    }
+
+    public void HandleGoToReached(TankManager tank)
+    {
+        if (!Active || tank == null)
+            return;
+
+        if (_currentCommandMode != TrainingCommandMode.GoTo)
+            return;
+
+        Debug.Log("Go-to point reached!");
+        tank.AddReward(1.0f);
+        AssignCommandForTank(tank);
+    }
+
+    public void HandleMarkedTargetHit(TankManager tank)
+    {
+        if (!Active || tank == null)
+            return;
+
+        if (_currentCommandMode != TrainingCommandMode.KillTarget)
+            return;
+
+        AssignCommandForTank(tank);
+    }
+
+    public void AssignCommandForTank(TankManager tank)
+    {
+        if (!Active || tank == null)
+            return;
+
+        if (_currentCommandMode == TrainingCommandMode.GoTo)
+        {
+            Vector3 localPos = GetRandomGoToLocalPosition();
+            tank.SetGoToPoint(localPos);
+            _goToTrainerController?.SetGoToLocalPosition(localPos);
+        }
+        else
+        {
+            TargetScript target = GetRandomTargetForTeam(tank.Team);
+            if (target == null)
+                return;
+
+            target.GetComponent<ITargetable>()?.setDetectedState(true);
+            tank.SetTarget(target.gameObject);
+            _goToTrainerController?.SetFollowTarget(target.transform);
+        }
+    }
+
+    private void ApplyCommandsToAllTanks()
+    {
+        if (!Active || m_EnvController == null)
+            return;
+
+        foreach (VehicleManager agent in m_EnvController.VehicleList)
+        {
+            if (agent.VehicleType != VehicleType.Tank)
+                continue;
+
+            AssignCommandForTank((TankManager)agent);
+        }
+    }
+
+    private void HandleEpisodeEnded()
+    {
+        if (!Active)
+            return;
+
+        //_currentCommandMode = _currentCommandMode == TrainingCommandMode.GoTo ? TrainingCommandMode.KillTarget : TrainingCommandMode.GoTo;
+        ApplyCommandsToAllTanks();
+    }
+
+    private Vector3 GetRandomGoToLocalPosition()
+    {
+        return new Vector3(
+            Random.Range(-PracticeAreaWidth / 2, PracticeAreaWidth / 2),
+            3.0f,
+            Random.Range(-PracticeAreaLength / 2, PracticeAreaLength / 2));
+    }
+
+    private TargetScript GetRandomTargetForTeam(Team team)
+    {
+        TargetScript[] targets = team == Team.Red ? m_yellowTargets : m_redTargets;
+        if (targets == null || targets.Length == 0)
+            return null;
+
+        return targets[Random.Range(0, targets.Length)];
     }
 
     //private void HandleProgression()

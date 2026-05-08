@@ -15,8 +15,8 @@ public class HeliObsProcesser : MonoBehaviour
     private EnvController playEnv;
     private TargetPracticeController _targetPracticeController;
 
-    private List<VehicleAgent> Enemies = new List<VehicleAgent>();
-    private List<VehicleAgent> Friendlies = new List<VehicleAgent>();
+    private List<VehicleManager> Enemies = new List<VehicleManager>();
+    private List<VehicleManager> Friendlies = new List<VehicleManager>();
 
 
 

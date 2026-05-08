@@ -27,7 +27,7 @@ public class TankController : MonoBehaviour, IVehicleController
 
     [SerializeField] private Transform bulletPrefab;
 
-    private TankAgent tankAgent;
+    private TankManager tankAgent;
 
     public float motorTorque = 100f;
     public float breakTorque = 100f;
@@ -50,7 +50,7 @@ public class TankController : MonoBehaviour, IVehicleController
 
     private void Start()
     {
-        tankAgent = GetComponent<TankAgent>();
+        tankAgent = GetComponent<TankManager>();
         _rigidbody.centerOfMass = centerOfMass.localPosition;
         towerTargetPosition = tankTower.position + tankTower.forward;
 

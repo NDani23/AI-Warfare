@@ -2,101 +2,91 @@ using UnityEngine;
 
 public class GoToTrainerController : MonoBehaviour
 {
-    private EnvController _envController;
-
-    private float _rearrangeTimer = 120.0f;
-    private float _stayCountDown = 5.0f;
-
-    private bool _isAgentInTarget = false;
+    private TargetPracticeController _targetPracticeController;
+    private Transform _followTarget;
+    private Vector3 _localTargetPosition;
+    private TankManager _currentTank;
+    private float _timeInZone = 0.0f;
+    private bool _isInZone = false;
 
     void Awake()
     {
-        _envController = GetComponentInParent<EnvController>();
-    }
-    void Start()
-    {
-        Rearrange();
-    }
-
-    void Rearrange()
-    {
-        Vector3 localCandidatePos = new Vector3(Random.Range(-300, 300), 3.0f, Random.Range(-300, 300));
-
-        // for(int i = 0; i < 100; i++)
-        // {
-        //     if(!Physics.CheckSphere(this.transform.parent.TransformPoint(localCandidatePos), 10.0f, ~LayerMask.GetMask("Ground")))
-        //     {
-        //         break;
-        //     }
-        //     localCandidatePos = new Vector3(Random.Range(-300, 300), 3.0f, Random.Range(-300, 300));
-        // }
-
-        this.transform.localPosition = localCandidatePos;
-
-        foreach (VehicleAgent agent in _envController.AgentsList)
-        {
-            if(agent.AgentType == AgentType.Tank)
-            {
-                ((TankAgent) agent).SetGoToPoint(this.transform.localPosition);
-            }
-        }
-
-        // _stayCountDown = 5.0f;
-        // _isAgentInTarget = false;
-
-        _rearrangeTimer = 120.0f;
+        _targetPracticeController = GetComponentInParent<TargetPracticeController>();
     }
 
     void Update()
     {
-        _rearrangeTimer -= Time.deltaTime;
-        if(_rearrangeTimer < 0.0f)
-            Rearrange();
+        if (_followTarget != null)
+        {
+            Vector3 followPos = _followTarget.position;
+            followPos.y = 3.0f;
+            transform.position = followPos;
 
-        // if(_isAgentInTarget)
-        // {
-        //     _stayCountDown -= Time.deltaTime;
-        //     if(_stayCountDown <= 0.0f)
-        //     {
-        //         // Debug.Log("Agent stayed in target for 5 seconds, rearranging...");
-        //         foreach (VehicleAgent agent in _envController.AgentsList)
-        //         {
-        //             if(agent.AgentType == AgentType.Tank)
-        //             {
-        //                 ((TankAgent) agent).AddReward(5.0f);
-        //             }
-        //         }
-        //         Debug.Log("Target reached!");
-        //         Rearrange();
-        //     }
-        // }
+            _isInZone = false;
+            _timeInZone = 0.0f;
+        }
+        else
+        {
+            Vector3 localPos = _localTargetPosition;
+            localPos.y = 3.0f;
+            transform.localPosition = localPos;
+
+            if (_isInZone && _currentTank != null)
+            {
+                _timeInZone += Time.deltaTime;
+                if (_timeInZone >= 5.0f)
+                {
+                    _timeInZone = 0.0f;
+                    _isInZone = false;
+                    _targetPracticeController?.HandleGoToReached(_currentTank);
+                }
+            }
+        }
+    }
+
+    public void SetGoToLocalPosition(Vector3 localPosition)
+    {
+        _followTarget = null;
+        _localTargetPosition = localPosition;
+    }
+
+    public void SetFollowTarget(Transform target)
+    {
+        _followTarget = target;
+        if (_followTarget != null && transform.parent != null)
+        {
+            _localTargetPosition = transform.parent.InverseTransformPoint(_followTarget.position);
+        }
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == "RedAgent" || other.gameObject.tag == "YellowAgent")
-        {
-            if(other.transform.parent.GetComponent<VehicleAgent>() == null)
-                return;
-            
-            //_isAgentInTarget = true;
+        if (_targetPracticeController == null || _followTarget != null)
+            return;
 
-            other.transform.parent.GetComponent<VehicleAgent>()?.AddReward(5.0f);
-            Debug.Log("Target reached!");
-            Rearrange();
-        }
+        if (other.gameObject.tag != "RedAgent" && other.gameObject.tag != "YellowAgent")
+            return;
+
+        TankManager tank = other.transform.parent.GetComponent<TankManager>();
+        if (tank == null)
+            return;
+
+        //_targetPracticeController?.HandleGoToReached(tank);
+
+        _currentTank = tank;
+        _isInZone = true;
+        _timeInZone = 0.0f;
     }
 
-    // void OnTriggerExit(Collider other)
-    // {
-    //     if(other.gameObject.tag == "RedAgent" || other.gameObject.tag == "YellowAgent")
-    //     {
-    //         if(other.transform.parent.GetComponent<VehicleAgent>() == null)
-    //             return;
-            
-    //         _isAgentInTarget = false;
-    //         _stayCountDown = 5.0f;
-    //     }
-    // }
+    void OnTriggerExit(Collider other)
+    {
+        if (_followTarget != null)
+            return;
 
+        if (other.transform.parent.GetComponent<TankManager>() == _currentTank)
+        {
+            _isInZone = false;
+            _timeInZone = 0.0f;
+        }
+    }
 }

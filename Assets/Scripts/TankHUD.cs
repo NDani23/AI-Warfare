@@ -9,23 +9,23 @@ public class TankHUD : MonoBehaviour, IVehicleUI
     [SerializeField] private UnityEngine.UI.Text HealthText;
     [SerializeField] private UnityEngine.UI.Image HealthForeground;
 
-    private TankAgent _agent;
+    private TankManager _vehicle;
 
-    public TankAgent Agent
+    public TankManager vehicle
     {
-        get => _agent;
-        set => _agent = value;
+        get => _vehicle;
+        set => _vehicle = value;
     }
 
     public void Update()
     {
-        if (_agent != null)
+        if (_vehicle != null)
         {
-            int playerHealth = (int)_agent.Health;
+            int playerHealth = (int)_vehicle.Health;
             HealthText.text = playerHealth.ToString() + "%";
-            if (HealthForeground != null) HealthForeground.fillAmount = _agent.Health / _agent.MaxHealth;
-            CooldownForeground.fillAmount = _agent.Health <= 0.0f ? 1.0f : _agent.gameObject.GetComponent<TankAgent>().getCooldown() / 3.0f;
-            AimPointerImage.transform.position = _agent.GetScreenSpaceAimPos();
+            if (HealthForeground != null) HealthForeground.fillAmount = _vehicle.Health / _vehicle.MaxHealth;
+            CooldownForeground.fillAmount = _vehicle.Health <= 0.0f ? 1.0f : _vehicle.gameObject.GetComponent<TankManager>().getCooldown() / 3.0f;
+            AimPointerImage.transform.position = _vehicle.GetScreenSpaceAimPos();
         }
 
     }
