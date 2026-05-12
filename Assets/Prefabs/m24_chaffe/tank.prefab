@@ -5986,7 +5986,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8677752397175227957
 Transform:
   m_ObjectHideFlags: 0
@@ -5999,7 +5999,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5074740990844575216}
   m_Father: {fileID: 1393235037358775708}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5382089302841173822
@@ -26365,11 +26366,11 @@ Transform:
   m_GameObject: {fileID: 9195421074058834648}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.95, z: -20}
+  m_LocalPosition: {x: 0, y: 0, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7255439763043002036}
+  m_Father: {fileID: 8677752397175227957}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9212347716668968282
 GameObject:
@@ -26733,6 +26734,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6c60d61114973fd48bd0271a86fed5e6, type: 2}
+    - target: {fileID: -5754084199372789682, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -3014937882001165872, guid: 628b25c521f5dc949b3c4649cb63e8f1, type: 3}
     - target: {fileID: 919132149155446097, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
       propertyPath: m_Name
       value: tank
@@ -26896,9 +26901,11 @@ MonoBehaviour:
   memberID: 1
   tankRB: {fileID: 3552105461344613741}
   tankCannon: {fileID: 1422994845642439456}
+  tankTurret: {fileID: 7255439763043002036}
   _healthBar: {fileID: 7814527802299802244}
   aimSensor: {fileID: 3194373162913784176}
   _moveToMarker: {fileID: 7798781102027547956}
+  gameCameraPivot: {fileID: 8677752397175227957}
   demonstrationRecorder: {fileID: 0}
   DiedEvent:
     m_PersistentCalls:
@@ -26926,6 +26933,8 @@ MonoBehaviour:
   _rigidbody: {fileID: 3552105461344613741}
   BodyCollider: {fileID: 8720462706373334002}
   BottomCollider: {fileID: 7562925608524321102}
+  LeftTankTrack: {fileID: 8239733940943313073}
+  RightTankTrack: {fileID: 1406724110282884526}
   wheels:
   - {fileID: 6125514228179182395}
   - {fileID: 4908577216596747087}
@@ -27074,6 +27083,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: a8e81175a7afc124b91ac08ea8705058, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b582986237edf5e45a467039e335b78e, type: 2}
+    - target: {fileID: -5754084199372789682, guid: a8e81175a7afc124b91ac08ea8705058, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4493585093827132993, guid: 7004a6ffeafd3794ab9b18e85b7081b5, type: 3}
     - target: {fileID: 919132149155446097, guid: a8e81175a7afc124b91ac08ea8705058, type: 3}
       propertyPath: m_Name
       value: tank_track_right
@@ -27087,6 +27104,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a8e81175a7afc124b91ac08ea8705058, type: 3}
+--- !u!1 &1406724110282884526 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a8e81175a7afc124b91ac08ea8705058, type: 3}
+  m_PrefabInstance: {fileID: 2253165346702670079}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1787472258954157844 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a8e81175a7afc124b91ac08ea8705058, type: 3}
@@ -27346,6 +27368,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6c60d61114973fd48bd0271a86fed5e6, type: 2}
+    - target: {fileID: -5754084199372789682, guid: 5599c243cd2acb14b9695099bb86d5f9, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -8678823145569952518, guid: 150a983b791939841aebc39a835889ad, type: 3}
     - target: {fileID: 919132149155446097, guid: 5599c243cd2acb14b9695099bb86d5f9, type: 3}
       propertyPath: m_Name
       value: tank_turret
@@ -27360,9 +27386,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5599c243cd2acb14b9695099bb86d5f9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1422994845642439456}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5599c243cd2acb14b9695099bb86d5f9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5074740990844575216}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5599c243cd2acb14b9695099bb86d5f9, type: 3}
       insertIndex: -1
@@ -27649,6 +27672,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: a8e81175a7afc124b91ac08ea8705058, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b582986237edf5e45a467039e335b78e, type: 2}
+    - target: {fileID: -5754084199372789682, guid: a8e81175a7afc124b91ac08ea8705058, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4493585093827132993, guid: 7004a6ffeafd3794ab9b18e85b7081b5, type: 3}
     - target: {fileID: 919132149155446097, guid: a8e81175a7afc124b91ac08ea8705058, type: 3}
       propertyPath: m_Name
       value: tank_track_left
@@ -27662,6 +27693,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a8e81175a7afc124b91ac08ea8705058, type: 3}
+--- !u!1 &8239733940943313073 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a8e81175a7afc124b91ac08ea8705058, type: 3}
+  m_PrefabInstance: {fileID: 9122044948922426848}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8724240975021965835 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a8e81175a7afc124b91ac08ea8705058, type: 3}

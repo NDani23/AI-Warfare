@@ -4,7 +4,7 @@ using UnityEngine;
 public class TankHUD : MonoBehaviour, IVehicleUI
 {
     [SerializeField] private UnityEngine.UI.Image CooldownForeground;
-    [SerializeField] private Texture2D aimCursor;
+    [SerializeField] private GameObject fixedCursor;
     [SerializeField] private UnityEngine.UI.Image AimPointerImage;
     [SerializeField] private UnityEngine.UI.Text HealthText;
     [SerializeField] private UnityEngine.UI.Image HealthForeground;
@@ -25,14 +25,25 @@ public class TankHUD : MonoBehaviour, IVehicleUI
             HealthText.text = playerHealth.ToString() + "%";
             if (HealthForeground != null) HealthForeground.fillAmount = _agent.Health / _agent.MaxHealth;
             CooldownForeground.fillAmount = _agent.Health <= 0.0f ? 1.0f : _agent.gameObject.GetComponent<TankAgent>().getCooldown() / 3.0f;
-            AimPointerImage.transform.position = _agent.GetScreenSpaceAimPos();
+
+            bool showAimPointer = _agent.IsCannonFacingCameraForward();
+            AimPointerImage.enabled = showAimPointer;
+            if (showAimPointer)
+            {
+                AimPointerImage.transform.position = _agent.GetScreenSpaceAimPos();
+            }
         }
 
     }
 
     public void switchToControlUI()
     {
-        Vector2 CursorHotspot = new Vector2(aimCursor.width / 2.0f, aimCursor.height / 2.0f);
-        Cursor.SetCursor(aimCursor, CursorHotspot, CursorMode.Auto);
+        Cursor.lockState =  CursorLockMode.Locked;
+        fixedCursor.SetActive(true);
+    }
+
+    public void switchOutControlUI()
+    {
+        fixedCursor.SetActive(false);
     }
 }

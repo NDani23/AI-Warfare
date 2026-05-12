@@ -11,9 +11,11 @@ public class TankAgent : VehicleAgent, ITargetable
 {
     [SerializeField] private Rigidbody tankRB;
     [SerializeField] private Transform tankCannon;
+    [SerializeField] private Transform tankTurret;
     [SerializeField] private GameObject _healthBar;
     [SerializeField] private RayPerceptionSensorComponent3D aimSensor;
     [SerializeField] private MoveToMarkerMarkerController _moveToMarker;
+    [SerializeField] private Transform gameCameraPivot;
 
     public DemonstrationRecorder? demonstrationRecorder;
     BehaviorParameters m_BehaviorParameters;
@@ -27,6 +29,8 @@ public class TankAgent : VehicleAgent, ITargetable
     public UnityEvent DiedEvent;
     public UnityEvent RespawnEvent;
     private GameObject _target;
+    private Vector3 _mousePosDelta = Vector3.zero;
+    private Vector3 _lookDirectionWorld = Vector3.forward;
 
     public override void Initialize()
     {
@@ -121,9 +125,42 @@ public class TankAgent : VehicleAgent, ITargetable
         }
     }
 
+    public void Update()
+    {
+        if(m_BehaviorParameters.BehaviorType != BehaviorType.HeuristicOnly)
+        {
+            gameCameraPivot.rotation = Quaternion.LookRotation(tankTurret.forward, Vector3.up);
+            _lookDirectionWorld = tankTurret.forward;
+            return;
+        }
+
+        var cameraRotationVertical = Input.mousePositionDelta.y / Screen.height * 30.0f;
+        var cameraRotationHorizontal = Input.mousePositionDelta.x / Screen.width * 60.0f;
+
+        _lookDirectionWorld = Quaternion.AngleAxis(cameraRotationHorizontal, Vector3.up) * _lookDirectionWorld;
+        _lookDirectionWorld = Quaternion.AngleAxis(-cameraRotationVertical, gameCameraPivot.right) * _lookDirectionWorld;
+        _lookDirectionWorld.Normalize();
+        _tankController.aimDirection = _lookDirectionWorld;
+        
+        gameCameraPivot.rotation = Quaternion.LookRotation(_lookDirectionWorld, Vector3.up);
+
+        _tankController.lockTurret = false;
+        if(Input.GetKey(KeyCode.LeftControl)) _tankController.lockTurret=true;
+    }
+
     public float getCooldown()
     {
         return _tankController.coolDownTime;
+    }
+
+    public bool IsCannonFacingCameraForward()
+    {
+        return Vector3.Dot(tankCannon.forward, gameCameraPivot.forward) > 0.0f;
+    }
+    
+    public bool IsHeuristicOnlyMode()
+    {
+        return m_BehaviorParameters.BehaviorType == BehaviorType.HeuristicOnly;
     }
 
     public void SetTarget(GameObject target)
@@ -146,6 +183,7 @@ public class TankAgent : VehicleAgent, ITargetable
 
     private void ResetTank()
     {
+        _lookDirectionWorld = this.transform.forward;
         _target = null;
         ResetAgent();
     }

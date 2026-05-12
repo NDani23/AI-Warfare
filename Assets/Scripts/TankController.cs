@@ -15,6 +15,8 @@ public class TankController : MonoBehaviour, IVehicleController
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private GameObject BodyCollider;
     [SerializeField] private GameObject BottomCollider;
+    [SerializeField] private GameObject LeftTankTrack;
+    [SerializeField] private GameObject RightTankTrack;
     [SerializeField] private WheelScript[] wheels;
     [SerializeField] private ParticleSystem FireParticles;
     [SerializeField] private ParticleSystem DirtParticles1;
@@ -45,8 +47,19 @@ public class TankController : MonoBehaviour, IVehicleController
     public float VerticalAimInput { get; set; }
     public int FireInput { get; set; }
     public Vector3 aimDirection { get; set; }
+    public bool lockTurret { get; set; }
     private GameObject Bullet;
     public float coolDownTime { get; set; }
+
+    private WheelCollider leftReferenceWheelCollider;
+    private WheelCollider rightReferenceWheelCollider;
+
+    private Vector4 leftTrackTextureOffset;
+    private Vector4 rightTrackTextureOffset;
+    private MaterialPropertyBlock trackMaterialPropertyBlock;
+
+    private int baseTankTrackMapId = Shader.PropertyToID("_BaseMap_ST");
+    private int TankTrackTextureMapId = Shader.PropertyToID("_MainTex_ST");
 
     private void Start()
     {
@@ -60,6 +73,15 @@ public class TankController : MonoBehaviour, IVehicleController
 
         aimDirection = tankCannon.forward;
 
+        leftReferenceWheelCollider = wheels[4].GetComponentInChildren<WheelCollider>();
+        rightReferenceWheelCollider = wheels[0].GetComponentInChildren<WheelCollider>();
+
+        leftTrackTextureOffset = new Vector4(1.0f, 1.0f, 0.0f, 0.0f);
+        rightTrackTextureOffset = new Vector4(1.0f, 1.0f, 0.0f, 0.0f);
+
+        trackMaterialPropertyBlock = new MaterialPropertyBlock();
+
+
         coolDownTime = 3.0f;
     }
     public void setStartingState(int teamID, int memberID)
@@ -69,6 +91,7 @@ public class TankController : MonoBehaviour, IVehicleController
         tankTower.gameObject.tag = tankAgent.Team == Team.Red ? "RedAgent" : "YellowAgent";
         _rigidbody.linearVelocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
+        lockTurret = false;
 
         setMaterial();
 
@@ -147,15 +170,22 @@ public class TankController : MonoBehaviour, IVehicleController
             }
         }
 
-        float currentPitch = tankCannon.localEulerAngles.x;
-        if (currentPitch > 180f) currentPitch -= 360f;
-        currentPitch += -VerticalAimInput * cannonRotationSpeed * Time.fixedDeltaTime;
-        tankCannon.localRotation = Quaternion.Euler(Mathf.Clamp(currentPitch, -25f, 5f), 0f, 0f);
+        if (tankAgent != null && tankAgent.IsHeuristicOnlyMode() && !lockTurret)
+        {
+            RotateTower(aimDirection);
+            RotateCannon(aimDirection);
+        }
+        else
+        {
+            float currentPitch = tankCannon.localEulerAngles.x;
+            if (currentPitch > 180f) currentPitch -= 360f;
+            currentPitch += -VerticalAimInput * cannonRotationSpeed * Time.fixedDeltaTime;
+            tankCannon.localRotation = Quaternion.Euler(Mathf.Clamp(currentPitch, -25f, 5f), 0f, 0f);
 
-        tankTower.Rotate(Vector3.up * (towerRotationSpeed * HorizontalAimInput * Time.fixedDeltaTime));
+            tankTower.Rotate(Vector3.up * (towerRotationSpeed * HorizontalAimInput * Time.fixedDeltaTime));
+        }
 
         HandleShooting();
-
 
         if (Vector3.Dot(transform.forward, _rigidbody.linearVelocity) >= 0)
         {
@@ -171,35 +201,33 @@ public class TankController : MonoBehaviour, IVehicleController
         DirtParticles1.startSpeed = _rigidbody.linearVelocity.magnitude;
         DirtParticles2.startSpeed = _rigidbody.linearVelocity.magnitude;
 
+        rotateTankTracks();
+
         coolDownTime = Mathf.Max(0, coolDownTime - Time.fixedDeltaTime);
     }
 
-    private void RotateTower(Vector3 targetDirection, float aimCurve)
+    private void RotateTower(Vector3 targetDirection)
     {
         Vector3 directionToTarget = Vector3.ProjectOnPlane(targetDirection, tankTower.up);
         Quaternion towerTargetDirection = Quaternion.LookRotation(directionToTarget, tankTower.up);
         Quaternion from = Quaternion.LookRotation(tankTower.forward, tankTower.up);
 
-        tankTower.rotation = Quaternion.RotateTowards(from, towerTargetDirection, (aimCurve * towerRotationSpeed) * Time.fixedDeltaTime);
+        tankTower.rotation = Quaternion.RotateTowards(from, towerTargetDirection, towerRotationSpeed * Time.fixedDeltaTime);
     }
 
     private void RotateCannon(Vector3 targetDirection)
     {
-        Vector3 directionToTarget = Vector3.ProjectOnPlane(targetDirection, tankTower.right);
-        Quaternion towerTargetDirection = Quaternion.LookRotation(directionToTarget, tankTower.right);
-
-        Quaternion from = Quaternion.LookRotation(tankCannon.forward, tankTower.right);
-
-        tankCannon.rotation = Quaternion.RotateTowards(from, towerTargetDirection, cannonRotationSpeed * Time.fixedDeltaTime);
-
         float currentPitch = tankCannon.localEulerAngles.x;
         if (currentPitch > 180f) currentPitch -= 360f;
-        tankCannon.localRotation = Quaternion.Euler(Mathf.Clamp(currentPitch, -20f, 5f), 0f, 0f);
 
-    }
-    private Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angles)
-    {
-        return Quaternion.Euler(angles) * (point - pivot) + pivot;
+        Vector3 localTargetDirection = tankTower.InverseTransformDirection(targetDirection.normalized);
+        float targetPitch = Mathf.Atan2(-localTargetDirection.y, localTargetDirection.z) * Mathf.Rad2Deg;
+        targetPitch = Mathf.Clamp(targetPitch, -25f, 5f);
+
+        float maxPitchStep = cannonRotationSpeed * Time.fixedDeltaTime;
+        float nextPitch = Mathf.MoveTowards(currentPitch, targetPitch, maxPitchStep);
+        tankCannon.localRotation = Quaternion.Euler(nextPitch, 0f, 0f);
+
     }
 
     private void HandleShooting()
@@ -288,5 +316,24 @@ public class TankController : MonoBehaviour, IVehicleController
         setMaterial();
         ExplodeParticles.Play();
         SmokeParticles.Play();
+    }
+
+    private void rotateTankTracks()
+    {
+        if(leftReferenceWheelCollider != null && LeftTankTrack != null)
+        {
+            leftTrackTextureOffset.w -= leftReferenceWheelCollider.rpm * Time.fixedDeltaTime * 0.01f;
+            leftTrackTextureOffset.w %= 1;
+            trackMaterialPropertyBlock.SetVector(TankTrackTextureMapId, leftTrackTextureOffset);
+            LeftTankTrack.GetComponent<Renderer>().SetPropertyBlock(trackMaterialPropertyBlock);
+        }
+
+        if(rightReferenceWheelCollider != null && RightTankTrack != null)
+        {
+            rightTrackTextureOffset.w -= rightReferenceWheelCollider.rpm * Time.fixedDeltaTime * 0.01f;
+            rightTrackTextureOffset.w %= 1;
+            trackMaterialPropertyBlock.SetVector(TankTrackTextureMapId, rightTrackTextureOffset);
+            RightTankTrack.GetComponent<Renderer>().SetPropertyBlock(trackMaterialPropertyBlock);
+        }
     }
 }

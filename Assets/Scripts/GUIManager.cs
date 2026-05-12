@@ -13,7 +13,6 @@ public enum GUIMode
 
 public class GUIManager : MonoBehaviour
 {
-    [SerializeField] private Texture2D aimCursor;
     [SerializeField] private UnityEngine.UI.Image AimPointerImage;
     [SerializeField] private UnityEngine.UI.Image RedState;
     [SerializeField] private UnityEngine.UI.Image YellowState;
@@ -49,8 +48,6 @@ public class GUIManager : MonoBehaviour
     private Vector2 CursorHotspot;
     void Start()
     {
-        CursorHotspot = new Vector2(aimCursor.width / 2.0f, aimCursor.height / 2.0f);
-        //Cursor.SetCursor(aimCursor, CursorHotspot, CursorMode.Auto);
         //player.DiedEvent.AddListener(PlayerDiedHandler);
         //player.RespawnEvent.AddListener(PlayerRespawnHandler);
         env.RedWonEvent.AddListener(RedWonHandler);
@@ -139,7 +136,6 @@ public class GUIManager : MonoBehaviour
 
     public void ContinueGameHandler()
     {
-        Cursor.SetCursor(aimCursor, CursorHotspot, CursorMode.Auto);
         PausePanel.gameObject.SetActive(false);
         //inputController.gameObject.SetActive(true);
     }

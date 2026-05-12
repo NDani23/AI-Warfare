@@ -27,6 +27,11 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.V))
         {
             gameCamera.startTransition(gameCamera.InAgentView ? null : SelectedAgent);
+
+            if(gameCamera.InAgentView && SelectedAgent != null)
+            {
+                SelectedAgent.GetComponent<VehicleAgent>().getVehicleUI().switchOutControlUI();
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.C) && gameCamera.InAgentView && SelectedAgent != null)
@@ -37,6 +42,7 @@ public class GameManager : MonoBehaviour
             {
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+                SelectedAgent.GetComponent<VehicleAgent>().getVehicleUI().switchOutControlUI();
             }
             else
             {
