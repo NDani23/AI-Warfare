@@ -72,7 +72,7 @@ public class CameraController : MonoBehaviour
         ViewTransitionEnded.Invoke();
     }
 
-    public void startTransition(VehicleAgent? toVehicle)
+    public void startTransition(VehicleManager? toVehicle)
     {
         if (toVehicle == null && !_inAgentView) return;
         if (toVehicle != null && _inAgentView) return;

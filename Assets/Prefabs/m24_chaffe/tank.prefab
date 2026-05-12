@@ -517,8 +517,8 @@ GameObject:
   - component: {fileID: 9169784374554674108}
   - component: {fileID: 7798781102027547956}
   m_Layer: 24
-  m_Name: MoveToMarker
-  m_TagString: MoveToTarget
+  m_Name: command_marker
+  m_TagString: CommandTarget
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -686,13 +686,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2763066568700084322}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.052335896, y: 0, z: 0, w: 0.9986295}
+  m_LocalRotation: {x: -0.078459024, y: 0, z: 0, w: 0.99691737}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1422994845642439456}
-  m_LocalEulerAnglesHint: {x: -6, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -9, y: 0, z: 0}
 --- !u!114 &9067837051928314185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -860,7 +860,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1729900885465849424
 Transform:
   m_ObjectHideFlags: 0
@@ -26696,7 +26696,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3
+      value: 38.96
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
       propertyPath: m_LocalPosition.z
@@ -26828,16 +26828,22 @@ PrefabInstance:
       addedObject: {fileID: 1043660638588339257}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 699821067305294800}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 190496215173863047}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1382756762813301473}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3942112267197940153}
+      addedObject: {fileID: 1795333538170643937}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1795333538170643937}
+      addedObject: {fileID: 2518750892819141834}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8927772873661965448}
   m_SourcePrefab: {fileID: 100100000, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
 --- !u!4 &1393235037358775708 stripped
 Transform:
@@ -26888,10 +26894,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07538447fab90e44e8a3b64dc0cdbeb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agentParameters:
-    maxStep: 0
-  hasUpgradedFromAgentParameters: 1
-  MaxStep: 0
   HitBoxMeshes: {fileID: 6616260003909532947}
   MinimapIcon: {fileID: 3319366175850388871}
   SelectedIcon: {fileID: 976558317107708066}
@@ -26904,6 +26906,9 @@ MonoBehaviour:
   tankTurret: {fileID: 7255439763043002036}
   _healthBar: {fileID: 7814527802299802244}
   aimSensor: {fileID: 3194373162913784176}
+  _commandMarker: {fileID: 7798781102027547956}
+  _driverAgent: {fileID: 699821067305294800}
+  _shooterAgent: {fileID: 2691580393211870795}
   _moveToMarker: {fileID: 7798781102027547956}
   gameCameraPivot: {fileID: 8677752397175227957}
   demonstrationRecorder: {fileID: 0}
@@ -26913,6 +26918,23 @@ MonoBehaviour:
   RespawnEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &699821067305294800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737847732356613926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5326c06da819bc840a77ed047aa704df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
+  _tankCannon: {fileID: 1422994845642439456}
 --- !u!114 &190496215173863047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26972,39 +26994,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 13
+    VectorObservationSize: 11
     NumStackedVectorObservations: 1
     m_ActionSpec:
-      m_NumContinuousActions: 2
-      BranchSizes: 030000000300000002000000
-    VectorActionSize: 
+      m_NumContinuousActions: 0
+      BranchSizes: 0300000003000000
+    VectorActionSize: 0300000003000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 2
   m_BehaviorType: 0
-  m_BehaviorName: TankControll
+  m_BehaviorName: TankDriver
   TeamId: 0
-  m_UseChildSensors: 1
+  m_UseChildSensors: 0
   m_UseChildActuators: 1
   m_DeterministicInference: 1
   m_ObservableAttributeHandling: 0
---- !u!114 &3942112267197940153
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1737847732356613926}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DecisionPeriod: 5
-  DecisionStep: 0
-  TakeActionsBetweenDecisions: 1
 --- !u!114 &1795333538170643937
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27035,6 +27042,49 @@ MonoBehaviour:
   m_ShowGizmos: 0
   m_CompressionType: 0
   m_ObservationStacks: 1
+--- !u!114 &2518750892819141834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737847732356613926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DecisionPeriod: 5
+  DecisionStep: 0
+  TakeActionsBetweenDecisions: 1
+--- !u!114 &8927772873661965448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737847732356613926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bb6b867a41448888c1cd4f99643ad71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: ObstacleSensor
+  m_DetectableTags: []
+  m_RaysPerDirection: 2
+  m_MaxRayDegrees: 25
+  m_SphereCastRadius: 3
+  m_RayLength: 75
+  m_RayLayerMask:
+    serializedVersion: 2
+    m_Bits: 33816577
+  m_ObservationStacks: 1
+  m_AlternatingRayOrder: 0
+  m_UseBatchedRaycasts: 0
+  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
+  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
+  m_StartVerticalOffset: 0
+  m_EndVerticalOffset: 0
 --- !u!1001 &2253165346702670079
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27380,6 +27430,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 18
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5599c243cd2acb14b9695099bb86d5f9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -27390,6 +27444,21 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5599c243cd2acb14b9695099bb86d5f9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2604245075455321633}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5599c243cd2acb14b9695099bb86d5f9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2691580393211870795}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5599c243cd2acb14b9695099bb86d5f9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3391966039719071136}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5599c243cd2acb14b9695099bb86d5f9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1256683648422502870}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5599c243cd2acb14b9695099bb86d5f9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6976770660551627290}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5599c243cd2acb14b9695099bb86d5f9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6782500598519729554}
   m_SourcePrefab: {fileID: 100100000, guid: 5599c243cd2acb14b9695099bb86d5f9, type: 3}
 --- !u!4 &7255439763043002036 stripped
 Transform:
@@ -27422,6 +27491,101 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5.44284, y: 2.5729213, z: 6.701381}
   m_Center: {x: 0, y: -0.04809642, z: 0.0014169216}
+--- !u!114 &2691580393211870795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8069131851121064974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a2d06f82d301b34b8fe7f4c24155c54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
+  _tankCannon: {fileID: 1422994845642439456}
+  _detectedEnemiesSensor: {fileID: 1256683648422502870}
+  _teammateSensor: {fileID: 6976770660551627290}
+--- !u!114 &3391966039719071136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8069131851121064974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d1c4e0b1822b495aa52bc52839ecb30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BrainParameters:
+    VectorObservationSize: 20
+    NumStackedVectorObservations: 1
+    m_ActionSpec:
+      m_NumContinuousActions: 2
+      BranchSizes: 02000000
+    VectorActionSize: 
+    VectorActionDescriptions: []
+    VectorActionSpaceType: 0
+    hasUpgradedBrainParametersWithActionSpec: 1
+  m_Model: {fileID: 0}
+  m_InferenceDevice: 0
+  m_BehaviorType: 0
+  m_BehaviorName: TankShooter
+  TeamId: 0
+  m_UseChildSensors: 1
+  m_UseChildActuators: 1
+  m_DeterministicInference: 0
+  m_ObservableAttributeHandling: 0
+--- !u!114 &1256683648422502870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8069131851121064974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd8012d5925524537b27131fef517017, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: DetectedEnemiesSensor
+  m_ObservableSize: 5
+  m_MaxNumObservables: 5
+--- !u!114 &6976770660551627290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8069131851121064974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd8012d5925524537b27131fef517017, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: TeammateSensor
+  m_ObservableSize: 5
+  m_MaxNumObservables: 4
+--- !u!114 &6782500598519729554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8069131851121064974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DecisionPeriod: 5
+  DecisionStep: 0
+  TakeActionsBetweenDecisions: 1
 --- !u!1001 &7294639082830822932
 PrefabInstance:
   m_ObjectHideFlags: 0

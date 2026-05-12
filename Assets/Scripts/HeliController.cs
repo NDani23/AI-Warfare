@@ -47,7 +47,7 @@ public class HeliController : MonoBehaviour, IVehicleController
         get { return _rigidbody; }
     }
 
-    private HeliAgent _agent;
+    private HeliManager _heliManager;
 
     public float rotor_speed = 1000.0f;
     public float base_acceleration;
@@ -109,8 +109,7 @@ public class HeliController : MonoBehaviour, IVehicleController
 
     private void Awake()
     {
-        _agent = this.GetComponent<HeliAgent>();
-
+        _heliManager = this.GetComponent<HeliManager>();
     }
     void Start()
     {
@@ -121,7 +120,7 @@ public class HeliController : MonoBehaviour, IVehicleController
     {
 
         _gunOverHeatStatus = 0.0f;
-        _colliders.tag = _agent.Team == Team.Red ? "RedAgent" : "YellowAgent";
+        _colliders.tag = _heliManager.Team == Team.Red ? "RedAgent" : "YellowAgent";
         setMaterial();
 
         if (SmokeParticles.isPlaying)
@@ -152,7 +151,7 @@ public class HeliController : MonoBehaviour, IVehicleController
     {
         _rigidbody.AddForce(Physics.gravity * (gravity_magnification - 1), ForceMode.Acceleration);
 
-        if (_agent.Health == 0) return;
+        if (_heliManager.Health == 0) return;
         
         _rotor.Rotate(Vector3.up * (rotor_speed * Time.fixedDeltaTime));
         _rear_rotor.Rotate(-Vector3.right * (rotor_speed * 2.5f * Time.fixedDeltaTime));
@@ -228,7 +227,7 @@ public class HeliController : MonoBehaviour, IVehicleController
     {
         if (mat == null)
         {
-            if (_agent.Health > 0)
+            if (_heliManager.Health > 0)
             {
                 this.GetComponent<MeshRenderer>().material = MainMaterial;
             }

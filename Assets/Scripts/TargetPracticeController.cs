@@ -10,25 +10,33 @@ enum Speed
     Fast
 }
 
+enum TrainingCommandMode
+{
+    GoTo = 0,
+    KillTarget = 1
+}
+
 public class TargetPracticeController : MonoBehaviour
 {
     [SerializeField] private bool Active;
     [SerializeField] private Transform redWallPrefab;
     [SerializeField] private Transform redTankPrefab;
     [SerializeField] private Transform redHeliPrefab;
-    [SerializeField] private Transform yellowTargetTankPrefab;
-    [SerializeField] private Transform yellowTargetWallPrefab;
+    [SerializeField] private Transform yellowTankPrefab;
+    [SerializeField] private Transform yellowWallPrefab;
+    [SerializeField] private Transform yellowHeliPrefab;
     [SerializeField] private CTController m_ControlPoint;
     [SerializeField] private EnvController m_EnvController;
+    [SerializeField] private GameObject GoToMarker;
 
     [SerializeField] private float PracticeAreaWidth;
     [SerializeField] private float PracticeAreaLength;
 
     [SerializeField] private float TargetWidth;
     [SerializeField] private float TargetHeight;
+    [SerializeField] private TrainingCommandMode CommandToTrain = TrainingCommandMode.KillTarget;
 
     [SerializeField] private bool UseTargetWall = false;
-
     [SerializeField] private uint RedTargetCount = 1;
     [SerializeField] private uint YellowTargetCount = 1;
 
@@ -43,23 +51,43 @@ public class TargetPracticeController : MonoBehaviour
     [SerializeField] private float TargetHealth;
 
     [SerializeField] private Speed ProgressionSpeed = Speed.Normal;
+    [SerializeField] private bool PlaceObstacles = false;
+    [SerializeField] private int ObstacleCount = 10;
+    [SerializeField] private List<GameObject> ObstaclePrefabs = new List<GameObject>();
 
     private float CTRearrangeCooldown;
     private static float CTRearrangeInterval = 60.0f;
 
-    private TargetScript[] m_redTargets;
-    private TargetScript[] m_yellowTargets;
+    public TargetScript[] m_redTargets;
+    public TargetScript[] m_yellowTargets;
+    private GameObject[] m_obstacles;
 
     private int hitCount = 0;
     private int captureCount = 0;
 
-    private VehicleAgent player;
+    private VehicleManager player;
+
+    private GoToTrainerController _goToTrainerController;
+    private TrainingCommandMode _currentCommandMode;
 
     void Start()
     {
         if(!Active) return;
 
-        m_EnvController.GameEnded.AddListener(RearrangeTargets);
+        if (GoToMarker != null)
+        {
+            _goToTrainerController = GoToMarker.GetComponent<GoToTrainerController>();
+        }
+
+        if (m_EnvController != null)
+        {
+            m_EnvController.GameEnded.AddListener(HandleEpisodeEnded);
+        }
+
+       // m_EnvController.GameEnded.AddListener(RearrangeTargets);
+
+        if(PlaceObstacles)
+            m_EnvController.GameEnded.AddListener(RepositionObstacles);
 
         if (AutomaticProgression)
         {
@@ -72,12 +100,13 @@ public class TargetPracticeController : MonoBehaviour
             TargetWidth = 120;
         }
 
+        _currentCommandMode = CommandToTrain;
+
         m_redTargets = new TargetScript[RedTargetCount];
         for (int i = 0; i < m_redTargets.Length; i++)
         {
-            //Transform newTarget = UseTargetWall ? GameObject.Instantiate(targetWallPrefab, this.transform) : 
-            //           (i < m_redTargets.Length-1) ? GameObject.Instantiate(targetTankPrefab, this.transform) : GameObject.Instantiate(targetHeliPrefab, this.transform);
-            Transform newTarget = GameObject.Instantiate(redTankPrefab, this.transform);
+            Transform newTarget = UseTargetWall ? GameObject.Instantiate(redWallPrefab, this.transform) : 
+                      (i < m_redTargets.Length-1) ? GameObject.Instantiate(redTankPrefab, this.transform) : GameObject.Instantiate(redHeliPrefab, this.transform);
             m_redTargets[i] = newTarget.gameObject.GetComponent<TargetScript>();
             m_redTargets[i].setController(this, Team.Red);
             m_redTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
@@ -86,15 +115,27 @@ public class TargetPracticeController : MonoBehaviour
         m_yellowTargets = new TargetScript[YellowTargetCount];
         for (int i = 0; i < m_yellowTargets.Length; i++)
         {
-            //Transform newFakeTarget = UseTargetWall ? GameObject.Instantiate(yellowTargetWallPrefab, this.transform) : GameObject.Instantiate(yellowTargetWallPrefab, this.transform);
-            Transform newTarget = GameObject.Instantiate(yellowTargetTankPrefab, this.transform);
+            Transform newTarget = UseTargetWall ? GameObject.Instantiate(yellowWallPrefab, this.transform) : 
+                      (i < m_redTargets.Length-1) ? GameObject.Instantiate(yellowTankPrefab, this.transform) : GameObject.Instantiate(yellowHeliPrefab, this.transform);
             m_yellowTargets[i] = newTarget.gameObject.GetComponent<TargetScript>();
             m_yellowTargets[i].setController(this, Team.Yellow);
             m_yellowTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
         }
 
-        //RearrangeCT();
-        //CTRearrangeCooldown = CTRearrangeInterval;
+        if (PlaceObstacles && ObstaclePrefabs.Count > 0)
+        {
+            m_obstacles = new GameObject[ObstacleCount];
+            for (int i = 0; i < ObstacleCount; i++)
+            {
+                m_obstacles[i] = GameObject.Instantiate(ObstaclePrefabs[i % ObstaclePrefabs.Count], this.transform);
+            }
+        }
+
+        if(PlaceObstacles)
+            RepositionObstacles();
+
+        ApplyCommandsToAllTanks();
+
     }
 
     // Update is called once per frame
@@ -121,8 +162,95 @@ public class TargetPracticeController : MonoBehaviour
         if (target.Health == 0)
         {
             target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
-            m_EnvController.AddPointToTeam(target.Team == Team.Red ? Team.Yellow : Team.Red, target.AgentType == AgentType.Tank ? 1 : 2);
+            //m_EnvController.AddPointToTeam(target.Team == Team.Red ? Team.Yellow : Team.Red, target.TargetType == TargetType.Tank ? 1 : 2);
         }
+    }
+
+    public void HandleGoToReached(TankManager tank)
+    {
+        if (!Active || tank == null)
+            return;
+
+        if (_currentCommandMode != TrainingCommandMode.GoTo)
+            return;
+
+        Debug.Log("Go-to point reached!");
+        tank.AddReward(1.0f);
+        AssignCommandForTank(tank);
+    }
+
+    public void HandleMarkedTargetHit(TankManager tank)
+    {
+        if (!Active || tank == null)
+            return;
+
+        if (_currentCommandMode != TrainingCommandMode.KillTarget)
+            return;
+
+        AssignCommandForTank(tank);
+    }
+
+    public void AssignCommandForTank(TankManager tank)
+    {
+        if (!Active || tank == null)
+            return;
+
+        if (_currentCommandMode == TrainingCommandMode.GoTo)
+        {
+            Vector3 localPos = GetRandomGoToLocalPosition();
+            tank.SetGoToPoint(localPos);
+            _goToTrainerController?.SetGoToLocalPosition(localPos);
+        }
+        else
+        {
+            TargetScript target = GetRandomTargetForTeam(tank.Team);
+            if (target == null)
+                return;
+
+            target.GetComponent<ITargetable>()?.setDetectedState(true);
+            tank.SetTarget(target.gameObject);
+            _goToTrainerController?.SetFollowTarget(target.transform);
+        }
+    }
+
+    private void ApplyCommandsToAllTanks()
+    {
+        if (!Active || m_EnvController == null)
+            return;
+
+        foreach (VehicleManager agent in m_EnvController.VehicleList)
+        {
+            if (agent.VehicleType != VehicleType.Tank)
+                continue;
+
+            AssignCommandForTank((TankManager)agent);
+        }
+    }
+
+    private void HandleEpisodeEnded()
+    {
+        if (!Active)
+            return;
+
+        //_currentCommandMode = _currentCommandMode == TrainingCommandMode.GoTo ? TrainingCommandMode.KillTarget : TrainingCommandMode.GoTo;
+        ApplyCommandsToAllTanks();
+    }
+
+    private Vector3 GetRandomGoToLocalPosition()
+    {
+        return new Vector3(
+            Random.Range(-PracticeAreaWidth / 2, PracticeAreaWidth / 2),
+            3.0f,
+            Random.Range(-PracticeAreaLength / 2, PracticeAreaLength / 2));
+    }
+
+    private TargetScript GetRandomTargetForTeam(Team team)
+    {
+        TargetScript[] targets = team == Team.Red ? m_yellowTargets : m_redTargets;
+        if (targets == null || targets.Length == 0)
+            return null;
+
+        return targets[Random.Range(0, targets.Length)];
     }
 
     //private void HandleProgression()
@@ -244,6 +372,7 @@ public class TargetPracticeController : MonoBehaviour
 
     public void RearrangeTargets()
     {
+        Debug.Log("REARRANGE");
         foreach (TargetScript target in m_redTargets) 
             target.Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
 
@@ -254,5 +383,51 @@ public class TargetPracticeController : MonoBehaviour
     public float GetTargetHealth()
     {
         return TargetHealth;
+    }
+
+    private void RepositionObstacles()
+    {
+        Physics.SyncTransforms();
+
+        int layersToCheck = ~LayerMask.GetMask("Ground");
+
+        foreach (GameObject obstacle in m_obstacles)
+        {
+            for(int i = 0; i < 100; i++)
+            {
+                float xPos = Random.Range(-PracticeAreaWidth / 2, PracticeAreaWidth / 2);
+                float zPos = Random.Range(-PracticeAreaLength / 2, PracticeAreaLength / 2);
+                Vector3 localCandidatePos = new Vector3(xPos, 0, zPos);
+                Vector3 worldCandidatePos = obstacle.transform.parent.TransformPoint(localCandidatePos);
+
+                if(!Physics.CheckSphere(worldCandidatePos, GetComplexPrefabRadius(obstacle), layersToCheck))
+                {
+                    obstacle.transform.localPosition =  localCandidatePos;
+                    obstacle.transform.localRotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
+                    break;
+                }
+            }
+        }
+    }
+
+    private float GetComplexPrefabRadius(GameObject prefab)
+    {
+        Collider[] allColliders = prefab.GetComponentsInChildren<Collider>();
+
+        if (allColliders.Length == 0)
+        {
+            return 0f;
+        }
+
+        Bounds totalBounds = allColliders[0].bounds;
+
+        for (int i = 1; i < allColliders.Length; i++)
+        {
+            totalBounds.Encapsulate(allColliders[i].bounds);
+        }
+
+        float maxRadius = Mathf.Max(totalBounds.extents.x, totalBounds.extents.z);
+
+        return maxRadius;
     }
 }

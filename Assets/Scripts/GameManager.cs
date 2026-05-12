@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CameraController gameCamera;
     [SerializeField] private GUIManager guiManager;
 
-    public VehicleAgent SelectedAgent { get; private set; }
+    public VehicleManager SelectedAgent { get; private set; }
 
     public UnityEvent<bool> ControlModeChangedEvent;
 
@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                SelectedAgent.GetComponent<VehicleAgent>().getVehicleUI().switchToControlUI();
+                SelectedAgent.GetComponent<VehicleManager>().getVehicleUI().switchToControlUI();
             }
             //Cursor.lockState = isManualControlMode && SelectedAgent.AgentType == AgentType.Heli ? CursorLockMode.Locked : CursorLockMode.None;
             ControlModeChangedEvent.Invoke(isManualControlMode);
@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         foreach (RaycastHit hit in Physics.RaycastAll(ray))
         {
-            VehicleAgent agent = hit.collider.GetComponentInParent<VehicleAgent>();
+            VehicleManager agent = hit.collider.GetComponentInParent<VehicleManager>();
             if (agent != null)
             {
                 Debug.Log($"Agent Selected");

@@ -11,7 +11,7 @@ TagManager:
   - ControllPoint
   - RedSpawnArea
   - YellowSpawnArea
-  - MoveToTarget
+  - CommandTarget
   layers:
   - Default
   - TransparentFX

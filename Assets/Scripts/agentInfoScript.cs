@@ -4,11 +4,11 @@ public class agentInfoScript : MonoBehaviour
 {
     [SerializeField] private UnityEngine.UI.Image HealthBar;
     private Camera m_Camera;
-    private TankAgent m_Agent;
+    private TankManager m_Agent;
     void Start()
     {
         m_Camera = Camera.main;
-        m_Agent = GetComponentInParent<TankAgent>();
+        m_Agent = GetComponentInParent<TankManager>();
     }
     void Update()
     {

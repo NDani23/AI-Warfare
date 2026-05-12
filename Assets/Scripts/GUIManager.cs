@@ -33,9 +33,9 @@ public class GUIManager : MonoBehaviour
 
     private GUIMode _GUIMode = GUIMode.Commander;
 
-    private VehicleAgent? playerVehicle;
+    private VehicleManager? playerVehicle;
 
-    public VehicleAgent PlayerVehicle
+    public VehicleManager PlayerVehicle
     {
         get { return playerVehicle; }
     }
@@ -158,7 +158,7 @@ public class GUIManager : MonoBehaviour
         //}
     }
 
-    public void SwitchGUIMode(VehicleAgent vehicleInFocus)
+    public void SwitchGUIMode(VehicleManager vehicleInFocus)
     {
 
         if (vehicleInFocus == null)
@@ -168,19 +168,19 @@ public class GUIManager : MonoBehaviour
             heliHUD.gameObject.SetActive(false);
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
-        else if (vehicleInFocus.AgentType == AgentType.Tank)
+        else if (vehicleInFocus.VehicleType == VehicleType.Tank)
         {
             _GUIMode = GUIMode.Tank;
             tankHUD.gameObject.SetActive(true);
             heliHUD.gameObject.SetActive(false);
-            tankHUD.Agent = (TankAgent)vehicleInFocus;
+            tankHUD.vehicle = (TankManager)vehicleInFocus;
         }
-        else if (vehicleInFocus.AgentType == AgentType.Heli)
+        else if (vehicleInFocus.VehicleType == VehicleType.Heli)
         {
             _GUIMode = GUIMode.Heli;
             tankHUD.gameObject.SetActive(false);
             heliHUD.gameObject.SetActive(true);
-            heliHUD.Agent = (HeliAgent)vehicleInFocus;
+            heliHUD.Agent = (HeliManager)vehicleInFocus;
         }
     }
 }

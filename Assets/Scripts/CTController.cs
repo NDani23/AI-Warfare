@@ -55,15 +55,15 @@ public class CTController : MonoBehaviour
 
         if(other.tag == "YellowAgent")
         {
-            if (other.transform.parent.GetComponent<VehicleAgent>().InCT) return;
-            m_envController.AgentEnteredCT(Team.Yellow);
-            other.transform.parent.GetComponent<VehicleAgent>().InCT = true;
+            if (other.transform.parent.GetComponent<VehicleManager>().InCT) return;
+            m_envController.VehicleEnteredCT(Team.Yellow);
+            other.transform.parent.GetComponent<VehicleManager>().InCT = true;
         }
         else if (other.tag == "RedAgent")
         {
-            if (other.transform.parent.GetComponent<VehicleAgent>().InCT) return;
-            m_envController.AgentEnteredCT(Team.Red);
-            other.transform.parent.GetComponent<VehicleAgent>().InCT = true;
+            if (other.transform.parent.GetComponent<VehicleManager>().InCT) return;
+            m_envController.VehicleEnteredCT(Team.Red);
+            other.transform.parent.GetComponent<VehicleManager>().InCT = true;
         }
     }
 
@@ -73,15 +73,15 @@ public class CTController : MonoBehaviour
 
         if (other.tag == "YellowAgent")
         {
-            if (!other.transform.parent.GetComponent<VehicleAgent>().InCT) return;
-            m_envController.AgentExitedCT(Team.Yellow);
-            other.transform.parent.GetComponent<VehicleAgent>().InCT = false;
+            if (!other.transform.parent.GetComponent<VehicleManager>().InCT) return;
+            m_envController.VehicleExitedCT(Team.Yellow);
+            other.transform.parent.GetComponent<VehicleManager>().InCT = false;
         }
         else if (other.tag == "RedAgent")
         {
-            if (!other.transform.parent.GetComponent<VehicleAgent>().InCT) return;
-            m_envController.AgentExitedCT(Team.Red);
-            other.transform.parent.GetComponent<VehicleAgent>().InCT = false;
+            if (!other.transform.parent.GetComponent<VehicleManager>().InCT) return;
+            m_envController.VehicleExitedCT(Team.Red);
+            other.transform.parent.GetComponent<VehicleManager>().InCT = false;
         }
     }
 
