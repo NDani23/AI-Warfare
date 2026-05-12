@@ -121,7 +121,7 @@ public class TankManager : VehicleManager, ITargetable
         }
 
         //Existential penalty
-        AddReward(-(Time.fixedDeltaTime / 60.0f));
+        AddReward(-(Time.fixedDeltaTime / 60.0f) * 0.5f);
     }
 
     public float getCooldown()

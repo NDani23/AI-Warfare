@@ -7,6 +7,7 @@ public class GoToTrainerController : MonoBehaviour
     private Vector3 _localTargetPosition;
     private TankManager _currentTank;
     private float _timeInZone = 0.0f;
+    private float _targetTimeInZone = 5.0f;
     private bool _isInZone = false;
 
     void Awake()
@@ -14,7 +15,7 @@ public class GoToTrainerController : MonoBehaviour
         _targetPracticeController = GetComponentInParent<TargetPracticeController>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (_followTarget != null)
         {
@@ -33,12 +34,14 @@ public class GoToTrainerController : MonoBehaviour
 
             if (_isInZone && _currentTank != null)
             {
-                _timeInZone += Time.deltaTime;
-                if (_timeInZone >= 5.0f)
+                _timeInZone += Time.fixedDeltaTime;
+                _currentTank.AddRewardToDriver(Time.fixedDeltaTime * 0.1f);
+                if (_timeInZone >= _targetTimeInZone)
                 {
                     _timeInZone = 0.0f;
                     _isInZone = false;
                     _targetPracticeController?.HandleGoToReached(_currentTank);
+                    _targetTimeInZone = Random.Range(2.0f, 10.0f);
                 }
             }
         }

@@ -96,6 +96,11 @@ public class TankShooterAgent : Agent
         //     Vector3 aimDirection = Vector3.Normalize(transform.InverseTransformVector(_tankCannon.transform.forward));
         //     _vehicleManager.AddRewardToShooter(Time.fixedDeltaTime / 60.0f * Vector3.Dot(toTarget, aimDirection) * 0.5f);
         // }
+
+        if (Target == null)
+        {
+            AddReward(Vector3.Dot(_tankCannon.forward, transform.parent.forward) * (Time.fixedDeltaTime / 60.0f) * 0.5f); // Small reward for keeping the cannon facing forward when no target is assigned
+        }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
