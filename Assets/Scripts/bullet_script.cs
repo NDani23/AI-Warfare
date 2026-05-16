@@ -46,23 +46,8 @@ public class bullet_script : MonoBehaviour
             else
                 envController.EnemyDetected(_parent.gameObject, Team.Red);
 
-            bool isTargetHit = collision.collider.gameObject.transform.parent.gameObject == _parent.ActiveCommand.targetGameObject ? true : false;
-
             collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Hit(_damage);
 
-            if(isTargetHit)
-            {
-                _parent.AddReward(1.0f);
-                _targetPracticeController?.HandleMarkedTargetHit(_parent);
-            }
-            else if(_parent.ActiveCommand.targetGameObject == null)
-            {
-                 _parent.AddRewardToShooter(0.15f);
-            }
-            else
-            {
-                _parent.AddRewardToShooter(0.05f);
-            }
         }
         else if((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Yellow) ||
                (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Red))

@@ -37,8 +37,8 @@ public class TankDriverAgent : Agent
         sensor.AddObservation(transform.InverseTransformDirection(_tankRB.angularVelocity).y); // Angular velocity (turn speed)
         sensor.AddObservation(_vehicleManager.Health * 0.01f); // Health
         sensor.AddObservation(transform.InverseTransformDirection(_tankCannon.forward)); // Cannon forward direction relative to the tank body
-        sensor.AddObservation(_vehicleManager.ActiveCommand.commandType == CommandType.GoToPosition ? 1.0f : 0.0f); // is Go-to command active
-        sensor.AddObservation(_vehicleManager.ActiveCommand.commandType == CommandType.EliminateTarget ? 1.0f : 0.0f); // is Kill-target command active
+        sensor.AddObservation(_vehicleManager.ActiveCommand == CommandType.GoToPosition ? 1.0f : 0.0f); // is Go-to command active
+        sensor.AddObservation(_vehicleManager.ActiveCommand == CommandType.EliminateTarget ? 1.0f : 0.0f); // is Kill-target command active
         sensor.AddObservation(_envController.m_ResetTimer / (float)_envController.timeLimit); // Remaining time of the episode
         sensor.AddObservation(0.0f); // Team score
         sensor.AddObservation(0.0f); // Enemy team score

@@ -1,4 +1,5 @@
 using System;
+using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
 public enum Team
@@ -17,10 +18,10 @@ public abstract class VehicleManager : MonoBehaviour
 {
     [SerializeField] protected GameObject HitBoxMeshes;
     [SerializeField] protected GameObject MinimapIcon;
+    [SerializeField] protected GameObject VehicleUI;
     [SerializeField] protected GameObject SelectedIcon;
     [SerializeField] protected GameObject DeadStateIcon;
     [SerializeField] protected GameObject GameCameraAnchor;
-    [SerializeField] protected GameObject VehicleUI;
     [SerializeField] protected int memberID;
     public int MemberID => memberID;
 
@@ -75,6 +76,11 @@ public abstract class VehicleManager : MonoBehaviour
         {
             bp.BehaviorType = _isPlayerControlled ? Unity.MLAgents.Policies.BehaviorType.HeuristicOnly : Unity.MLAgents.Policies.BehaviorType.Default;
         }
+    }
+
+    protected virtual void extendSelectedStateChanged(bool isSelected)
+    {
+        // This method can be overridden by derived classes to implement additional behavior when the selected state changes.
     }
 
     public void Hit(int damage)
@@ -175,6 +181,7 @@ public abstract class VehicleManager : MonoBehaviour
         {
             _healthBar.SetActive(true);
         }
+        extendSelectedStateChanged(isSelected);
         UpdateIconsVisibility();
     }
 }

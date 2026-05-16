@@ -7,6 +7,7 @@ using System.Linq;
 using UnityEngine.Events;
 using Unity.MLAgents.Demonstrations;
 using Unity.MLAgents;
+using Unity.VisualScripting;
 
 public enum CommandType
 {
@@ -15,23 +16,11 @@ public enum CommandType
     EliminateTarget = 2
 }
 
-public struct Command
-{
-    public CommandType commandType;
-    public GameObject targetGameObject;
-
-    public Command(CommandType commandType, GameObject targetGameObject)
-    {
-        this.commandType = commandType;
-        this.targetGameObject = targetGameObject;
-    }
-}
-
 public class TankManager : VehicleManager, ITargetable
 {
 
     [SerializeField] private RayPerceptionSensorComponent3D aimSensor;
-    [SerializeField] private CommandMarkerController _commandMarker;
+    [SerializeField] private CommandTargetMarkerController _commandMarker;
     [SerializeField] private TankDriverAgent _driverAgent;
     [SerializeField] private TankShooterAgent _shooterAgent;
     [SerializeField] private Transform gameCameraPivot;
@@ -43,8 +32,10 @@ public class TankManager : VehicleManager, ITargetable
 
     private TankController _tankController;
 
-    private Command activeCommand = new Command(CommandType.None, null);
-    public Command ActiveCommand => activeCommand;
+    private CommandType activeCommand = CommandType.None;
+    public CommandType ActiveCommand => activeCommand;
+
+    public CommandTargetMarkerController CommandMarker => _commandMarker;
     public float DriverThrottleAction => _driverAgent.LastThrottleAction;
     public float DriverSteerAction => _driverAgent.LastSteerAction;
 
@@ -106,6 +97,18 @@ public class TankManager : VehicleManager, ITargetable
         _shooterAgent.SetPlayerControl(control);
     }
 
+    protected override void extendSelectedStateChanged(bool isSelected)
+    {
+        if (!isSelected)
+        {
+            CommandMarker.ShowCommandIcon(false);
+        }
+        else
+        {
+            CommandMarker.ShowCommandIcon(true);
+        }
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag != "Bullet")
@@ -131,10 +134,10 @@ public class TankManager : VehicleManager, ITargetable
             _envController.EnemyDetected(obs.RayOutputs[0].HitGameObject.transform.parent.gameObject, this._team);
         }
 
-        if (activeCommand.commandType == CommandType.EliminateTarget && _shooterAgent.Target == null)
-        {
-            ClearCommand();
-        }
+        // if (activeCommand.commandType == CommandType.EliminateTarget && _shooterAgent.Target == null)
+        // {
+        //     ClearCommand();
+        // }
 
         //Existential penalty
         AddReward(-(Time.fixedDeltaTime / 60.0f) * 0.5f);
@@ -188,24 +191,29 @@ public class TankManager : VehicleManager, ITargetable
 
         if (commandTarget.GetComponent<ITargetable>() != null)
         {
-            activeCommand = new Command(CommandType.EliminateTarget, commandTarget);
-            _shooterAgent.SetTarget(commandTarget);
+            activeCommand = CommandType.EliminateTarget;
             _commandMarker.gameObject.SetActive(true);
-            _commandMarker.SetFollowTarget(commandTarget.transform);
+            _commandMarker.SetFollowTarget(commandTarget);
         }
         else
         {
-            activeCommand = new Command(CommandType.GoToPosition, commandTarget);
+            activeCommand = CommandType.GoToPosition;
             _commandMarker.gameObject.SetActive(true);
-            _commandMarker.SetFollowTarget(commandTarget.transform);
+            _commandMarker.SetFollowTarget(commandTarget);
         }
+    }
+
+    public void IssueCommand(Vector3 commandTargetGlobalPosition)
+    {
+        activeCommand = CommandType.GoToPosition;
+        _commandMarker.gameObject.SetActive(true);
+        _commandMarker.SetTargetGlobalPosition(commandTargetGlobalPosition);
+
     }
     private void ClearCommand()
     {
-        activeCommand.commandType = CommandType.None;
-        _shooterAgent.SetTarget(null);
+        activeCommand = CommandType.None;
         _commandMarker.gameObject.SetActive(false);
-        _commandMarker.SetFollowTarget(null);
     }
 
     public void ResetTank()

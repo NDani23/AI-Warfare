@@ -19,7 +19,7 @@ public class IconController : MonoBehaviour
         this.transform.position = new Vector3(transform.parent.transform.position.x, fixedHeight, transform.parent.transform.position.z);
         this.transform.rotation = Quaternion.Euler(90.0f, transform.parent.transform.rotation.eulerAngles.y, 0.0f);
 
-        if(vehicleManager != null)
+        if(vehicleManager != null && agentHealthForeground != null && agentNameText != null)
         {
             agentHealthForeground.fillAmount = vehicleManager.Health / vehicleManager.MaxHealth;
             agentNameText.text = vehicleManager.AgentName;

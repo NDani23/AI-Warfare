@@ -51,42 +51,44 @@ TemporaryDependencyNodeTargetIdentifier=netstandard2.1
 /warnaserror+:NU1605
 
 [sourceFiles]
-Assets/Scripts/
- agentInfoScript.cs
- BulletTrail.cs
- BulletTrailPool.cs
- bullet_script.cs
- CameraController.cs
- CommandMarkerController.cs
- CTController.cs
- DeadTankScript.cs
- EnvController.cs
- GameManager.cs
- GoToTrainerController.cs
- GUIManager.cs
- HeliController.cs
- HeliHUD.cs
- HeliManager.cs
- HeliObsProcesser.cs
- HeliPilotAgent.cs
- HeliVisualController.cs
- IconController.cs
- ITargetable.cs
- IVehicleController.cs
- IVehicleUI.cs
- MenuManager.cs
- MinimapGridSensor.cs
- MinimapGridSensorComponent.cs
- SparkEmitterScript.cs
- TankController.cs
- TankDriverAgent.cs
- TankHUD.cs
- TankManager.cs
- TankShooterAgent.cs
- TargetPracticeController.cs
- TargetScript.cs
- VehicleManager.cs
- WheelScript.cs
+Assets/
+ CommandIconController.cs
+ Scripts/
+  agentInfoScript.cs
+  BulletTrail.cs
+  BulletTrailPool.cs
+  bullet_script.cs
+  CameraController.cs
+  CommandMarkerController.cs
+  CTController.cs
+  DeadTankScript.cs
+  EnvController.cs
+  GameManager.cs
+  GoToTrainerController.cs
+  GUIManager.cs
+  HeliController.cs
+  HeliHUD.cs
+  HeliManager.cs
+  HeliObsProcesser.cs
+  HeliPilotAgent.cs
+  HeliVisualController.cs
+  IconController.cs
+  ITargetable.cs
+  IVehicleController.cs
+  IVehicleUI.cs
+  MenuManager.cs
+  MinimapGridSensor.cs
+  MinimapGridSensorComponent.cs
+  SparkEmitterScript.cs
+  TankController.cs
+  TankDriverAgent.cs
+  TankHUD.cs
+  TankManager.cs
+  TankShooterAgent.cs
+  TargetPracticeController.cs
+  TargetScript.cs
+  VehicleManager.cs
+  WheelScript.cs
 Temp/obj/Debug/Assembly-CSharp/.NETStandard,Version=v2.1.AssemblyAttributes.cs
 
 [metadataReferences]

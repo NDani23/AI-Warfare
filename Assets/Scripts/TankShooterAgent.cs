@@ -17,9 +17,6 @@ public class TankShooterAgent : Agent
     private EnvController _envController;
     private Rigidbody _tankRB;
 
-    private GameObject _target;
-    public GameObject Target => _target;
-
     public override void Initialize()
     {
         _vehicleManager = GetComponentInParent<TankManager>();
@@ -30,7 +27,7 @@ public class TankShooterAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        GameObject activeTarget = _vehicleManager.ActiveCommand.commandType == CommandType.EliminateTarget ? _target : null;
+        GameObject activeTarget = _vehicleManager.ActiveCommand == CommandType.EliminateTarget ? _vehicleManager.CommandMarker.FollowTarget : null;
 
         sensor.AddObservation(Vector3.Dot(transform.parent.forward, _tankRB.linearVelocity) / 40.0f); // Forward velocity
         sensor.AddObservation(transform.InverseTransformDirection(_tankRB.angularVelocity).y); // Angular velocity (turn speed)
@@ -97,10 +94,10 @@ public class TankShooterAgent : Agent
         //     _vehicleManager.AddRewardToShooter(Time.fixedDeltaTime / 60.0f * Vector3.Dot(toTarget, aimDirection) * 0.5f);
         // }
 
-        if (Target == null)
-        {
-            AddReward(Vector3.Dot(_tankCannon.forward, transform.parent.forward) * (Time.fixedDeltaTime / 60.0f) * 0.5f); // Small reward for keeping the cannon facing forward when no target is assigned
-        }
+        // if (Target == null)
+        // {
+        //     AddReward(Vector3.Dot(_tankCannon.forward, transform.parent.forward) * (Time.fixedDeltaTime / 60.0f) * 0.5f); // Small reward for keeping the cannon facing forward when no target is assigned
+        // }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -127,11 +124,5 @@ public class TankShooterAgent : Agent
     public Vector3 GetCannonForward()
     {
         return _tankCannon.forward;
-    }
-
-    public void SetTarget(GameObject target)
-    {
-        if (target == null || target.GetComponent<ITargetable>() == null) _target = null;
-        else _target = target;
     }
 }
