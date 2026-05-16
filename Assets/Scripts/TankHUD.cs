@@ -8,29 +8,35 @@ public class TankHUD : MonoBehaviour, IVehicleUI
     [SerializeField] private UnityEngine.UI.Image AimPointerImage;
     [SerializeField] private UnityEngine.UI.Text HealthText;
     [SerializeField] private UnityEngine.UI.Image HealthForeground;
+    [SerializeField] private float aimPointerSmoothTime = 0.08f;
 
-    private TankAgent _agent;
+    private TankManager _vehicle;
 
-    public TankAgent Agent
+    public TankManager vehicle
     {
-        get => _agent;
-        set => _agent = value;
+        get => _vehicle;
+        set => _vehicle = value;
     }
 
-    public void Update()
-    {
-        if (_agent != null)
-        {
-            int playerHealth = (int)_agent.Health;
-            HealthText.text = playerHealth.ToString() + "%";
-            if (HealthForeground != null) HealthForeground.fillAmount = _agent.Health / _agent.MaxHealth;
-            CooldownForeground.fillAmount = _agent.Health <= 0.0f ? 1.0f : _agent.gameObject.GetComponent<TankAgent>().getCooldown() / 3.0f;
+    private Vector2 _aimPointerVelocity;
 
-            bool showAimPointer = _agent.IsCannonFacingCameraForward();
+    public void LateUpdate()
+    {
+        if (_vehicle != null)
+        {
+            int playerHealth = (int)_vehicle.Health;
+            HealthText.text = playerHealth.ToString() + "%";
+            if (HealthForeground != null) HealthForeground.fillAmount = _vehicle.Health / _vehicle.MaxHealth;
+            CooldownForeground.fillAmount = _vehicle.Health <= 0.0f ? 1.0f : _vehicle.gameObject.GetComponent<TankManager>().getCooldown() / 3.0f;
+
+            bool showAimPointer = _vehicle.IsCannonFacingCameraForward();
             AimPointerImage.enabled = showAimPointer;
             if (showAimPointer)
             {
-                AimPointerImage.transform.position = _agent.GetScreenSpaceAimPos();
+                Vector2 targetPos = _vehicle.GetScreenSpaceAimPos();
+                Vector2 currentPos = AimPointerImage.rectTransform.position;
+                Vector2 smoothedPos = Vector2.SmoothDamp(currentPos, targetPos, ref _aimPointerVelocity, aimPointerSmoothTime);
+                AimPointerImage.rectTransform.position = smoothedPos;
             }
         }
 

@@ -40,6 +40,8 @@ public class HeliManager : VehicleManager, ITargetable
         _vehicleType = VehicleType.Heli;
         _vehicleController = this.gameObject.GetComponent<HeliController>();
         _heliController = (HeliController)_vehicleController;
+        _agent = GetComponent<HeliPilotAgent>();
+         _healthBar = GetComponentInChildren<agentInfoScript>().gameObject;
 
         _health = MaxHealth;
         _envController = GetComponentInParent<EnvController>();
@@ -59,6 +61,8 @@ public class HeliManager : VehicleManager, ITargetable
         {
             _team = Team.Yellow;
         }
+
+        _agentName = _team == Team.Red ? "R" + memberID.ToString() : "Y" + memberID.ToString();
     }
 
     public override void AddReward(float reward)

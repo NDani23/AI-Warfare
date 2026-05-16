@@ -1136,7 +1136,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2010938301376057981, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2254685693878061145, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2112,7 +2112,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2010938301376057981, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2254685693878061145, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4315,7 +4315,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2010938301376057981, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2254685693878061145, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4699,11 +4699,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 508294273621732386, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: TargetWidth
-      value: 15
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 508294273621732386, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: TargetHeight
-      value: 15
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 508294273621732386, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: ObstacleCount
@@ -4711,7 +4711,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 508294273621732386, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: UseTargetWall
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 508294273621732386, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: redTankPrefab
@@ -8544,7 +8544,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2010938301376057981, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2254685693878061145, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9303,8 +9303,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc5b92fd6f9d4e040b2b40b52004f99d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameCamera: {fileID: 0}
   guiManager: {fileID: 0}
+  playEnvs: {fileID: 0}
   ControlModeChangedEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -9516,7 +9516,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2010938301376057981, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2254685693878061145, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9726,7 +9726,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 508294273621732386, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: UseTargetWall
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 508294273621732386, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: redTankPrefab
@@ -9814,7 +9814,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2010938301376057981, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2254685693878061145, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10397,7 +10397,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba0f0b4386682fd46b199da4fad7a38f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aimCursor: {fileID: 2800000, guid: 7f89d5203baefa94b8380954e145e610, type: 3}
   AimPointerImage: {fileID: 59450459}
   RedState: {fileID: 182544472}
   YellowState: {fileID: 1902715602}
@@ -10410,9 +10409,7 @@ MonoBehaviour:
   PausePanel: {fileID: 598595193}
   TiePanel: {fileID: 334085686}
   RespawnCooldownText: {fileID: 608908069}
-  env: {fileID: 0}
   gameManager: {fileID: 1478751593}
-  GameCamera: {fileID: 0}
   tankHUD: {fileID: 1842617938}
   heliHUD: {fileID: 1824020333}
   PausedEvent:
@@ -10705,7 +10702,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2010938301376057981, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2254685693878061145, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_LocalPosition.z
@@ -11666,7 +11663,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2010938301376057981, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2254685693878061145, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_LocalPosition.z
@@ -12278,7 +12275,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2010938301376057981, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2254685693878061145, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_LocalPosition.z
@@ -12553,10 +12550,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CooldownForeground: {fileID: 2024893912}
-  aimCursor: {fileID: 2800000, guid: 7f89d5203baefa94b8380954e145e610, type: 3}
+  fixedCursor: {fileID: 0}
   AimPointerImage: {fileID: 59450459}
   HealthText: {fileID: 2059934278}
   HealthForeground: {fileID: 1414937023}
+  aimPointerSmoothTime: 0.08
 --- !u!224 &1842617939
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12697,7 +12695,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2010938301376057981, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2254685693878061145, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_LocalPosition.z
@@ -13872,7 +13870,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2010938301376057981, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2254685693878061145, guid: 3b0c54fbfcba77d48823080f9d61a987, type: 3}
       propertyPath: m_LocalPosition.z

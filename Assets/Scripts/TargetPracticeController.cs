@@ -198,7 +198,7 @@ public class TargetPracticeController : MonoBehaviour
         if (_currentCommandMode == TrainingCommandMode.GoTo)
         {
             Vector3 localPos = GetRandomGoToLocalPosition();
-            tank.SetGoToPoint(localPos);
+            tank.IssueCommand(GoToMarker);
             _goToTrainerController?.SetGoToLocalPosition(localPos);
         }
         else
@@ -208,7 +208,7 @@ public class TargetPracticeController : MonoBehaviour
                 return;
 
             target.GetComponent<ITargetable>()?.setDetectedState(true);
-            tank.SetTarget(target.gameObject);
+            tank.IssueCommand(target.gameObject);
             _goToTrainerController?.SetFollowTarget(target.transform);
         }
     }

@@ -8,20 +8,33 @@ using UnityEngine.Events;
 using Unity.MLAgents.Demonstrations;
 using Unity.MLAgents;
 
+public enum CommandType
+{
+    None = 0,
+    GoToPosition = 1,
+    EliminateTarget = 2
+}
+
+public struct Command
+{
+    public CommandType commandType;
+    public GameObject targetGameObject;
+
+    public Command(CommandType commandType, GameObject targetGameObject)
+    {
+        this.commandType = commandType;
+        this.targetGameObject = targetGameObject;
+    }
+}
+
 public class TankManager : VehicleManager, ITargetable
 {
-    public enum CommandType
-    {
-        None = 0,
-        GoToPoint = 1,
-        KillTarget = 2
-    }
 
-    [SerializeField] private GameObject _healthBar;
     [SerializeField] private RayPerceptionSensorComponent3D aimSensor;
     [SerializeField] private CommandMarkerController _commandMarker;
     [SerializeField] private TankDriverAgent _driverAgent;
     [SerializeField] private TankShooterAgent _shooterAgent;
+    [SerializeField] private Transform gameCameraPivot;
 
     BehaviorParameters m_BehaviorParameters;
     private float _maxHealth = 100.0f;
@@ -30,14 +43,15 @@ public class TankManager : VehicleManager, ITargetable
 
     private TankController _tankController;
 
-    private CommandType _activeCommand = CommandType.None;
-    public CommandType ActiveCommand => _activeCommand;
-    public GameObject CommandTarget => _shooterAgent.Target;
+    private Command activeCommand = new Command(CommandType.None, null);
+    public Command ActiveCommand => activeCommand;
     public float DriverThrottleAction => _driverAgent.LastThrottleAction;
     public float DriverSteerAction => _driverAgent.LastSteerAction;
 
     public UnityEvent DiedEvent;
     public UnityEvent RespawnEvent;
+
+    private Vector3 _lookDirectionWorld = Vector3.forward;
 
     private SimpleMultiAgentGroup _tankCrewAgentGroup;
 
@@ -46,6 +60,7 @@ public class TankManager : VehicleManager, ITargetable
         _vehicleType = VehicleType.Tank;
         _vehicleController = this.gameObject.GetComponent<TankController>();
         _tankController = (TankController)_vehicleController;
+        _healthBar = GetComponentInChildren<agentInfoScript>().gameObject;
 
         _health = MaxHealth;
         m_BehaviorParameters = gameObject.GetComponent<BehaviorParameters>();
@@ -54,6 +69,7 @@ public class TankManager : VehicleManager, ITargetable
         _tankCrewAgentGroup = new SimpleMultiAgentGroup();
 
         _team = m_BehaviorParameters.TeamId == (int)Team.Red ? Team.Red : Team.Yellow;
+        _agentName = _team == Team.Red ? "R" + memberID.ToString() : "Y" + memberID.ToString();
     }
 
     void Start()
@@ -115,7 +131,7 @@ public class TankManager : VehicleManager, ITargetable
             _envController.EnemyDetected(obs.RayOutputs[0].HitGameObject.transform.parent.gameObject, this._team);
         }
 
-        if (_activeCommand == CommandType.KillTarget && _shooterAgent.Target == null)
+        if (activeCommand.commandType == CommandType.EliminateTarget && _shooterAgent.Target == null)
         {
             ClearCommand();
         }
@@ -124,41 +140,69 @@ public class TankManager : VehicleManager, ITargetable
         AddReward(-(Time.fixedDeltaTime / 60.0f) * 0.5f);
     }
 
+    
+    public void Update()
+    {
+        if(!_driverAgent.IsPlayerControlled() || _health == 0.0f)
+        {
+            gameCameraPivot.rotation = Quaternion.LookRotation(_shooterAgent.GetCannonForward(), Vector3.up);
+            _lookDirectionWorld = _shooterAgent.GetCannonForward();
+            return;
+        }
+
+        var cameraRotationVertical = Input.mousePositionDelta.y / Screen.height * 30.0f;
+        var cameraRotationHorizontal = Input.mousePositionDelta.x / Screen.width * 60.0f;
+
+        _lookDirectionWorld = Quaternion.AngleAxis(cameraRotationHorizontal, Vector3.up) * _lookDirectionWorld;
+        _lookDirectionWorld = Quaternion.AngleAxis(-cameraRotationVertical, gameCameraPivot.right) * _lookDirectionWorld;
+        _lookDirectionWorld.Normalize();
+        _tankController.aimDirection = _lookDirectionWorld;
+        
+        gameCameraPivot.rotation = Quaternion.LookRotation(_lookDirectionWorld, Vector3.up);
+
+        _tankController.lockTurret = false;
+        if(Input.GetKey(KeyCode.LeftControl)) _tankController.lockTurret=true;
+    }
+    
+    public bool IsCannonFacingCameraForward()
+    {
+        return Vector3.Dot(_shooterAgent.transform.forward, gameCameraPivot.forward) > 0.0f;
+    }
+
+    public bool IsHeuristicOnlyMode()
+    {
+        return _driverAgent.IsPlayerControlled();
+    }
+
     public float getCooldown()
     {
         return _tankController.coolDownTime;
     }
 
-    public void SetTarget(GameObject target)
+    public void IssueCommand(GameObject commandTarget)
     {
-        if (target == null || target.GetComponent<ITargetable>() == null)
-        {
-            return;
-        }
-
         ClearCommand();
-        _activeCommand = CommandType.KillTarget;
-        _shooterAgent.SetTarget(target);
-        _commandMarker.gameObject.SetActive(true);
-        _commandMarker.SetFollowTarget(target.transform);
-    }
 
-    public GameObject GetTarget()
-    {
-        return _shooterAgent.Target;
-    }
+        if (commandTarget == null)
+            return;
 
-    public void SetGoToPoint(Vector3 envSpacePoint)
-    {
-        if (Mathf.Abs(envSpacePoint.x) > 340 || Mathf.Abs(envSpacePoint.z) > 340) return;
-        _activeCommand = CommandType.GoToPoint;
-        _shooterAgent.SetTarget(null);
-        _commandMarker.gameObject.SetActive(true);
-        _commandMarker.SetEnvSpacePosition(envSpacePoint);
+        if (commandTarget.GetComponent<ITargetable>() != null)
+        {
+            activeCommand = new Command(CommandType.EliminateTarget, commandTarget);
+            _shooterAgent.SetTarget(commandTarget);
+            _commandMarker.gameObject.SetActive(true);
+            _commandMarker.SetFollowTarget(commandTarget.transform);
+        }
+        else
+        {
+            activeCommand = new Command(CommandType.GoToPosition, commandTarget);
+            _commandMarker.gameObject.SetActive(true);
+            _commandMarker.SetFollowTarget(commandTarget.transform);
+        }
     }
-    public void ClearCommand()
+    private void ClearCommand()
     {
-        _activeCommand = CommandType.None;
+        activeCommand.commandType = CommandType.None;
         _shooterAgent.SetTarget(null);
         _commandMarker.gameObject.SetActive(false);
         _commandMarker.SetFollowTarget(null);
@@ -166,7 +210,7 @@ public class TankManager : VehicleManager, ITargetable
 
     public void ResetTank()
     {
-        //ClearCommand();
+        IssueCommand(_envController.ControlPoint);
         ResetVehicle();
     }
 }

@@ -46,25 +46,22 @@ public class bullet_script : MonoBehaviour
             else
                 envController.EnemyDetected(_parent.gameObject, Team.Red);
 
-            bool isTargetHit = collision.collider.gameObject.transform.parent.gameObject == _parent.GetTarget() ? true : false;
+            bool isTargetHit = collision.collider.gameObject.transform.parent.gameObject == _parent.ActiveCommand.targetGameObject ? true : false;
 
             collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Hit(_damage);
 
             if(isTargetHit)
             {
-                Debug.Log("Hit marked!");
                 _parent.AddReward(1.0f);
                 _targetPracticeController?.HandleMarkedTargetHit(_parent);
             }
-            else if(_parent.GetTarget() == null)
+            else if(_parent.ActiveCommand.targetGameObject == null)
             {
                  _parent.AddRewardToShooter(0.15f);
-                Debug.Log("Hit unmarked!");
             }
             else
             {
                 _parent.AddRewardToShooter(0.05f);
-                Debug.Log("Hit unmarked!");
             }
         }
         else if((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Yellow) ||
@@ -76,7 +73,6 @@ public class bullet_script : MonoBehaviour
             //    emitter.position = collision.transform.position;
             //}
             _parent.AddRewardToShooter(-0.5f);
-            Debug.Log("Friendly fire!");
             collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Hit(_damage);
         }
         else

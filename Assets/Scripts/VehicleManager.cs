@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public enum Team
@@ -39,6 +40,8 @@ public abstract class VehicleManager : MonoBehaviour
 
     protected float _regenHealthCooldown = 0;
 
+    protected GameObject _healthBar;
+
     protected VehicleType _vehicleType = VehicleType.Tank;
     public VehicleType VehicleType => _vehicleType;
 
@@ -57,6 +60,9 @@ public abstract class VehicleManager : MonoBehaviour
 
     protected bool _isPlayerControlled = false;
     public bool IsPlayerControlled => _isPlayerControlled;
+
+    protected String _agentName;
+    public String AgentName => _agentName;
 
     public abstract void AddReward(float reward);
     public abstract void EndEpisode();
@@ -104,6 +110,7 @@ public abstract class VehicleManager : MonoBehaviour
         _health = MaxHealth;
         _vehicleController.setStartingState((int)_team, memberID);
         _detected = false;
+        if(!_selected) _healthBar.SetActive(true);
         HitBoxMeshes.SetActive(true);
         gameObject.tag = _team == Team.Red ? "RedAgent" : "YellowAgent";
         if (_inCT)
@@ -124,6 +131,7 @@ public abstract class VehicleManager : MonoBehaviour
         _vehicleController.setDeadState();
         _detected = false;
         HitBoxMeshes.SetActive(false);
+        _healthBar.SetActive(false);
         if (_inCT)
         {
             _inCT = false;
@@ -159,6 +167,14 @@ public abstract class VehicleManager : MonoBehaviour
     public void setSelectedState(bool isSelected)
     {
         _selected = isSelected;
+        if(isSelected)
+        {
+            _healthBar.SetActive(false);
+        }
+        else
+        {
+            _healthBar.SetActive(true);
+        }
         UpdateIconsVisibility();
     }
 }

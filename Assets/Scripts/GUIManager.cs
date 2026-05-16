@@ -1,4 +1,5 @@
 using Google.Protobuf.WellKnownTypes;
+using NUnit;
 using System;
 using Unity.MLAgents;
 using UnityEngine;
@@ -25,15 +26,17 @@ public class GUIManager : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Image PausePanel;
     [SerializeField] private UnityEngine.UI.Image TiePanel;
     [SerializeField] private UnityEngine.UI.Text RespawnCooldownText;
-    [SerializeField] private EnvController env;
     [SerializeField] private GameManager gameManager;
-    [SerializeField] private CameraController GameCamera;
     [SerializeField] private TankHUD tankHUD;
     [SerializeField] private HeliHUD heliHUD;
 
     private GUIMode _GUIMode = GUIMode.Commander;
 
     private VehicleManager? playerVehicle;
+
+    private EnvController env;
+
+    private CameraController GameCamera;
 
     public VehicleManager PlayerVehicle
     {
@@ -46,6 +49,11 @@ public class GUIManager : MonoBehaviour
     float endRoundTimer = 0.0f;
 
     private Vector2 CursorHotspot;
+
+    void Awake()
+    {
+        GameCamera = Camera.main.GetComponent<CameraController>();
+    }
     void Start()
     {
         //player.DiedEvent.AddListener(PlayerDiedHandler);
@@ -57,6 +65,11 @@ public class GUIManager : MonoBehaviour
         PausedEvent.AddListener(PauseGameHandler);
 
         playerVehicle = null;
+    }
+
+    public void setPlayEnv(EnvController envController)
+    {
+        env = envController;
     }
 
     void Update()

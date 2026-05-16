@@ -16,14 +16,34 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 1665526004022726642, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1801883545344880449, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Layer
       value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2250074915574215846, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.b
+      value: 0.19607843
+      objectReference: {fileID: 0}
+    - target: {fileID: 2250074915574215846, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.g
+      value: 0.24705882
+      objectReference: {fileID: 0}
+    - target: {fileID: 2250074915574215846, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.r
+      value: 0.96862745
       objectReference: {fileID: 0}
     - target: {fileID: 2510629832125699754, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Layer
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 2640464162299084759, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: MinimapIcon
+      value: 
+      objectReference: {fileID: 3915803686749267506}
     - target: {fileID: 3457863037060981203, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_CullingMask.m_Bits
       value: 101580799
@@ -36,6 +56,34 @@ PrefabInstance:
       propertyPath: DefaultFriendlyMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 3fa8773277c0e7e44a87ae2d0f525889, type: 2}
+    - target: {fileID: 3636067532492036787, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.b
+      value: 0.19607843
+      objectReference: {fileID: 0}
+    - target: {fileID: 3636067532492036787, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.g
+      value: 0.24705882
+      objectReference: {fileID: 0}
+    - target: {fileID: 3636067532492036787, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.r
+      value: 0.96862745
+      objectReference: {fileID: 0}
+    - target: {fileID: 3703769849645382422, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3772620315084093811, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.b
+      value: 0.19607843
+      objectReference: {fileID: 0}
+    - target: {fileID: 3772620315084093811, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.g
+      value: 0.24705882
+      objectReference: {fileID: 0}
+    - target: {fileID: 3772620315084093811, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.r
+      value: 0.96862745
+      objectReference: {fileID: 0}
     - target: {fileID: 3998644805695371758, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_DetectableTags.Array.size
       value: 2
@@ -67,6 +115,18 @@ PrefabInstance:
     - target: {fileID: 4713395377111143109, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: 'm_DetectableTags.Array.data[1]'
       value: RedAgent
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788932317435522377, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.b
+      value: 0.13333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788932317435522377, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.g
+      value: 0.13333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788932317435522377, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.r
+      value: 0.13333334
       objectReference: {fileID: 0}
     - target: {fileID: 4957934931221697080, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -136,6 +196,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6265954815333268923, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.b
+      value: 0.19607843
+      objectReference: {fileID: 0}
+    - target: {fileID: 6265954815333268923, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.g
+      value: 0.24705882
+      objectReference: {fileID: 0}
+    - target: {fileID: 6265954815333268923, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.r
+      value: 0.96862745
+      objectReference: {fileID: 0}
     - target: {fileID: 6551001859060944875, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Layer
       value: 16
@@ -147,6 +219,18 @@ PrefabInstance:
     - target: {fileID: 6903705954778870765, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_TagString
       value: RedAgent
+      objectReference: {fileID: 0}
+    - target: {fileID: 6926666748120546977, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.b
+      value: 0.19607843
+      objectReference: {fileID: 0}
+    - target: {fileID: 6926666748120546977, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.g
+      value: 0.24705882
+      objectReference: {fileID: 0}
+    - target: {fileID: 6926666748120546977, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+      propertyPath: m_Color.r
+      value: 0.96862745
       objectReference: {fileID: 0}
     - target: {fileID: 7054242417711879285, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
       propertyPath: m_Layer
@@ -177,3 +261,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+--- !u!1 &3915803686749267506 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1665526004022726642, guid: 1fd587b691ba2bd43872442f8433657b, type: 3}
+  m_PrefabInstance: {fileID: 2398898695260711360}
+  m_PrefabAsset: {fileID: 0}

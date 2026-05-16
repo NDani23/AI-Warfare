@@ -129,7 +129,6 @@ public class HeliController : MonoBehaviour, IVehicleController
             SmokeParticles.Stop();
         }
 
-
         _rigidbody.linearVelocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
 

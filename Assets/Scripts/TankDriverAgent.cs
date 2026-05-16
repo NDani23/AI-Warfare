@@ -37,8 +37,8 @@ public class TankDriverAgent : Agent
         sensor.AddObservation(transform.InverseTransformDirection(_tankRB.angularVelocity).y); // Angular velocity (turn speed)
         sensor.AddObservation(_vehicleManager.Health * 0.01f); // Health
         sensor.AddObservation(transform.InverseTransformDirection(_tankCannon.forward)); // Cannon forward direction relative to the tank body
-        sensor.AddObservation(_vehicleManager.ActiveCommand == TankManager.CommandType.GoToPoint ? 1.0f : 0.0f); // is Go-to command active
-        sensor.AddObservation(_vehicleManager.ActiveCommand == TankManager.CommandType.KillTarget ? 1.0f : 0.0f); // is Kill-target command active
+        sensor.AddObservation(_vehicleManager.ActiveCommand.commandType == CommandType.GoToPosition ? 1.0f : 0.0f); // is Go-to command active
+        sensor.AddObservation(_vehicleManager.ActiveCommand.commandType == CommandType.EliminateTarget ? 1.0f : 0.0f); // is Kill-target command active
         sensor.AddObservation(_envController.m_ResetTimer / (float)_envController.timeLimit); // Remaining time of the episode
         sensor.AddObservation(0.0f); // Team score
         sensor.AddObservation(0.0f); // Enemy team score
@@ -71,6 +71,12 @@ public class TankDriverAgent : Agent
 
         discreteActions[0] = Input.GetKey(KeyCode.W) ? 2 : (Input.GetKey(KeyCode.S) ? 0 : 1);
         discreteActions[1] = Input.GetKey(KeyCode.D) ? 2 : (Input.GetKey(KeyCode.A) ? 0 : 1);
+    }
+
+    public bool IsPlayerControlled()
+    {
+        var bp = GetComponent<Unity.MLAgents.Policies.BehaviorParameters>();
+        return bp != null ? bp.BehaviorType == Unity.MLAgents.Policies.BehaviorType.HeuristicOnly : false;
     }
 
     public void SetPlayerControl(bool control)

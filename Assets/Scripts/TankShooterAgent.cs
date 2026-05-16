@@ -30,7 +30,7 @@ public class TankShooterAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        GameObject activeTarget = _vehicleManager.ActiveCommand == TankManager.CommandType.KillTarget ? _target : null;
+        GameObject activeTarget = _vehicleManager.ActiveCommand.commandType == CommandType.EliminateTarget ? _target : null;
 
         sensor.AddObservation(Vector3.Dot(transform.parent.forward, _tankRB.linearVelocity) / 40.0f); // Forward velocity
         sensor.AddObservation(transform.InverseTransformDirection(_tankRB.angularVelocity).y); // Angular velocity (turn speed)
@@ -122,6 +122,11 @@ public class TankShooterAgent : Agent
         {
             bp.BehaviorType = control ? Unity.MLAgents.Policies.BehaviorType.HeuristicOnly : Unity.MLAgents.Policies.BehaviorType.Default;
         }
+    }
+
+    public Vector3 GetCannonForward()
+    {
+        return _tankCannon.forward;
     }
 
     public void SetTarget(GameObject target)
