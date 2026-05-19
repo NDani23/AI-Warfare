@@ -21865,10 +21865,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HitBoxMeshes: {fileID: 2452752077751520955}
   MinimapIcon: {fileID: 0}
+  VehicleUI: {fileID: 0}
   SelectedIcon: {fileID: 500901212058286793}
   DeadStateIcon: {fileID: 7863204569985114219}
   GameCameraAnchor: {fileID: 1426322841439908022}
-  VehicleUI: {fileID: 0}
   memberID: 0
   _leftAimSensor: {fileID: 4713395377111143109}
   _rightAimSensor: {fileID: 3998644805695371758}
@@ -21889,8 +21889,8 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
-  _detectedEnemiesSensor: {fileID: 0}
-  _teammateSensor: {fileID: 0}
+  _detectedEnemiesSensor: {fileID: 6618767515980235466}
+  _teammateSensor: {fileID: 4436334009465684431}
 --- !u!114 &4841696427924709451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21913,7 +21913,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: f168facba1fee314c85adee3ee41466d, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 9885e2c5e96716b41960e6ee290c9282, type: 3}
   m_InferenceDevice: 2
   m_BehaviorType: 0
   m_BehaviorName: HeliControll

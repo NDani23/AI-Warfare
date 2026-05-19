@@ -37,7 +37,7 @@ public class TankShooterAgent : Agent
         sensor.AddObservation(_vehicleController.coolDownTime / 3.0f); // Shoot cooldown time
         sensor.AddObservation(activeTarget != null ? Vector3.Normalize(_tankCannon.transform.InverseTransformDirection(activeTarget.gameObject.transform.localPosition - transform.parent.localPosition)) : Vector3.zero); // Direction to active target
         sensor.AddObservation(activeTarget != null ? Vector3.Distance(activeTarget.gameObject.transform.localPosition, transform.parent.localPosition) / 700.0f : 0); // Distance to active target
-        sensor.AddObservation(_vehicleManager.ActiveCommand == TankManager.CommandType.KillTarget ? 1.0f : 0.0f); // is Kill-target command active
+        sensor.AddObservation(_vehicleManager.ActiveCommand == CommandType.EliminateTarget ? 1.0f : 0.0f); // is Kill-target command active
         sensor.AddObservation(0.0f); //Placeholder for future use (team score relative to the other team)
 
         //Observations about other agents
@@ -106,24 +106,24 @@ public class TankShooterAgent : Agent
         //     _vehicleManager.AddRewardToShooter(Time.fixedDeltaTime / 60.0f * Vector3.Dot(toTarget, aimDirection) * 0.5f);
         // }
 
-        if (Target == null)
-        {
-            float cannonRelativeDirecton = Vector3.Dot(_tankCannon.forward, transform.parent.forward);
-            AddReward(cannonRelativeDirecton * (Time.fixedDeltaTime / 60.0f) * 0.5f);
-            // if(cannonRelativeDirecton < 0.0f)
-            // {
-            //     AddReward(cannonRelativeDirecton * (Time.fixedDeltaTime / 60.0f) * 0.);
-            // }
-            // else
-            // {
-            //     AddReward(cannonRelativeDirecton * (Time.fixedDeltaTime / 60.0f) * 0.1f);
-            // }
-        }
-        else
-        {
-            // Existential penalty
-            AddReward(-(Time.fixedDeltaTime / 60.0f) * 0.5f);
-        }
+        // if (Target == null)
+        // {
+        //     float cannonRelativeDirecton = Vector3.Dot(_tankCannon.forward, transform.parent.forward);
+        //     AddReward(cannonRelativeDirecton * (Time.fixedDeltaTime / 60.0f) * 0.5f);
+        //     // if(cannonRelativeDirecton < 0.0f)
+        //     // {
+        //     //     AddReward(cannonRelativeDirecton * (Time.fixedDeltaTime / 60.0f) * 0.);
+        //     // }
+        //     // else
+        //     // {
+        //     //     AddReward(cannonRelativeDirecton * (Time.fixedDeltaTime / 60.0f) * 0.1f);
+        //     // }
+        // }
+        // else
+        // {
+        //     // Existential penalty
+        //     AddReward(-(Time.fixedDeltaTime / 60.0f) * 0.5f);
+        // }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)

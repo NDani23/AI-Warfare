@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        _envController = playEnvs.GetComponentInChildren<EnvController>();
+        _envController = playEnvs.GetComponentInChildren<EnvController>(false);
         guiManager.setPlayEnv(_envController);
         gameCamera = Camera.main.GetComponent<CameraController>();
         gameCamera.ViewTransitionEnded.AddListener(HandleCameraTransitionEnd);

@@ -113,13 +113,13 @@ public class TankController : MonoBehaviour, IVehicleController
         if (teamID == (int)Team.Red)
         {
             transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-            transform.localPosition = new Vector3((150 - 150 * memberID) + Random.Range(-100.0f, 100.0f), 3f, -300);
+            transform.localPosition = new Vector3((150 - 150 * memberID) + Random.Range(-65.0f, 65.0f), 3f, -300);
         }
         else
         {
 
             transform.localRotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
-            transform.localPosition = new Vector3((150 - 150 * memberID) + Random.Range(-100.0f, 100.0f), 3f, 300);
+            transform.localPosition = new Vector3((150 - 150 * memberID) + Random.Range(-65.0f, 65.0f), 3f, 300);
         }
 
         // Physics.SyncTransforms();
