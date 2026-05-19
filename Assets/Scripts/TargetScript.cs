@@ -76,7 +76,7 @@ public class TargetScript : MonoBehaviour, ITargetable
 
     public void Rearrange(float width, float height, float practiceAreaLenght, float practiceAreaWidth, bool canFloat)
     {
-        m_health = targetType is TargetType.Tank ? 40.0f : 40.0f;
+        m_health = targetType is TargetType.Tank ? 100.0f : 40.0f;
 
         if(targetType is TargetType.Tank) canFloat = false;
 

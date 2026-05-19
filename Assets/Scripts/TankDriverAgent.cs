@@ -56,7 +56,10 @@ public class TankDriverAgent : Agent
         //     AddReward(-(Time.fixedDeltaTime / 60.0f));
         // }
 
-        AddReward(_tankRB.linearVelocity.magnitude / 30.0f * (Time.fixedDeltaTime / 60.0f)); // Reward for forward movement, scaled down to prevent excessive rewards at high speeds
+        if((!_vehicleManager.IsInZone && _vehicleManager.ActiveCommand == TankManager.CommandType.GoToPoint) || (_vehicleManager.ActiveCommand == TankManager.CommandType.KillTarget))
+        {
+            AddReward(_tankRB.linearVelocity.magnitude / 30.0f * (Time.fixedDeltaTime / 60.0f)); // Reward for forward movement, scaled down to prevent excessive rewards at high speeds
+        }
     }
 
     public override void OnActionReceived(ActionBuffers actions)

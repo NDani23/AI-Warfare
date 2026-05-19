@@ -31,7 +31,11 @@ public class CommandMarkerController : MonoBehaviour
 
         float currentDistanceToGoToPoint = Vector3.Distance(_agent.transform.position, _targetGlobalPosition);
         float distanceDelta = distanceToGoToPoint - currentDistanceToGoToPoint;
-        _agent.AddRewardToDriver(distanceDelta / startDistanceToGoToPoint * 0.5f);
+        if(!_agent.IsInZone)
+        {
+            float multiplier = _agent.ActiveCommand == TankManager.CommandType.GoToPoint ? 0.3f : 0.1f;
+            _agent.AddRewardToDriver(distanceDelta / startDistanceToGoToPoint * multiplier);
+        }
         distanceToGoToPoint = currentDistanceToGoToPoint;
     }
 

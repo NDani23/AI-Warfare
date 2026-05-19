@@ -37,6 +37,13 @@ public class TankManager : VehicleManager, ITargetable
     public float DriverThrottleAction => _driverAgent.LastThrottleAction;
     public float DriverSteerAction => _driverAgent.LastSteerAction;
 
+    private bool isInZone = false;
+    public bool IsInZone
+    {
+        get => isInZone;
+        set => isInZone = value;
+    }
+
     public UnityEvent DiedEvent;
     public UnityEvent RespawnEvent;
 
@@ -99,7 +106,7 @@ public class TankManager : VehicleManager, ITargetable
     {
         if (collision.gameObject.tag != "Bullet")
         {
-            AddRewardToDriver(-0.05f);
+            AddRewardToDriver(-0.1f);
         }
     }
 
@@ -125,7 +132,7 @@ public class TankManager : VehicleManager, ITargetable
             ClearCommand();
         }
 
-        AddRewardToDriver(Vector3.Dot(transform.forward, Vector3.Normalize(_commandMarker.transform.position - transform.position)) * 0.15f * (Time.fixedDeltaTime / 60.0f));
+        //AddRewardToDriver(Vector3.Dot(transform.forward, Vector3.Normalize(_commandMarker.transform.position - transform.position)) * 0.15f * (Time.fixedDeltaTime / 60.0f));
     }
 
     public float getCooldown()
@@ -171,6 +178,7 @@ public class TankManager : VehicleManager, ITargetable
     public void ResetTank()
     {
         //ClearCommand();
+        isInZone = false;
         ResetVehicle();
     }
 }
