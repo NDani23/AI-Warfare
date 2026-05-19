@@ -5,10 +5,9 @@ public class GoToTrainerController : MonoBehaviour
     private TargetPracticeController _targetPracticeController;
     private Transform _followTarget;
     private Vector3 _localTargetPosition;
-    private TankManager _currentTank;
+    [SerializeField] private TankManager _currentTank;
     private float _timeInZone = 0.0f;
     private float _targetTimeInZone = 5.0f;
-    private bool _isInZone = false;
 
     void Awake()
     {
@@ -23,7 +22,7 @@ public class GoToTrainerController : MonoBehaviour
             followPos.y = 3.0f;
             transform.position = followPos;
 
-            _isInZone = false;
+            _currentTank.IsInZone = false;
             _timeInZone = 0.0f;
         }
         else
@@ -32,14 +31,14 @@ public class GoToTrainerController : MonoBehaviour
             localPos.y = 3.0f;
             transform.localPosition = localPos;
 
-            if (_isInZone && _currentTank != null)
+            if (_currentTank != null && _currentTank.IsInZone)
             {
                 _timeInZone += Time.fixedDeltaTime;
-                _currentTank.AddRewardToDriver(Time.fixedDeltaTime * 0.1f);
+                _currentTank.AddRewardToDriver(Time.fixedDeltaTime * 0.25f);
                 if (_timeInZone >= _targetTimeInZone)
                 {
                     _timeInZone = 0.0f;
-                    _isInZone = false;
+                    _currentTank.IsInZone = false;
                     _targetPracticeController?.HandleGoToReached(_currentTank);
                     _targetTimeInZone = Random.Range(1.0f, 10.0f);
                 }
@@ -71,14 +70,18 @@ public class GoToTrainerController : MonoBehaviour
             return;
 
         TankManager tank = other.transform.parent.GetComponent<TankManager>();
-        if (tank == null)
+        if (tank == null || tank != _currentTank)
             return;
 
-        _targetPracticeController?.HandleGoToReached(tank);
+        //_targetPracticeController?.HandleGoToReached(tank);
 
-        // _currentTank = tank;
-        // _isInZone = true;
-        // _timeInZone = 0.0f;
+        _currentTank.IsInZone = true;
+        _timeInZone = 0.0f;
+    }
+
+    public TankManager GetCurrentTank()
+    {
+        return _currentTank;
     }
 
     void OnTriggerExit(Collider other)
@@ -88,7 +91,7 @@ public class GoToTrainerController : MonoBehaviour
 
         if (other.transform.parent.GetComponent<TankManager>() == _currentTank)
         {
-            _isInZone = false;
+            _currentTank.IsInZone = false;
             _timeInZone = 0.0f;
         }
     }

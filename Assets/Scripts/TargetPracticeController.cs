@@ -27,7 +27,7 @@ public class TargetPracticeController : MonoBehaviour
     [SerializeField] private Transform yellowHeliPrefab;
     [SerializeField] private CTController m_ControlPoint;
     [SerializeField] private EnvController m_EnvController;
-    [SerializeField] private GameObject GoToMarker;
+    [SerializeField] private List<GoToTrainerController> GoToTrainerControllers;
 
     [SerializeField] private float PracticeAreaWidth;
     [SerializeField] private float PracticeAreaLength;
@@ -67,21 +67,31 @@ public class TargetPracticeController : MonoBehaviour
 
     private VehicleManager player;
 
-    private GoToTrainerController _goToTrainerController;
+    private Dictionary<TankManager, GoToTrainerController> GoToTrainerDict;
     private TrainingCommandMode _currentCommandMode;
 
     void Start()
     {
         if(!Active) return;
 
-        if (GoToMarker != null)
-        {
-            _goToTrainerController = GoToMarker.GetComponent<GoToTrainerController>();
-        }
-
         if (m_EnvController != null)
         {
             m_EnvController.GameEnded.AddListener(HandleEpisodeEnded);
+        }
+
+        foreach (GoToTrainerController goToTrainer in GoToTrainerControllers)
+        {
+            if (goToTrainer != null)
+            {
+                TankManager tank = goToTrainer.GetCurrentTank();
+                if (tank != null)
+                {
+                    if (GoToTrainerDict == null)
+                        GoToTrainerDict = new Dictionary<TankManager, GoToTrainerController>();
+
+                    GoToTrainerDict[tank] = goToTrainer;
+                }
+            }
         }
 
        // m_EnvController.GameEnded.AddListener(RearrangeTargets);
@@ -175,7 +185,7 @@ public class TargetPracticeController : MonoBehaviour
             return;
 
         Debug.Log("Go-to point reached!");
-        tank.AddRewardToDriver(2.0f);
+        tank.AddRewardToDriver(1.5f);
         AssignCommandForTank(tank);
     }
 

@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using Unity.MLAgents.Policies;
 using UnityEngine;
 
@@ -46,19 +47,60 @@ public class bullet_script : MonoBehaviour
             else
                 envController.EnemyDetected(_parent.gameObject, Team.Red);
 
-            collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Hit(_damage);
+            GameObject target = collision.collider.gameObject.transform.parent.gameObject;
 
+            bool isTargetHit = target.gameObject == _parent.GetTarget() ? true : false;
+
+            float healthBeforeHit = target.GetComponent<ITargetable>().Health;
+            target.GetComponent<ITargetable>().Hit(_damage);
+
+            //Hit rewards
+            if(isTargetHit)
+            {
+                _parent.AddRewardToShooter(0.2f);
+            }
+            else if(_parent.GetTarget() == null)
+            {
+                 _parent.AddRewardToShooter(0.08f);
+            }
+            else
+            {
+                _parent.AddRewardToShooter(0.02f);
+            }
+
+            //Eliminate rewards
+            if(healthBeforeHit <= 40.0f)
+            {
+                if(isTargetHit)
+                {
+                    _parent.AddReward(1.0f);
+                     Debug.Log("Eliminated marked!");
+                    _targetPracticeController?.HandleMarkedTargetHit(_parent);
+                }
+                else if(_parent.GetTarget() == null)
+                {
+                     _parent.AddRewardToShooter(0.5f);
+                    Debug.Log("Eliminated unmarked!");
+                }
+                else
+                {
+                    _parent.AddRewardToShooter(0.2f);
+                    Debug.Log("Eliminated unmarked!");
+                }
+                
+            }
         }
         else if((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Yellow) ||
                (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Red))
         {
-            //if (_parent.GetComponent<BehaviorParameters>().BehaviorType != BehaviorType.Default)
-            //{
-            //    Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
-            //    emitter.position = collision.transform.position;
-            //}
             _parent.AddRewardToShooter(-0.5f);
             collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Hit(_damage);
+            float healthBeforeHit =  collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Health;
+            if(healthBeforeHit <= 40.0f)
+            {
+                _parent.AddRewardToShooter(-2.0f);
+                Debug.Log("Eliminated friendly!");
+            }
         }
         else
         {
