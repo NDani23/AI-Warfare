@@ -122,11 +122,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1795333538170643937, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: m_DebugColors.Array.size
-      value: 6
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1795333538170643937, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: m_DetectableTags.Array.size
-      value: 6
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1795333538170643937, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: m_DebugColors.Array.data[1].b
@@ -178,11 +178,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1795333538170643937, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: 'm_DetectableTags.Array.data[1]'
-      value: YellowSpawnArea
+      value: RedAgent
       objectReference: {fileID: 0}
     - target: {fileID: 1795333538170643937, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: 'm_DetectableTags.Array.data[2]'
-      value: RedSpawnArea
+      value: YellowAgent
       objectReference: {fileID: 0}
     - target: {fileID: 1795333538170643937, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: 'm_DetectableTags.Array.data[3]'

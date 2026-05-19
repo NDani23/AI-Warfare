@@ -14,7 +14,7 @@ public class MinimapGridSensor : GridSensorBase
 
     protected override int GetCellObservationSize()
     {
-        return DetectableTags == null ? 2 : DetectableTags.Length + 2;
+        return DetectableTags == null ? 1 : DetectableTags.Length + 1;
     }
 
     protected override bool IsDataNormalized()
@@ -29,19 +29,16 @@ public class MinimapGridSensor : GridSensorBase
 
     protected override void GetObjectData(GameObject detectedObject, int tagIndex, float[] dataBuffer)
     {
-        if (tagIndex == 4 && detectedObject.transform.parent.gameObject == agentGameObject) return; // Ignore the agent itself
+        if (tagIndex == 2 && detectedObject.transform.parent.gameObject == agentGameObject) return; // Ignore the agent itself
         if (tagIndex == 3 && detectedObject.transform.parent.gameObject != agentGameObject) return; // Only process the move to marker of the agent itself
-        if (tagIndex == 5 && !detectedObject.transform.parent.GetComponent<ITargetable>().Detected) return; // Only process enemies that are detected
+        if (tagIndex == 1 && !detectedObject.transform.parent.GetComponent<ITargetable>().Detected) return; // Only process enemies that are detected
 
         dataBuffer[tagIndex] = 1;
 
-        if(tagIndex == 4 || tagIndex == 5)
+        if(tagIndex == 1 || tagIndex == 2)
         {
-            dataBuffer[DetectableTags.Length] = detectedObject.transform.parent.GetComponent<ITargetable>().Health * 0.01f;
-            dataBuffer[DetectableTags.Length + 1] = detectedObject.transform.parent.position.y / 600.0f;
+            dataBuffer[DetectableTags.Length] = detectedObject.transform.parent.position.y / 600.0f;
         }
-
-        //if (tagIndex == 5) Debug.Log("DETECTED ENEMY");
 
         //Debug.Log("[" + dataBuffer[0] + ", " + dataBuffer[1] + ", " + dataBuffer[2] + ", " + dataBuffer[3] + ", " + dataBuffer[4] + ", " + dataBuffer[5] + ", " + dataBuffer[6] + ", " + dataBuffer[7] + "]");
     }

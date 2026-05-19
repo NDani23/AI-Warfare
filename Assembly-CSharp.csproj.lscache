@@ -51,44 +51,42 @@ TemporaryDependencyNodeTargetIdentifier=netstandard2.1
 /warnaserror+:NU1605
 
 [sourceFiles]
-Assets/
- CommandIconController.cs
- Scripts/
-  agentInfoScript.cs
-  BulletTrail.cs
-  BulletTrailPool.cs
-  bullet_script.cs
-  CameraController.cs
-  CommandMarkerController.cs
-  CTController.cs
-  DeadTankScript.cs
-  EnvController.cs
-  GameManager.cs
-  GoToTrainerController.cs
-  GUIManager.cs
-  HeliController.cs
-  HeliHUD.cs
-  HeliManager.cs
-  HeliObsProcesser.cs
-  HeliPilotAgent.cs
-  HeliVisualController.cs
-  IconController.cs
-  ITargetable.cs
-  IVehicleController.cs
-  IVehicleUI.cs
-  MenuManager.cs
-  MinimapGridSensor.cs
-  MinimapGridSensorComponent.cs
-  SparkEmitterScript.cs
-  TankController.cs
-  TankDriverAgent.cs
-  TankHUD.cs
-  TankManager.cs
-  TankShooterAgent.cs
-  TargetPracticeController.cs
-  TargetScript.cs
-  VehicleManager.cs
-  WheelScript.cs
+Assets/Scripts/
+ agentInfoScript.cs
+ BulletTrail.cs
+ BulletTrailPool.cs
+ bullet_script.cs
+ CameraController.cs
+ CommandMarkerController.cs
+ CTController.cs
+ DeadTankScript.cs
+ EnvController.cs
+ GameManager.cs
+ GoToTrainerController.cs
+ GUIManager.cs
+ HeliController.cs
+ HeliHUD.cs
+ HeliManager.cs
+ HeliObsProcesser.cs
+ HeliPilotAgent.cs
+ HeliVisualController.cs
+ IconController.cs
+ ITargetable.cs
+ IVehicleController.cs
+ IVehicleUI.cs
+ MenuManager.cs
+ MinimapGridSensor.cs
+ MinimapGridSensorComponent.cs
+ SparkEmitterScript.cs
+ TankController.cs
+ TankDriverAgent.cs
+ TankHUD.cs
+ TankManager.cs
+ TankShooterAgent.cs
+ TargetPracticeController.cs
+ TargetScript.cs
+ VehicleManager.cs
+ WheelScript.cs
 Temp/obj/Debug/Assembly-CSharp/.NETStandard,Version=v2.1.AssemblyAttributes.cs
 
 [metadataReferences]
@@ -398,7 +396,7 @@ C:/Program Files/Unity/Hub/Editor/6000.0.37f1/Editor/Data/Tools/Unity.SourceGene
  Unity.Properties.SourceGenerator.dll
  Unity.SourceGenerators.dll
  Unity.UIToolkit.SourceGenerator.dll
-C:/Users/nagyd/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.2.2/Analyzers/Microsoft.Unity.Analyzers.dll
+C:/Users/User/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.2.2/Analyzers/Microsoft.Unity.Analyzers.dll
 Library/PackageCache/
  com.unity.ai.inference@587873fd5e1b/Runtime/Core/SourceGenerator/SourceGenerators.dll
  com.unity.dt.app-ui@7b87c8225c06/Runtime/SourceGenerators/netstandard2.0/EnumToLowerCase.dll

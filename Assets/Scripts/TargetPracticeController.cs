@@ -116,7 +116,7 @@ public class TargetPracticeController : MonoBehaviour
         for (int i = 0; i < m_yellowTargets.Length; i++)
         {
             Transform newTarget = UseTargetWall ? GameObject.Instantiate(yellowWallPrefab, this.transform) : 
-                      (i < m_redTargets.Length-1) ? GameObject.Instantiate(yellowTankPrefab, this.transform) : GameObject.Instantiate(yellowHeliPrefab, this.transform);
+                      (i < m_yellowTargets.Length-1) ? GameObject.Instantiate(yellowTankPrefab, this.transform) : GameObject.Instantiate(yellowHeliPrefab, this.transform);
             m_yellowTargets[i] = newTarget.gameObject.GetComponent<TargetScript>();
             m_yellowTargets[i].setController(this, Team.Yellow);
             m_yellowTargets[i].Rearrange(TargetWidth, TargetHeight, PracticeAreaLength, PracticeAreaWidth, FloatingTargets);
@@ -175,7 +175,7 @@ public class TargetPracticeController : MonoBehaviour
             return;
 
         Debug.Log("Go-to point reached!");
-        tank.AddReward(1.0f);
+        tank.AddRewardToDriver(2.0f);
         AssignCommandForTank(tank);
     }
 
