@@ -41,7 +41,7 @@ public class GoToTrainerController : MonoBehaviour
                     _timeInZone = 0.0f;
                     _isInZone = false;
                     _targetPracticeController?.HandleGoToReached(_currentTank);
-                    _targetTimeInZone = Random.Range(2.0f, 10.0f);
+                    _targetTimeInZone = Random.Range(1.0f, 10.0f);
                 }
             }
         }
@@ -74,11 +74,11 @@ public class GoToTrainerController : MonoBehaviour
         if (tank == null)
             return;
 
-        //_targetPracticeController?.HandleGoToReached(tank);
+        _targetPracticeController?.HandleGoToReached(tank);
 
-        _currentTank = tank;
-        _isInZone = true;
-        _timeInZone = 0.0f;
+        // _currentTank = tank;
+        // _isInZone = true;
+        // _timeInZone = 0.0f;
     }
 
     void OnTriggerExit(Collider other)

@@ -7,6 +7,7 @@ using System.Linq;
 using UnityEngine.Events;
 using Unity.MLAgents.Demonstrations;
 using Unity.MLAgents;
+using Unity.VisualScripting;
 
 public class TankManager : VehicleManager, ITargetable
 {
@@ -39,7 +40,7 @@ public class TankManager : VehicleManager, ITargetable
     public UnityEvent DiedEvent;
     public UnityEvent RespawnEvent;
 
-    private SimpleMultiAgentGroup _tankCrewAgentGroup;
+    //private SimpleMultiAgentGroup _tankCrewAgentGroup;
 
     public void Awake()
     {
@@ -51,21 +52,23 @@ public class TankManager : VehicleManager, ITargetable
         m_BehaviorParameters = gameObject.GetComponent<BehaviorParameters>();
         _envController = GetComponentInParent<EnvController>();
 
-        _tankCrewAgentGroup = new SimpleMultiAgentGroup();
+        //_tankCrewAgentGroup = new SimpleMultiAgentGroup();
 
         _team = m_BehaviorParameters.TeamId == (int)Team.Red ? Team.Red : Team.Yellow;
     }
 
     void Start()
     {
-        _tankCrewAgentGroup.RegisterAgent(_driverAgent);
-        _tankCrewAgentGroup.RegisterAgent(_shooterAgent);
+        //_tankCrewAgentGroup.RegisterAgent(_driverAgent);
+        //_tankCrewAgentGroup.RegisterAgent(_shooterAgent);
     }
 
 
     public override void AddReward(float reward)
     {
-        _tankCrewAgentGroup.AddGroupReward(reward);
+        //_tankCrewAgentGroup.AddGroupReward(reward);
+        _driverAgent.AddReward(reward);
+        _shooterAgent.AddReward(reward);
     }
 
     public void AddRewardToShooter(float reward)
@@ -80,7 +83,9 @@ public class TankManager : VehicleManager, ITargetable
 
     public override void EndEpisode()
     {
-        _tankCrewAgentGroup.EndGroupEpisode();
+        //_tankCrewAgentGroup.EndGroupEpisode();
+        _driverAgent.EndEpisode();
+        _shooterAgent.EndEpisode();
     }
 
     public override void SetPlayerControl(bool control)
@@ -94,7 +99,7 @@ public class TankManager : VehicleManager, ITargetable
     {
         if (collision.gameObject.tag != "Bullet")
         {
-            AddRewardToDriver(-0.01f);
+            AddRewardToDriver(-0.05f);
         }
     }
 
@@ -120,8 +125,7 @@ public class TankManager : VehicleManager, ITargetable
             ClearCommand();
         }
 
-        //Existential penalty
-        AddReward(-(Time.fixedDeltaTime / 60.0f) * 0.5f);
+        AddRewardToDriver(Vector3.Dot(transform.forward, Vector3.Normalize(_commandMarker.transform.position - transform.position)) * 0.15f * (Time.fixedDeltaTime / 60.0f));
     }
 
     public float getCooldown()

@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
+using System;
 
 public class TankDriverAgent : Agent
 {
@@ -39,9 +40,23 @@ public class TankDriverAgent : Agent
         sensor.AddObservation(transform.InverseTransformDirection(_tankCannon.forward)); // Cannon forward direction relative to the tank body
         sensor.AddObservation(_vehicleManager.ActiveCommand == TankManager.CommandType.GoToPoint ? 1.0f : 0.0f); // is Go-to command active
         sensor.AddObservation(_vehicleManager.ActiveCommand == TankManager.CommandType.KillTarget ? 1.0f : 0.0f); // is Kill-target command active
-        sensor.AddObservation(_envController.m_ResetTimer / (float)_envController.timeLimit); // Remaining time of the episode
-        sensor.AddObservation(0.0f); // Team score
-        sensor.AddObservation(0.0f); // Enemy team score
+        sensor.AddObservation(0.0f); //Placeholder for future use (team score relative to the other team)
+    }
+
+    void FixedUpdate()
+    {
+        AddReward(-(Time.fixedDeltaTime / 60.0f) * 0.5f);
+        // Existential penalty
+        // if(_vehicleManager.ActiveCommand == TankManager.CommandType.KillTarget)
+        // {
+        //     AddReward(-(Time.fixedDeltaTime / 60.0f) * 0.5f);
+        // }
+        // else if(_vehicleManager.ActiveCommand == TankManager.CommandType.GoToPoint)
+        // {
+        //     AddReward(-(Time.fixedDeltaTime / 60.0f));
+        // }
+
+        AddReward(_tankRB.linearVelocity.magnitude / 30.0f * (Time.fixedDeltaTime / 60.0f)); // Reward for forward movement, scaled down to prevent excessive rewards at high speeds
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -49,28 +64,35 @@ public class TankDriverAgent : Agent
         if (_vehicleManager.Health == 0.0f)
             return;
 
-        _lastThrottleAction = actions.DiscreteActions[0] - 1;
-        _lastSteerAction = actions.DiscreteActions[1] - 1;
+        _lastThrottleAction = actions.ContinuousActions[0];
+        _lastSteerAction = actions.ContinuousActions[1];
 
         _vehicleController.Throttle = _lastThrottleAction;
+        _vehicleController.Steer = _lastSteerAction;
+
+        // _vehicleController.Throttle = _lastThrottleAction;
         
-        if (_lastSteerAction == 0 || _lastSteerAction * _vehicleController.Steer < 0)
-        {
-            _vehicleController.Steer = 0;
-        }
-        else
-        {
-            _vehicleController.Steer = Mathf.Lerp(_vehicleController.Steer, _lastSteerAction, 0.075f);
-        }
+        // if (_lastSteerAction == 0 || _lastSteerAction * _vehicleController.Steer < 0)
+        // {
+        //     _vehicleController.Steer = 0;
+        // }
+        // else
+        // {
+        //     _vehicleController.Steer = Mathf.Lerp(_vehicleController.Steer, _lastSteerAction, 0.1f);
+        // }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         if(_vehicleManager.Health == 0.0f) return;
-        ActionSegment<int> discreteActions = actionsOut.DiscreteActions;
+        // ActionSegment<int> discreteActions = actionsOut.DiscreteActions;
 
-        discreteActions[0] = Input.GetKey(KeyCode.W) ? 2 : (Input.GetKey(KeyCode.S) ? 0 : 1);
-        discreteActions[1] = Input.GetKey(KeyCode.D) ? 2 : (Input.GetKey(KeyCode.A) ? 0 : 1);
+        // discreteActions[0] = Input.GetKey(KeyCode.W) ? 2 : (Input.GetKey(KeyCode.S) ? 0 : 1);
+        // discreteActions[1] = Input.GetKey(KeyCode.D) ? 2 : (Input.GetKey(KeyCode.A) ? 0 : 1);
+
+        ActionSegment<float> continuousActions = actionsOut.ContinuousActions;
+        continuousActions[0] = Input.GetKey(KeyCode.S) ? -1 : (Input.GetKey(KeyCode.W) ? 1 : 0);
+        continuousActions[1] = Input.GetKey(KeyCode.D) ? 1 : (Input.GetKey(KeyCode.A) ? -1 : 0);
     }
 
     public void SetPlayerControl(bool control)

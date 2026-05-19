@@ -53,17 +53,18 @@ public class bullet_script : MonoBehaviour
             if(isTargetHit)
             {
                 Debug.Log("Hit marked!");
-                _parent.AddReward(1.0f);
+                _parent.AddRewardToShooter(1.0f);
                 _targetPracticeController?.HandleMarkedTargetHit(_parent);
             }
             else if(_parent.GetTarget() == null)
             {
-                 _parent.AddRewardToShooter(0.15f);
+                 _parent.AddRewardToShooter(0.4f);
+                 //_parent.AddRewardToDriver(0.01f);
                 Debug.Log("Hit unmarked!");
             }
             else
             {
-                _parent.AddRewardToShooter(0.05f);
+                _parent.AddRewardToShooter(0.1f);
                 Debug.Log("Hit unmarked!");
             }
         }
@@ -81,7 +82,7 @@ public class bullet_script : MonoBehaviour
         }
         else
         {
-           _parent.AddRewardToShooter(-0.005f);
+           _parent.AddRewardToShooter(-0.1f);
         }
 
         this.gameObject.SetActive(false);

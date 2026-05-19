@@ -29,10 +29,10 @@ public class CommandMarkerController : MonoBehaviour
             0.0f,
             Mathf.Clamp(transform.localPosition.z, -400f, 400f));
 
-        // float currentDistanceToGoToPoint = Vector3.Distance(_agent.transform.position, _targetGlobalPosition);
-        // float distanceDelta = Mathf.Max(distanceToGoToPoint - currentDistanceToGoToPoint, 0);
-        // _agent.AddRewardToDriver(distanceDelta / startDistanceToGoToPoint * 0.4f);
-        // distanceToGoToPoint = currentDistanceToGoToPoint;
+        float currentDistanceToGoToPoint = Vector3.Distance(_agent.transform.position, _targetGlobalPosition);
+        float distanceDelta = distanceToGoToPoint - currentDistanceToGoToPoint;
+        _agent.AddRewardToDriver(distanceDelta / startDistanceToGoToPoint * 0.5f);
+        distanceToGoToPoint = currentDistanceToGoToPoint;
     }
 
     public void SetEnvSpacePosition(Vector3 envSpacePosition)

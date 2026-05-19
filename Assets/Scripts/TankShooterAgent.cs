@@ -36,14 +36,12 @@ public class TankShooterAgent : Agent
         sensor.AddObservation(transform.InverseTransformDirection(_tankRB.angularVelocity).y); // Angular velocity (turn speed)
         sensor.AddObservation(_vehicleManager.DriverThrottleAction); // Driver throttle action (-1..1)
         sensor.AddObservation(_vehicleManager.DriverSteerAction); // Driver steer action (-1..1)
-        sensor.AddObservation(transform.InverseTransformDirection(_vehicleManager.transform.forward)); // Body forward direction relative to the tank turret
-        sensor.AddObservation(transform.InverseTransformDirection(_tankCannon.transform.forward).y); // Pitch of the cannon
+        sensor.AddObservation(_tankCannon.transform.InverseTransformDirection(_vehicleManager.transform.forward)); // Body forward direction relative to the tank cannon
         sensor.AddObservation(_vehicleController.coolDownTime / 3.0f); // Shoot cooldown time
         sensor.AddObservation(activeTarget != null ? Vector3.Normalize(_tankCannon.transform.InverseTransformDirection(activeTarget.gameObject.transform.localPosition - transform.parent.localPosition)) : Vector3.zero); // Direction to active target
         sensor.AddObservation(activeTarget != null ? Vector3.Distance(activeTarget.gameObject.transform.localPosition, transform.parent.localPosition) / 700.0f : 0); // Distance to active target
-        sensor.AddObservation(Vector3.zero); // direction to enemy spawn (right edge)
-        sensor.AddObservation(Vector3.zero); // direction to enemy spawn (left edge)
-        sensor.AddObservation(0.0f); // distance to enemy spawn
+        sensor.AddObservation(_vehicleManager.ActiveCommand == TankManager.CommandType.KillTarget ? 1.0f : 0.0f); // is Kill-target command active
+        sensor.AddObservation(0.0f); //Placeholder for future use (team score relative to the other team)
 
         //Observations about other agents
         Dictionary<GameObject, float> detectedEnemies = _vehicleManager.Team == Team.Red ? _envController.m_DetectedYellowEnemies : _envController.m_DetectedRedEnemies;
@@ -53,7 +51,7 @@ public class TankShooterAgent : Agent
             {
                 Vector3 dir = Vector3.Normalize(_tankCannon.transform.InverseTransformDirection(agent.transform.localPosition - transform.parent.localPosition));
                 float dist = Vector3.Distance(agent.transform.localPosition, transform.parent.localPosition) / 700.0f;
-                float health = _vehicleManager.Health * 0.01f;
+                float health = agent.GetComponent<ITargetable>().Health * 0.01f;
 
                 float[] Obs = { dir.x, dir.y, dir.z, dist, health};
                 _detectedEnemiesSensor.AppendObservation(Obs);
@@ -70,7 +68,7 @@ public class TankShooterAgent : Agent
 
                 Vector3 dir = Vector3.Normalize(_tankCannon.transform.InverseTransformDirection(agent.gameObject.transform.localPosition - transform.parent.localPosition));
                 float dist = Vector3.Distance(agent.gameObject.transform.localPosition, transform.parent.localPosition) / 700.0f;
-                float health = agent.Health * 0.01f;
+                float health = agent.GetComponent<ITargetable>().Health * 0.01f;
 
                 float[] Obs = { dir.x, dir.y, dir.z, dist, health};
                 _teammateSensor.AppendObservation(Obs);
@@ -84,8 +82,22 @@ public class TankShooterAgent : Agent
             return;
 
         _vehicleController.FireInput = actions.DiscreteActions[0];
+
         _vehicleController.HorizontalAimInput = actions.ContinuousActions[0];
         _vehicleController.VerticalAimInput = actions.ContinuousActions[1];
+    }
+
+    public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
+    {
+        if (_vehicleController == null)
+        {
+            return;
+        }
+
+        if (_vehicleController.coolDownTime > 0.0f)
+        {
+            actionMask.SetActionEnabled(0, 1, false);
+        }
     }
 
     public void FixedUpdate()
@@ -99,7 +111,21 @@ public class TankShooterAgent : Agent
 
         if (Target == null)
         {
-            AddReward(Vector3.Dot(_tankCannon.forward, transform.parent.forward) * (Time.fixedDeltaTime / 60.0f) * 0.5f); // Small reward for keeping the cannon facing forward when no target is assigned
+            float cannonRelativeDirecton = Vector3.Dot(_tankCannon.forward, transform.parent.forward);
+            AddReward(cannonRelativeDirecton * (Time.fixedDeltaTime / 60.0f) * 0.5f);
+            // if(cannonRelativeDirecton < 0.0f)
+            // {
+            //     AddReward(cannonRelativeDirecton * (Time.fixedDeltaTime / 60.0f) * 0.);
+            // }
+            // else
+            // {
+            //     AddReward(cannonRelativeDirecton * (Time.fixedDeltaTime / 60.0f) * 0.1f);
+            // }
+        }
+        else
+        {
+            // Existential penalty
+            AddReward(-(Time.fixedDeltaTime / 60.0f) * 0.5f);
         }
     }
 
