@@ -116,7 +116,7 @@ public abstract class VehicleManager : MonoBehaviour
         _health = MaxHealth;
         _vehicleController.setStartingState((int)_team, memberID);
         _detected = false;
-        if(!_selected) _healthBar.SetActive(true);
+        //if(!_selected) _healthBar.SetActive(true);
         HitBoxMeshes.SetActive(true);
         gameObject.tag = _team == Team.Red ? "RedAgent" : "YellowAgent";
         if (_inCT)
@@ -137,7 +137,7 @@ public abstract class VehicleManager : MonoBehaviour
         _vehicleController.setDeadState();
         _detected = false;
         HitBoxMeshes.SetActive(false);
-        _healthBar.SetActive(false);
+        //_healthBar.SetActive(false);
         if (_inCT)
         {
             _inCT = false;

@@ -106,24 +106,11 @@ public class TankShooterAgent : Agent
         //     _vehicleManager.AddRewardToShooter(Time.fixedDeltaTime / 60.0f * Vector3.Dot(toTarget, aimDirection) * 0.5f);
         // }
 
-        // if (Target == null)
-        // {
-        //     float cannonRelativeDirecton = Vector3.Dot(_tankCannon.forward, transform.parent.forward);
-        //     AddReward(cannonRelativeDirecton * (Time.fixedDeltaTime / 60.0f) * 0.5f);
-        //     // if(cannonRelativeDirecton < 0.0f)
-        //     // {
-        //     //     AddReward(cannonRelativeDirecton * (Time.fixedDeltaTime / 60.0f) * 0.);
-        //     // }
-        //     // else
-        //     // {
-        //     //     AddReward(cannonRelativeDirecton * (Time.fixedDeltaTime / 60.0f) * 0.1f);
-        //     // }
-        // }
-        // else
-        // {
-        //     // Existential penalty
-        //     AddReward(-(Time.fixedDeltaTime / 60.0f) * 0.5f);
-        // }
+
+        if(_vehicleManager.ActiveCommand == CommandType.EliminateTarget)
+        {
+            AddReward(-(Time.fixedDeltaTime / 60.0f) * 0.5f);
+        }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)

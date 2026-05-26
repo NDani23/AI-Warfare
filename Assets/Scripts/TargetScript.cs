@@ -88,9 +88,7 @@ public class TargetScript : MonoBehaviour, ITargetable
            //newHeight = height / 2;
         }
 
-        transform.localPosition = new Vector3(Random.Range(-practiceAreaWidth / 2, practiceAreaWidth / 2),
-                                                newHeight,
-                                                Random.Range(-practiceAreaLenght / 2, practiceAreaLenght / 2));
+        transform.localPosition = GetRandomGoToLocalPosition(canFloat);
         transform.localRotation = Quaternion.Euler(transform.localRotation.x, Random.Range(0.0f, 360.0f), transform.localRotation.z);
 
          _gridTag.position = new Vector3(transform.position.x, 3.0f, transform.position.z);
@@ -99,6 +97,21 @@ public class TargetScript : MonoBehaviour, ITargetable
          m_rearrangeCooldown = m_rearrangeInterval;
 
     }
+
+    private Vector3 GetRandomGoToLocalPosition(bool canFloat)
+    {
+        Vector3 localCandidatePos = new Vector3(Random.Range(-300, 300), canFloat ? Random.Range(0.0f, 50.0f) : 2.6f, Random.Range(-300, 300));
+        for(int i = 0; i < 100; i++)
+        {
+            if(!Physics.CheckSphere(this.transform.parent.TransformPoint(localCandidatePos), 15.0f, ~LayerMask.GetMask("Ground")))
+                break;
+            localCandidatePos = new Vector3(Random.Range(-300, 300), canFloat ? Random.Range(0.0f, 50.0f) : 2.6f, Random.Range(-300, 300));
+        }
+
+        return localCandidatePos;
+    }
+
+
 
     public void SetMaterial(Material mat = null)
     {

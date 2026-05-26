@@ -27,7 +27,6 @@ public class TargetPracticeController : MonoBehaviour
     [SerializeField] private Transform yellowHeliPrefab;
     [SerializeField] private CTController m_ControlPoint;
     [SerializeField] private EnvController m_EnvController;
-    [SerializeField] private List<GoToTrainerController> GoToTrainerControllers;
 
     [SerializeField] private float PracticeAreaWidth;
     [SerializeField] private float PracticeAreaLength;
@@ -67,7 +66,6 @@ public class TargetPracticeController : MonoBehaviour
 
     private VehicleManager player;
 
-    private Dictionary<TankManager, GoToTrainerController> GoToTrainerDict;
     private TrainingCommandMode _currentCommandMode;
 
     void Start()
@@ -77,21 +75,6 @@ public class TargetPracticeController : MonoBehaviour
         if (m_EnvController != null)
         {
             m_EnvController.GameEnded.AddListener(HandleEpisodeEnded);
-        }
-
-        foreach (GoToTrainerController goToTrainer in GoToTrainerControllers)
-        {
-            if (goToTrainer != null)
-            {
-                TankManager tank = goToTrainer.GetCurrentTank();
-                if (tank != null)
-                {
-                    if (GoToTrainerDict == null)
-                        GoToTrainerDict = new Dictionary<TankManager, GoToTrainerController>();
-
-                    GoToTrainerDict[tank] = goToTrainer;
-                }
-            }
         }
 
        // m_EnvController.GameEnded.AddListener(RearrangeTargets);
@@ -185,7 +168,7 @@ public class TargetPracticeController : MonoBehaviour
             return;
 
         Debug.Log("Go-to point reached!");
-        tank.AddRewardToDriver(1.5f);
+        tank.AddRewardToDriver(2.0f);
         AssignCommandForTank(tank);
     }
 
@@ -208,8 +191,7 @@ public class TargetPracticeController : MonoBehaviour
         if (_currentCommandMode == TrainingCommandMode.GoTo)
         {
             Vector3 localPos = GetRandomGoToLocalPosition();
-            tank.IssueCommand(GoToMarker);
-            _goToTrainerController?.SetGoToLocalPosition(localPos);
+            tank.IssueCommand(localPos + this.transform.position);
         }
         else
         {
@@ -219,7 +201,6 @@ public class TargetPracticeController : MonoBehaviour
 
             target.GetComponent<ITargetable>()?.setDetectedState(true);
             tank.IssueCommand(target.gameObject);
-            _goToTrainerController?.SetFollowTarget(target.transform);
         }
     }
 
@@ -248,10 +229,15 @@ public class TargetPracticeController : MonoBehaviour
 
     private Vector3 GetRandomGoToLocalPosition()
     {
-        return new Vector3(
-            Random.Range(-PracticeAreaWidth / 2, PracticeAreaWidth / 2),
-            3.0f,
-            Random.Range(-PracticeAreaLength / 2, PracticeAreaLength / 2));
+        Vector3 localCandidatePos = new Vector3(Random.Range(-300, 300), 3.0f, Random.Range(-300, 300));
+        for(int i = 0; i < 100; i++)
+        {
+            if(!Physics.CheckSphere(this.transform.TransformPoint(localCandidatePos), 15.0f, ~LayerMask.GetMask("Ground")))
+                break;
+            localCandidatePos = new Vector3(Random.Range(-300, 300), 3.0f, Random.Range(-300, 300));
+        }
+
+        return localCandidatePos;
     }
 
     private TargetScript GetRandomTargetForTeam(Team team)

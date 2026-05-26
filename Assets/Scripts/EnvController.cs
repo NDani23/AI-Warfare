@@ -239,16 +239,16 @@ public class EnvController : MonoBehaviour
         {
 
             m_DetectedRedEnemies.Remove(vehicle.gameObject);
-            AddRewardToTeamMembers(Team.Yellow, vehicle.VehicleType == VehicleType.Tank ? 0.1f : 0.2f);
-            AddRewardToTeamMembers(Team.Red, vehicle.VehicleType == VehicleType.Tank ? -0.1f : -0.2f);
+            // AddRewardToTeamMembers(Team.Yellow, vehicle.VehicleType == VehicleType.Tank ? 0.1f : 0.2f);
+            // AddRewardToTeamMembers(Team.Red, vehicle.VehicleType == VehicleType.Tank ? -0.1f : -0.2f);
             AddPointToTeam(Team.Yellow, 1);
 
         }
         else if (vehicle.Team == Team.Yellow)
         {
             m_DetectedYellowEnemies.Remove(vehicle.gameObject);
-            AddRewardToTeamMembers(Team.Red, vehicle.VehicleType == VehicleType.Tank ? 0.1f : 0.2f);
-            AddRewardToTeamMembers(Team.Yellow, vehicle.VehicleType == VehicleType.Tank ? -0.1f : -0.2f);
+            // AddRewardToTeamMembers(Team.Red, vehicle.VehicleType == VehicleType.Tank ? 0.1f : 0.2f);
+            // AddRewardToTeamMembers(Team.Yellow, vehicle.VehicleType == VehicleType.Tank ? -0.1f : -0.2f);
             AddPointToTeam(Team.Red, 1);
         }
 

@@ -53,16 +53,19 @@ public class TankManager : VehicleManager, ITargetable
 
     //private SimpleMultiAgentGroup _tankCrewAgentGroup;
 
+    private TargetPracticeController _targetPracticeController;
+
     public void Awake()
     {
         _vehicleType = VehicleType.Tank;
         _vehicleController = this.gameObject.GetComponent<TankController>();
         _tankController = (TankController)_vehicleController;
-        _healthBar = GetComponentInChildren<agentInfoScript>().gameObject;
+//       _healthBar = GetComponentInChildren<agentInfoScript>().gameObject;
 
         _health = MaxHealth;
         m_BehaviorParameters = gameObject.GetComponent<BehaviorParameters>();
         _envController = GetComponentInParent<EnvController>();
+        _targetPracticeController = GetComponentInParent<TargetPracticeController>();
 
         //_tankCrewAgentGroup = new SimpleMultiAgentGroup();
 
@@ -124,7 +127,7 @@ public class TankManager : VehicleManager, ITargetable
     {
         if (collision.gameObject.tag != "Bullet")
         {
-            AddRewardToDriver(-0.1f);
+            AddRewardToDriver(-0.2f);
         }
     }
 
@@ -143,7 +146,20 @@ public class TankManager : VehicleManager, ITargetable
         if (obs.RayOutputs[0].HitTagIndex == 1)
         {
             _envController.EnemyDetected(obs.RayOutputs[0].HitGameObject.transform.parent.gameObject, this._team);
+            AddRewardToShooter(0.001f);
         }
+
+        const float detectRange = 70.0f;
+        Vector3 tankPos = transform.position;
+        var targets = Team == Team.Red ? _targetPracticeController.m_yellowTargets : _targetPracticeController.m_redTargets;
+        foreach (var target in targets)
+        {
+            if ((target.transform.position - tankPos).magnitude <= detectRange)
+            {
+                _envController.EnemyDetected(target.gameObject, this._team);
+            }
+        }
+
 
         // if (activeCommand.commandType == CommandType.EliminateTarget && _shooterAgent.Target == null)
         // {
@@ -229,7 +245,6 @@ public class TankManager : VehicleManager, ITargetable
     public void ResetTank()
     {
         //ClearCommand();
-        isInZone = false;
         ResetVehicle();
     }
 }

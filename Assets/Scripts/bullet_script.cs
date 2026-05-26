@@ -49,7 +49,11 @@ public class bullet_script : MonoBehaviour
 
             GameObject target = collision.collider.gameObject.transform.parent.gameObject;
 
-            bool isTargetHit = target.gameObject == _parent.GetTarget() ? true : false;
+            bool isTargetHit = false;
+            if(_parent.ActiveCommand == CommandType.EliminateTarget)
+            {
+                isTargetHit = _parent.CommandMarker.FollowTarget == target;
+            }
 
             float healthBeforeHit = target.GetComponent<ITargetable>().Health;
             target.GetComponent<ITargetable>().Hit(_damage);
@@ -57,15 +61,15 @@ public class bullet_script : MonoBehaviour
             //Hit rewards
             if(isTargetHit)
             {
-                _parent.AddRewardToShooter(0.2f);
+                _parent.AddRewardToShooter(0.3f);
             }
-            else if(_parent.GetTarget() == null)
+            else if(_parent.ActiveCommand == CommandType.GoToPosition)
             {
-                 _parent.AddRewardToShooter(0.08f);
+                 _parent.AddRewardToShooter(0.1f);
             }
             else
             {
-                _parent.AddRewardToShooter(0.02f);
+                _parent.AddRewardToShooter(0.05f);
             }
 
             //Eliminate rewards
@@ -77,7 +81,7 @@ public class bullet_script : MonoBehaviour
                      Debug.Log("Eliminated marked!");
                     _targetPracticeController?.HandleMarkedTargetHit(_parent);
                 }
-                else if(_parent.GetTarget() == null)
+                else if(_parent.ActiveCommand == CommandType.GoToPosition)
                 {
                      _parent.AddRewardToShooter(0.5f);
                     Debug.Log("Eliminated unmarked!");
@@ -94,13 +98,7 @@ public class bullet_script : MonoBehaviour
                (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Red))
         {
             _parent.AddRewardToShooter(-0.5f);
-            collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Hit(_damage);
-            float healthBeforeHit =  collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Health;
-            if(healthBeforeHit <= 40.0f)
-            {
-                _parent.AddRewardToShooter(-2.0f);
-                Debug.Log("Eliminated friendly!");
-            }
+            Debug.Log("Friendly fire!");
         }
         else
         {

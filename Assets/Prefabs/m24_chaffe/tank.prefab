@@ -27237,7 +27237,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: cf9603d53b5595c44b55ce6343c83d70, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: TankDriver
@@ -27551,12 +27551,24 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2405976058743624034, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2405976058743624034, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2405976058743624034, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2405976058743624034, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2405976058743624034, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2405976058743624034, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
       propertyPath: m_LocalPosition.z
@@ -27590,6 +27602,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4551808946548362676, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4891164032152790816, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
       propertyPath: gridComandMarker
       value: 
@@ -27597,19 +27613,83 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1664217243094511312, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2163758570765265798}
+    - targetCorrespondingSourceObject: {fileID: 1664217243094511312, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4864652780081911223}
   m_SourcePrefab: {fileID: 100100000, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
 --- !u!4 &1746913479604866442 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2405976058743624034, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
   m_PrefabInstance: {fileID: 4133731575906082024}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3334223056708629048 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1664217243094511312, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
+  m_PrefabInstance: {fileID: 4133731575906082024}
+  m_PrefabAsset: {fileID: 0}
+--- !u!33 &2163758570765265798
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3334223056708629048}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &4864652780081911223
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3334223056708629048}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: ae18c0b59b154c749afdb48510de1a23, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &8844244151014849480 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4891164032152790816, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
   m_PrefabInstance: {fileID: 4133731575906082024}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 3334223056708629048}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3786b0474cc80c44b6614dbc7cdc0fc, type: 3}
@@ -27847,7 +27927,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 10c495717f2b60e458900e7f93a5d3fe, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: TankShooter
