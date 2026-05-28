@@ -64,7 +64,7 @@ public class NetworkManager : MonoBehaviour
 
                     MatchStateData state = new MatchStateData
                     {
-                        timeRemaining = (int)env.getRemainingTime(),
+                        timeRemaining = (int)env.ResetTimer,
                         redPoints = (int)env.RedTeamPoints,
                         yellowPoints = (int)env.YellowTeamPoints,
                         yellowVehicles = new List<VehicleStateData>(),

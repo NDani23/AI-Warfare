@@ -135,13 +135,13 @@ public class HeliController : MonoBehaviour, IVehicleController
         if (teamID == (int)Team.Red)
         {
             transform.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-            transform.localPosition = new Vector3(UnityEngine.Random.Range(-290.0f, 290.0f), 300.0f, -300);
+            transform.localPosition = new Vector3(UnityEngine.Random.Range(-290.0f, 290.0f), 200.0f, -300);
         }
         else
         {
 
             transform.localRotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
-            transform.localPosition = new Vector3(UnityEngine.Random.Range(-290.0f, 290.0f), 300.0f, 300);
+            transform.localPosition = new Vector3(UnityEngine.Random.Range(-290.0f, 290.0f), 200.0f, 300);
         }
     }
 
@@ -185,7 +185,7 @@ public class HeliController : MonoBehaviour, IVehicleController
             float _gunRotateSpeed = 1000;
             _machineGunLeft.Rotate(-Vector3.forward * _gunRotateSpeed * Time.fixedDeltaTime, Space.Self);
             _machineGunRight.Rotate(-Vector3.forward * _gunRotateSpeed * Time.fixedDeltaTime, Space.Self);
-            _gunOverHeatStatus += Time.fixedDeltaTime / 3.0f;
+            _gunOverHeatStatus += Time.fixedDeltaTime / 4.0f;
             if (_gunOverHeatStatus >= 1.0f)
             {
                 _overHeatCooldown = 5.0f;
@@ -195,6 +195,7 @@ public class HeliController : MonoBehaviour, IVehicleController
 
             if(_lastShootTime + _shootDelay < Time.fixedTime)
             {
+                
                 SpawnTracer(_leftShootPosition.position, _leftGunHitInfo.hitPosition, _leftTracerParticles);
                 SpawnTracer(_rightShootPosition.position, _rightGunHitInfo.hitPosition, _rightTracerParticles);
                 
@@ -213,7 +214,7 @@ public class HeliController : MonoBehaviour, IVehicleController
         }
         else
         {
-            _gunOverHeatStatus = Mathf.Max(0.0f, _gunOverHeatStatus - Time.fixedDeltaTime / 4.5f);
+            _gunOverHeatStatus = Mathf.Max(0.0f, _gunOverHeatStatus - Time.fixedDeltaTime / 4.0f);
         }
     }
 

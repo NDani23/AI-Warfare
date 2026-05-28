@@ -40,10 +40,10 @@ public class HeliPilotAgent : Agent
 
         //Gameplay related observations
         sensor.AddObservation(_vehicleManager.Health / _vehicleManager.MaxHealth);
-        sensor.AddObservation(_envController.m_ResetTimer / (float)_envController.timeLimit); //remaining time
+        sensor.AddObservation(_envController.ResetTimer / (float)_envController.timeLimit); //remaining time
 
         //Observations about other agents
-        Dictionary<GameObject, float> detectedEnemies = _vehicleManager.Team == Team.Red ? _envController.m_DetectedYellowEnemies : _envController.m_DetectedRedEnemies;
+        Dictionary<GameObject, float> detectedEnemies = _vehicleManager.Team == Team.Red ? _envController.DetectedYellowEnemies : _envController.DetectedRedEnemies;
         if (_vehicleManager.Health != 0)
         {
             foreach (var agent in detectedEnemies.Keys.ToList())
@@ -92,8 +92,8 @@ public class HeliPilotAgent : Agent
         discreteActions[0] = Input.GetMouseButton(0) ? 1 : 0;
 
         ActionSegment<float> continousActions = actionsOut.ContinuousActions;
-        continousActions[0] = (-_mousePosDelta.y / Screen.height) * 15.0f; //PITCH
-        continousActions[1] = (_mousePosDelta.x / Screen.width) * 15.0f; //YAW
+        continousActions[0] = Mathf.Clamp(-_mousePosDelta.y / Screen.height * 15.0f, -1.0f, 1.0f); //PITCH
+        continousActions[1] = Mathf.Clamp(_mousePosDelta.x / Screen.width * 15.0f, -1.0f, 1.0f); //YAW
         continousActions[2] = Input.GetKey(KeyCode.A) ? 1.0f : (Input.GetKey(KeyCode.D) ? -1.0f : 0.0f); //ROLL
         continousActions[3] = Input.GetKey(KeyCode.W) ? 1.0f : (Input.GetKey(KeyCode.S) ? -1.0f : 0.0f); //THROTTLE
 

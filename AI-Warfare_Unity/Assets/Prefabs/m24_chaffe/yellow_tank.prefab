@@ -225,6 +225,10 @@ PrefabInstance:
       value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 3720631176085568044, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
+      propertyPath: fixedHeight
+      value: 602
+      objectReference: {fileID: 0}
+    - target: {fileID: 3720631176085568044, guid: 870eb8baf762fa74292859b78c0b809b, type: 3}
       propertyPath: agentHealthForeground
       value: 
       objectReference: {fileID: 3315833839157919715}

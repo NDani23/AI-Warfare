@@ -72,7 +72,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 101711871
+    m_Bits: 101449727
   m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 1
@@ -196,7 +196,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2686331484063492467}
-  m_Layer: 21
+  m_Layer: 18
   m_Name: ShootPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5375,7 +5375,7 @@ GameObject:
   - component: {fileID: 3307576517618126736}
   - component: {fileID: 3361592820287313266}
   - component: {fileID: 1674740804476629851}
-  m_Layer: 21
+  m_Layer: 23
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10547,7 +10547,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1269378980894971744}
-  m_Layer: 21
+  m_Layer: 18
   m_Name: ShootPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16638,7 +16638,7 @@ GameObject:
   - component: {fileID: 1552330663957344026}
   - component: {fileID: 888802799253789143}
   - component: {fileID: 1641994364663399312}
-  m_Layer: 21
+  m_Layer: 23
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21589,7 +21589,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4deda84a6d467fc46bf6646dc229b128, type: 3}
       propertyPath: m_Layer
-      value: 21
+      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21655,7 +21655,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: fbdce4c1226f7a94c956172658b49449, type: 3}
       propertyPath: m_Layer
-      value: 21
+      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21725,7 +21725,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b5a507707316bb54e8a5e01b662435d0, type: 3}
       propertyPath: m_Layer
-      value: 21
+      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21870,8 +21870,11 @@ MonoBehaviour:
   DeadStateIcon: {fileID: 7863204569985114219}
   GameCameraAnchor: {fileID: 1426322841439908022}
   memberID: 0
-  _leftAimSensor: {fileID: 4713395377111143109}
-  _rightAimSensor: {fileID: 3998644805695371758}
+  _leftGunMuzzle: {fileID: 2686331484063492467}
+  _rightGunMuzzle: {fileID: 1269378980894971744}
+  _hitscanLayerMask:
+    serializedVersion: 2
+    m_Bits: 100925441
   _gridTag: {fileID: 6440548496584004991}
 --- !u!114 &4786721448616941797
 MonoBehaviour:
@@ -21913,14 +21916,14 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 9885e2c5e96716b41960e6ee290c9282, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: d70963974c35f93479b0705350a5418d, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: HeliControll
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
-  m_DeterministicInference: 0
+  m_DeterministicInference: 1
   m_ObservableAttributeHandling: 0
 --- !u!54 &9084466223548633011
 Rigidbody:
@@ -22069,7 +22072,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 08b09f6d12d42dc4d9bfe1b0deef7adc, type: 3}
       propertyPath: m_Layer
-      value: 21
+      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -22174,7 +22177,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 08b09f6d12d42dc4d9bfe1b0deef7adc, type: 3}
       propertyPath: m_Layer
-      value: 21
+      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

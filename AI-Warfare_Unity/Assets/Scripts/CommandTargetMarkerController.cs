@@ -12,6 +12,8 @@ public class CommandTargetMarkerController : MonoBehaviour
     public GameObject FollowTarget => _followTarget;
     private Vector3 _targetGlobalPosition;
 
+    public Vector3 TargetGlobalPosition => _targetGlobalPosition;
+
     private bool showCommandIcon = false;
     public bool ShowCommandIcon
     {
@@ -30,10 +32,21 @@ public class CommandTargetMarkerController : MonoBehaviour
     }
     void Update()
     {
+        if(_agent.Health <= 0)
+        {
+            ShowCommandIcon = false;
+            if(GoToIcon.activeSelf != false || TargetIcon.activeSelf != false)
+            {
+                GoToIcon.SetActive(false);
+                TargetIcon.SetActive(false);   
+            }
+            return;
+        }
+
         if(_followTarget != null)
         {
             _targetGlobalPosition = _followTarget.transform.position;
-            transform.rotation = Quaternion.Euler(0f, 0f, _followTarget.transform.rotation.z);
+            transform.rotation = Quaternion.Euler(0f, _followTarget.transform.rotation.eulerAngles.y, 0f);
         }
         else
         {

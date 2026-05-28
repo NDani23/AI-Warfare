@@ -41,7 +41,7 @@ public class TankShooterAgent : Agent
         sensor.AddObservation(0.0f); //Placeholder for future use (team score relative to the other team)
 
         //Observations about other agents
-        Dictionary<GameObject, float> detectedEnemies = _vehicleManager.Team == Team.Red ? _envController.m_DetectedYellowEnemies : _envController.m_DetectedRedEnemies;
+        Dictionary<GameObject, float> detectedEnemies = _vehicleManager.Team == Team.Red ? _envController.DetectedYellowEnemies : _envController.DetectedRedEnemies;
         if (_vehicleManager.Health != 0)
         {
             foreach (var agent in detectedEnemies.Keys.ToList())

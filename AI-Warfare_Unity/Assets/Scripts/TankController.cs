@@ -31,6 +31,8 @@ public class TankController : MonoBehaviour, IVehicleController
 
     private TankManager tankAgent;
 
+    public Transform FirePosition => firePosition;
+
     public float motorTorque = 100f;
     public float breakTorque = 100f;
     public float turnSpeed = 10.0f;

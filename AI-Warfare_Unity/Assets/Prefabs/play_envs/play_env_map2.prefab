@@ -2733,11 +2733,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeLimit: 120
-  m_ControlPoint: {fileID: 4527811904296105688}
-  m_ResetTimer: 0
+  _controlPoint: {fileID: 4527811904296105688}
+  _TopDownViewPoint: {fileID: 6910053014659181684}
+  _gameMode: 0
   RedTeamPoints: 0
   YellowTeamPoints: 0
-  ctState: 2
+  CtState: 2
   RedWonEvent:
     m_PersistentCalls:
       m_Calls: []

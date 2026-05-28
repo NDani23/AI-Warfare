@@ -21,15 +21,17 @@ public struct HitInfo
 }
 public class HeliManager : VehicleManager, ITargetable
 {
-    [SerializeField] private RayPerceptionSensorComponent3D _leftAimSensor;
-    [SerializeField] private RayPerceptionSensorComponent3D _rightAimSensor;
+    [SerializeField] private Transform _leftGunMuzzle;
+    [SerializeField] private Transform _rightGunMuzzle;
     [SerializeField] private Transform _gridTag;
 
 
     private Agent _agent;
     private HeliController _heliController;
     private HitInfo _leftGunHitInfo;
+    public HitInfo LeftGunHitInfo => _leftGunHitInfo;
     private HitInfo _rightGunHitInfo;
+    public HitInfo RightGunHitInfo => _rightGunHitInfo;
 
     private float _maxHealth = 40.0f;
     public int IsShooting { get; set; } = 0;
@@ -106,39 +108,76 @@ public class HeliManager : VehicleManager, ITargetable
             _health = Mathf.Min(MaxHealth, _health + Time.deltaTime * 5.0f);
         }
 
-        if (IsShooting == 1)
-        {
-            RayPerceptionInput spec = _leftAimSensor.GetRayPerceptionInput();
-            RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec, false);
-            _leftGunHitInfo.hitPosition = obs.RayOutputs[0].EndPositionWorld;
-            _leftGunHitInfo.hitTag = obs.RayOutputs[0].HitTagIndex;
-            _leftGunHitInfo.hitGameObject = obs.RayOutputs[0].HitGameObject;
-
-            spec = _rightAimSensor.GetRayPerceptionInput();
-            obs = RayPerceptionSensor.Perceive(spec, false);
-            _rightGunHitInfo.hitPosition = obs.RayOutputs[0].EndPositionWorld;
-            _rightGunHitInfo.hitTag = obs.RayOutputs[0].HitTagIndex;
-            _rightGunHitInfo.hitGameObject = obs.RayOutputs[0].HitGameObject;
-
-            _heliController.LeftGunHitInfo = _leftGunHitInfo;
-            _heliController.RightGunHitInfo = _rightGunHitInfo;
-
-            if(_leftGunHitInfo.hitTag == 0)
-            {
-                _envController.EnemyDetected(_leftGunHitInfo.hitGameObject.transform.parent.gameObject, this.Team);
-                _envController.EnemyDetected(this.gameObject, this.Team == Team.Yellow ? Team.Red : Team.Yellow);
-            }
-
-            if (_rightGunHitInfo.hitTag == 0)
-            {
-                _envController.EnemyDetected(_rightGunHitInfo.hitGameObject.transform.parent.gameObject, this.Team);
-
-            }
-
-        }
+        EvaluateWeapons();
 
         _heliController.IsShooting = IsShooting;
+        if(IsShooting == 1)
+        {
+            _envController.EnemyDetected(this.gameObject);
+        }
+
         _gridTag.position = new Vector3(transform.position.x, 3.0f, transform.position.z);
+    }
+
+    public override HitInfo RequestHitInfo()
+    {
+        EvaluateWeapons(1000.0f);
+        return _leftGunHitInfo;
+    }
+
+    private void EvaluateWeapons(float range = 400.0f)
+    {
+        string EnemyTag = _team == Team.Red ? "YellowAgent" : "RedAgent";
+        string AllyTag = _team == Team.Red ? "RedAgent" : "YellowAgent";
+        // --- LEFT GUN ---
+        if (Physics.Raycast(_leftGunMuzzle.position, _leftGunMuzzle.forward, out RaycastHit leftHit, range, _hitscanLayerMask))
+        {
+            _leftGunHitInfo.hitPosition = leftHit.point;
+            _leftGunHitInfo.hitGameObject = leftHit.collider.gameObject;
+
+            if (leftHit.collider.CompareTag(EnemyTag))
+            {
+                _leftGunHitInfo.hitTag = 0;
+                _envController.EnemyDetected(leftHit.collider.transform.parent.gameObject);
+            }
+            else if (!leftHit.collider.CompareTag(AllyTag))
+            {
+                _leftGunHitInfo.hitTag = -1;
+            }
+        }
+        else
+        {
+            _leftGunHitInfo.hitPosition = _leftGunMuzzle.position + (_leftGunMuzzle.forward * range);
+            _leftGunHitInfo.hitGameObject = null;
+            _leftGunHitInfo.hitTag = -1;
+        }
+
+        // --- RIGHT GUN ---
+        if (Physics.Raycast(_rightGunMuzzle.position, _rightGunMuzzle.forward, out RaycastHit rightHit, range, _hitscanLayerMask))
+        {
+            _rightGunHitInfo.hitPosition = rightHit.point;
+            _rightGunHitInfo.hitGameObject = rightHit.collider.gameObject;
+
+            if (rightHit.collider.CompareTag(EnemyTag)) 
+            {
+                _rightGunHitInfo.hitTag = 0;
+                _envController.EnemyDetected(rightHit.collider.transform.parent.gameObject);
+            }
+            else if (!rightHit.collider.CompareTag(AllyTag))
+            {
+                _rightGunHitInfo.hitTag = -1;
+            }
+        }
+        else
+        {
+            _rightGunHitInfo.hitPosition = _rightGunMuzzle.position + (_rightGunMuzzle.forward * range);
+            _rightGunHitInfo.hitGameObject = null;
+            _rightGunHitInfo.hitTag = -1;
+        }
+
+        _heliController.LeftGunHitInfo = _leftGunHitInfo;
+        _heliController.RightGunHitInfo = _rightGunHitInfo;
+        _heliController.IsShooting = IsShooting;
     }
 
     public float getOverHeatStatus()

@@ -89,19 +89,19 @@ public class GUIManager : MonoBehaviour
 
         //AimPointerImage.transform.position = player.GetScreenSpaceAimPos();
 
-        TimeSpan timeSpan = TimeSpan.FromSeconds(env.getRemainingTime());
+        TimeSpan timeSpan = TimeSpan.FromSeconds(env.ResetTimer);
         TimerText.text = timeSpan.ToString(@"mm\:ss");
         RedTeamPoints.fillAmount = env.RedTeamPoints / 100.0f;
         YellowTeamPoints.fillAmount = env.YellowTeamPoints / 100.0f;
 
-        if (env.getStateNum() > 0)
+        if (env.StateNum > 0)
         {
-            YellowState.fillAmount = env.getStateNum() / 10.0f;
+            YellowState.fillAmount = env.StateNum / 10.0f;
             RedState.fillAmount = 0;
         }
-        else if(env.getStateNum() < 0)
+        else if(env.StateNum < 0)
         {
-            RedState.fillAmount = Mathf.Abs(env.getStateNum()) / 10.0f;
+            RedState.fillAmount = Mathf.Abs(env.StateNum) / 10.0f;
             YellowState.fillAmount = 0;
         }
         else

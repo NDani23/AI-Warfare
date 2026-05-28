@@ -1,15 +1,25 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+
+public enum MapType
+{
+    PineForest,
+    Plain,
+}
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GUIManager guiManager;
     [SerializeField] private GameObject playEnvs;
     [SerializeField] private Texture2D commandCursor;
-
+    [SerializeField] private GameObject _pineForestMap;
+    [SerializeField] private GameObject _plainMap;
+    [SerializeField] private MapType _currentMapType;
+    [SerializeField] private GameMode _currentGameMode;
 
     public VehicleManager SelectedAgent { get; private set; }
 
@@ -21,11 +31,49 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        _envController = playEnvs.GetComponentInChildren<EnvController>(false);
-        guiManager.setPlayEnv(_envController);
         gameCamera = Camera.main.GetComponent<CameraController>();
         gameCamera.ViewTransitionEnded.AddListener(HandleCameraTransitionEnd);
         gameCamera.ViewTransitionStarted.AddListener(HandleCameraTransitionStarted);
+    }
+
+    private void Start()
+    {
+        StartGame();
+    }
+
+    private void StartGame()
+    {
+        switch (_currentMapType)
+        {
+            case MapType.PineForest:
+                _pineForestMap.SetActive(true);
+                _plainMap.SetActive(false);
+                _envController = _pineForestMap.GetComponentInChildren<EnvController>();
+                break;
+            case MapType.Plain:
+                _pineForestMap.SetActive(false);
+                _plainMap.SetActive(true);
+                _envController = _plainMap.GetComponentInChildren<EnvController>();
+                break;
+        }
+
+        switch (_currentGameMode)
+        {
+            case GameMode.TDM:
+                _envController.SetGameMode(GameMode.TDM);
+                break;
+            case GameMode.Conquest:
+                _envController.SetGameMode(GameMode.Conquest);
+                break;
+        }
+
+        gameCamera.transform.SetParent(_envController.TopDownViewPoint);
+        gameCamera.transform.localPosition = Vector3.zero;
+        gameCamera.transform.localRotation = Quaternion.identity;
+
+        guiManager.setPlayEnv(_envController);
+
+        _envController.ResetEnv(null, false);
     }
 
     public void IssueCommandToVehicle(GameObject commandTarget, String agentName = "all")
@@ -40,7 +88,9 @@ public class GameManager : MonoBehaviour
             {
                 tank.IssueCommand(commandTarget);
                 if(agentName != "all")
+                {
                     return;
+                }
             }
         }
     }
@@ -58,7 +108,9 @@ public class GameManager : MonoBehaviour
             {
                 tank.IssueCommand(commandTargetPosition);
                 if(agentName != "all")
+                {
                     return;
+                }
             }
         }
     }
@@ -121,6 +173,40 @@ public class GameManager : MonoBehaviour
                 Cursor.SetCursor(commandCursor, new Vector2(commandCursor.width / 2f, commandCursor.height / 2f), CursorMode.Auto);
             }
         }
+
+        if(!gameCamera.InAgentView)
+        {
+            UpdateCommandMarkerIcons();
+        }
+        else if(SelectedAgent != null)
+        {
+            HandleVehicleModeCommandAssignment();
+        }
+    }
+
+    private void HandleVehicleModeCommandAssignment()
+    {
+        if(Input.GetMouseButtonDown(1))
+        {
+            VehicleManager selectedVehicle = SelectedAgent.GetComponent<VehicleManager>();
+            HitInfo RayHitInfo = selectedVehicle.RequestHitInfo();
+            if(RayHitInfo.hitTag == 0 && RayHitInfo.hitGameObject != null)
+            {
+                GameObject targetVehicle = RayHitInfo.hitGameObject.transform.parent.gameObject;
+                if (targetVehicle != null)
+                {
+                    IssueCommandToVehicle(targetVehicle);
+                }
+            }
+            else if(RayHitInfo.hitTag == -1)
+            {
+                IssueCommandToVehicle(RayHitInfo.hitPosition);
+            }
+        }
+        else if(Input.GetKey(KeyCode.F) && SelectedAgent.VehicleType == VehicleType.Tank)
+        {
+            IssueCommandToVehicle(((TankManager)SelectedAgent).FollowPositionMarker);
+        }
     }
 
     private void HandleCommanderClick()
@@ -181,6 +267,68 @@ public class GameManager : MonoBehaviour
                 }
             }
             IssueCommandToVehicle(hit.point, SelectedAgent != null ? SelectedAgent.AgentName : "all");
+        }
+    }
+
+    private void UpdateCommandMarkerIcons()
+    {
+        if (_envController == null || _envController.VehicleList == null) return;
+
+        List<TankManager> aliveTanks = new List<TankManager>();
+        foreach (VehicleManager vehicle in _envController.VehicleList)
+        {
+            if (vehicle.Team == Team.Yellow && vehicle.VehicleType == VehicleType.Tank && vehicle.Health > 0)
+            {
+                aliveTanks.Add((TankManager)vehicle);
+            }
+        }
+
+        if (aliveTanks.Count == 0) return;
+
+        bool allShareCommand = false;
+        CommandType sharedType = aliveTanks[0].ActiveCommand;
+
+        if (sharedType != CommandType.None)
+        {
+            allShareCommand = true;
+            GameObject sharedTarget = aliveTanks[0].CommandMarker.FollowTarget;
+            Vector3 sharedPos = aliveTanks[0].CommandMarker.TargetGlobalPosition;
+
+            foreach (TankManager tank in aliveTanks)
+            {
+                if (tank.ActiveCommand != sharedType) 
+                {
+                    allShareCommand = false;
+                    break;
+                }
+
+                if (sharedType == CommandType.EliminateTarget && tank.CommandMarker.FollowTarget != sharedTarget)
+                {
+                    allShareCommand = false;
+                    break;
+                }
+                else if (sharedType == CommandType.GoToPosition && Vector3.Distance(tank.CommandMarker.TargetGlobalPosition, sharedPos) > 0.1f)
+                {
+                    allShareCommand = false;
+                    break;
+                }
+            }
+        }
+
+        foreach (TankManager tank in aliveTanks)
+        {
+            if (SelectedAgent == tank)
+            {
+                tank.CommandMarker.ShowCommandIcon = true;
+            }
+            else if (SelectedAgent == null && allShareCommand)
+            {
+                tank.CommandMarker.ShowCommandIcon = true;
+            }
+            else
+            {
+                tank.CommandMarker.ShowCommandIcon = false;
+            }
         }
     }
 

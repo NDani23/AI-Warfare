@@ -1,8 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using Unity.MLAgents;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,187 +9,179 @@ public enum GameMode
     TDM
 }
 
-
 public class EnvController : MonoBehaviour
 {
     [Tooltip("Time limit (seconds)")] public int timeLimit = 60;
 
-    [SerializeField] private CTController m_ControlPoint;
-    [SerializeField] private GameMode gameMode = GameMode.Conquest;
+    [SerializeField] private CTController _controlPoint;
+    [SerializeField] private Transform _TopDownViewPoint;
+    [SerializeField] private GameMode _gameMode = GameMode.Conquest;
 
-    public static int RespawnCooldown = 15;
+    public GameMode GameMode => _gameMode;
+    public Transform TopDownViewPoint => _TopDownViewPoint;
 
-    private List<VehicleManager> vehicleList = new List<VehicleManager>();
+    private int _respawnCooldown;
 
-    public List<VehicleManager> VehicleList => vehicleList;
+    private List<VehicleManager> _vehicleList = new List<VehicleManager>();
 
-    //public SimpleMultiAgentGroup m_RedAgentGroup;
-    //public SimpleMultiAgentGroup m_YellowAgentGroup;
+    public List<VehicleManager> VehicleList => _vehicleList;
 
-    public float m_ResetTimer = 5;
+    private float _resetTimer;
+    public float ResetTimer => _resetTimer;
 
-    public Dictionary<GameObject,float> m_DetectedRedEnemies = new Dictionary<GameObject, float>();
-    public Dictionary<GameObject, float> m_DetectedYellowEnemies = new Dictionary<GameObject, float>();
-    public Dictionary<VehicleManager, float> m_DeadAgents = new Dictionary<VehicleManager, float>();
+    public Dictionary<GameObject,float> _detectedRedEnemies = new Dictionary<GameObject, float>();
+    public Dictionary<GameObject, float> _detectedYellowEnemies = new Dictionary<GameObject, float>();
+    public Dictionary<VehicleManager, float> _deadAgents = new Dictionary<VehicleManager, float>();
 
-    public GameObject ControlPoint => m_ControlPoint.gameObject;
+    public Dictionary<GameObject,float> DetectedRedEnemies => _detectedRedEnemies;
+    public Dictionary<GameObject, float> DetectedYellowEnemies => _detectedYellowEnemies;
+    public Dictionary<VehicleManager, float> DeadAgents => _deadAgents;
+
+    public GameObject ControlPoint => _controlPoint.gameObject;
 
     public float RedTeamPoints = 0.0f;
     public float YellowTeamPoints = 0.0f;
 
-    private int m_MatchTotalKills = 0;
-    private int m_MatchTankKills = 0;
-    private int m_MatchHeliKills = 0;
+    public CTState CtState = CTState.Neutral;
 
-    public CTState ctState = CTState.Neutral;
+    private int _redAgentsOnCT = 0;
+    private int _yellowAgentsOnCT = 0;
 
-    private int redAgentsOnCT = 0;
-    private int yellowAgentsOnCT = 0;
-
-    private bool capturing = false;
-    private float StateNum = 0.0f;
+    private bool _capturing = false;
+    private float _stateNum = 0.0f;
+    public float StateNum => _stateNum;
 
     public UnityEvent RedWonEvent;
     public UnityEvent YellowWonEvent;
     public UnityEvent TieEvent;
     public UnityEvent GameEnded;
 
-    private int winBalance = 0;
+
     private void Awake()
     {
-        vehicleList = this.GetComponentsInChildren<VehicleManager>().ToList();
+        _vehicleList = this.GetComponentsInChildren<VehicleManager>().ToList();
+        _respawnCooldown = GameMode == GameMode.Conquest ? 15 : 5;
     }
 
 
     void Start()
     {
-        m_ResetTimer = timeLimit;
+        _resetTimer = timeLimit;
 
-        if(gameMode == GameMode.TDM)
+        if(_gameMode == GameMode.TDM)
         {
-            m_ControlPoint.gameObject.SetActive(false);
+            _controlPoint.gameObject.SetActive(false);
+
+            foreach(var vehicle in _vehicleList)
+            {
+                EnemyDetected(vehicle.gameObject, timeLimit);
+            }
         }
         else
         {
-            m_ControlPoint.gameObject.SetActive(true);
+            _controlPoint.gameObject.SetActive(true);
         }
-        //m_RedAgentGroup = new SimpleMultiAgentGroup();
-        //m_YellowAgentGroup = new SimpleMultiAgentGroup();
-
-        //foreach (var agent in VehicleList)
-        //{
-        //    if (agent.Team == Team.Red)
-        //    {
-        //        m_RedAgentGroup.RegisterAgent((Agent)agent);
-        //    }
-        //    else
-        //    {
-        //        m_YellowAgentGroup.RegisterAgent((Agent)agent);
-        //    }
-        //}
     }
 
     void FixedUpdate()
     {
 
-        m_ResetTimer -= Time.fixedDeltaTime;
+        _resetTimer -= Time.fixedDeltaTime;
         HandleCaptureState();
 
-        if (m_ResetTimer <= 0.0f)
+        if (_resetTimer <= 0.0f)
         {
             Team? winnerTeam = RedTeamPoints > YellowTeamPoints ? Team.Red : (YellowTeamPoints > RedTeamPoints ? Team.Yellow : null);
             ResetEnv(winnerTeam, true);
             return;
         }
 
-        foreach (var agent in m_DetectedRedEnemies.Keys.ToList())
+        foreach (var agent in _detectedRedEnemies.Keys.ToList())
         {
-            m_DetectedRedEnemies[agent] = m_DetectedRedEnemies[agent] - Time.fixedDeltaTime;
-            if(m_DetectedRedEnemies[agent] <= 0.0f)
+            _detectedRedEnemies[agent] = _detectedRedEnemies[agent] - Time.fixedDeltaTime;
+            if(_detectedRedEnemies[agent] <= 0.0f)
             {
                 agent.GetComponent<ITargetable>()?.setDetectedState(false);
-                m_DetectedRedEnemies.Remove(agent);
+                _detectedRedEnemies.Remove(agent);
             }
         }
 
-        foreach (var agent in m_DetectedYellowEnemies.Keys.ToList())
+        foreach (var agent in _detectedYellowEnemies.Keys.ToList())
         {
-            m_DetectedYellowEnemies[agent] = m_DetectedYellowEnemies[agent] - Time.fixedDeltaTime;
-            if (m_DetectedYellowEnemies[agent] <= 0.0f)
+            _detectedYellowEnemies[agent] = _detectedYellowEnemies[agent] - Time.fixedDeltaTime;
+            if (_detectedYellowEnemies[agent] <= 0.0f)
             {
                 agent.GetComponent<ITargetable>()?.setDetectedState(false);
-                m_DetectedYellowEnemies.Remove(agent);
+                _detectedYellowEnemies.Remove(agent);
             }
         }
 
-        foreach (var agent in m_DeadAgents.Keys.ToList())
+        foreach (var agent in _deadAgents.Keys.ToList())
         {
-            m_DeadAgents[agent] = m_DeadAgents[agent] - Time.fixedDeltaTime;
-            if (m_DeadAgents[agent] <= 0.0f)
+            _deadAgents[agent] = _deadAgents[agent] - Time.fixedDeltaTime;
+            if (_deadAgents[agent] <= 0.0f)
             {
-                m_DeadAgents.Remove(agent);
+                _deadAgents.Remove(agent);
                 agent.ResetVehicle();
             }
         }
 
-        if (capturing)
+        if (_capturing)
         {
-           if(redAgentsOnCT < yellowAgentsOnCT)
+           if(_redAgentsOnCT < _yellowAgentsOnCT)
            {
-               if (StateNum < 0 && ctState != CTState.Red) StateNum = 0;
-               StateNum = Mathf.Min(StateNum + Time.fixedDeltaTime, 10.0f);
+               if (_stateNum < 0 && CtState != CTState.Red) _stateNum = 0;
+               _stateNum = Mathf.Min(_stateNum + Time.fixedDeltaTime, 10.0f);
 
-               if (StateNum >= 0.0f && ctState == CTState.Red)
+               if (_stateNum >= 0.0f && CtState == CTState.Red)
                {
-                   ctState = CTState.Neutral;
-                   m_ControlPoint.ChangeState(ctState);
+                   CtState = CTState.Neutral;
+                   _controlPoint.ChangeState(CtState);
                }
 
-               if (StateNum == 10.0f && ctState != CTState.Yellow)
+               if (_stateNum == 10.0f && CtState != CTState.Yellow)
                {
 
-                   ctState = CTState.Yellow;
-                   m_ControlPoint.ChangeState(ctState);
-                   capturing = false;
-                   Debug.Log("CAPTURED!");
+                   CtState = CTState.Yellow;
+                   _controlPoint.ChangeState(CtState);
+                   _capturing = false;
                }
            }
            else
            {
-               if (StateNum > 0 && ctState != CTState.Yellow) StateNum = 0;
-               StateNum = Mathf.Max(StateNum - Time.fixedDeltaTime, -10.0f);
+               if (_stateNum > 0 && CtState != CTState.Yellow) _stateNum = 0;
+               _stateNum = Mathf.Max(_stateNum - Time.fixedDeltaTime, -10.0f);
 
-               if (StateNum <= 0.0 && ctState == CTState.Yellow)
+               if (_stateNum <= 0.0 && CtState == CTState.Yellow)
                {
-                   ctState = CTState.Neutral;
-                   m_ControlPoint.ChangeState(ctState);
+                   CtState = CTState.Neutral;
+                   _controlPoint.ChangeState(CtState);
                }
 
-               if (StateNum == -10.0f && ctState != CTState.Red)
+               if (_stateNum == -10.0f && CtState != CTState.Red)
                {
-                   ctState = CTState.Red;
-                   m_ControlPoint.ChangeState(ctState);
-                   capturing = false;
-                   Debug.Log("CAPTURED!");
+                   CtState = CTState.Red;
+                   _controlPoint.ChangeState(CtState);
+                   _capturing = false;
                }
            }
         }
         else
         {
-           if ((redAgentsOnCT == 0 && yellowAgentsOnCT == 0)
-            || (redAgentsOnCT == 0 && ctState == CTState.Yellow)
-            || (yellowAgentsOnCT == 0 && ctState == CTState.Red))
+           if ((_redAgentsOnCT == 0 && _yellowAgentsOnCT == 0)
+            || (_redAgentsOnCT == 0 && CtState == CTState.Yellow)
+            || (_yellowAgentsOnCT == 0 && CtState == CTState.Red))
            {
-               switch (ctState)
+               switch (CtState)
                {
                    case CTState.Red:
-                       StateNum = -10.0f;
+                       _stateNum = -10.0f;
                        break;
                    case CTState.Yellow:
-                       StateNum = 10.0f;
+                       _stateNum = 10.0f;
                        break;
                    case CTState.Neutral:
-                       StateNum = 0;
+                       _stateNum = 0;
                        break;
 
                }
@@ -201,11 +190,11 @@ public class EnvController : MonoBehaviour
 
 
         float pointToAdd = (100.0f / 60.0f) * Time.fixedDeltaTime;
-        if (ctState == CTState.Red)
+        if (CtState == CTState.Red)
         {
            RedTeamPoints += pointToAdd;
         }
-        else if (ctState == CTState.Yellow)
+        else if (CtState == CTState.Yellow)
         {
            YellowTeamPoints += pointToAdd;
         }
@@ -213,31 +202,18 @@ public class EnvController : MonoBehaviour
         if (RedTeamPoints >= 100.0f && YellowTeamPoints >= 100.0f)
         {
            //TieEvent.Invoke();
-           //m_YellowAgentGroup.AddGroupReward(0);
-           //m_RedAgentGroup.AddGroupReward(0);
-           //m_YellowAgentGroup.EndGroupEpisode();
-           //m_RedAgentGroup.EndGroupEpisode();
-           //ResetEnv();
            ResetEnv(null);
            return;
         }
         else if (RedTeamPoints >= 100.0f)
         {
            //RedWonEvent.Invoke();
-           //m_RedAgentGroup.AddGroupReward(1.0f);
-           //m_YellowAgentGroup.EndGroupEpisode();
-           //m_RedAgentGroup.EndGroupEpisode();
-           //ResetEnv();
            ResetEnv(Team.Red);
            return;
         }
         else if (YellowTeamPoints >= 100.0f)
         {
            //YellowWonEvent.Invoke();
-           //m_YellowAgentGroup.AddGroupReward(1.0f);
-           //m_YellowAgentGroup.EndGroupEpisode();
-           //m_RedAgentGroup.EndGroupEpisode();
-           //ResetEnv();
            ResetEnv(Team.Yellow);
            return;
         }
@@ -245,40 +221,30 @@ public class EnvController : MonoBehaviour
 
     public void VehicleDied(VehicleManager vehicle)
     {
-        if (m_DeadAgents.ContainsKey(vehicle)) return;
-        m_DeadAgents.TryAdd(vehicle, RespawnCooldown);
-
-        RegisterKillForStats(vehicle.VehicleType);
-
-        //float timeMultiplier = (m_ResetTimer / timeLimit) + 1.0f;
+        if (_deadAgents.ContainsKey(vehicle)) return;
+        _deadAgents.TryAdd(vehicle, _respawnCooldown);
 
         if (vehicle.Team == Team.Red)
         {
 
-            m_DetectedRedEnemies.Remove(vehicle.gameObject);
+            _detectedRedEnemies.Remove(vehicle.gameObject);
             AddRewardToTeamMembers(Team.Yellow, vehicle.VehicleType == VehicleType.Tank ? 0.1f : 0.2f);
             AddRewardToTeamMembers(Team.Red, vehicle.VehicleType == VehicleType.Tank ? -0.1f : -0.2f);
-            AddPointToTeam(Team.Yellow, 1);
+            AddPointToTeam(Team.Yellow, _gameMode == GameMode.Conquest ? 1 : 10);
 
         }
         else if (vehicle.Team == Team.Yellow)
         {
-            m_DetectedYellowEnemies.Remove(vehicle.gameObject);
+            _detectedYellowEnemies.Remove(vehicle.gameObject);
             AddRewardToTeamMembers(Team.Red, vehicle.VehicleType == VehicleType.Tank ? 0.1f : 0.2f);
             AddRewardToTeamMembers(Team.Yellow, vehicle.VehicleType == VehicleType.Tank ? -0.1f : -0.2f);
-            AddPointToTeam(Team.Red, 1);
+            AddPointToTeam(Team.Red, _gameMode == GameMode.Conquest ? 1 : 10);
         }
-
-        ////vehicle.ResetAgent();
-        //ResetEnv(vehicle.Team == Team.Red? Team.Yellow : Team.Red);
-
-        //ResetEnv(null, true);
-        ////agent.gameObject.SetActive(false);
     }
 
     public List<VehicleManager> GetAllVehicles()
     {
-        return vehicleList;
+        return _vehicleList;
     }
 
     public void AddPointToTeam(Team team, int point)
@@ -298,11 +264,11 @@ public class EnvController : MonoBehaviour
     {
         if (tank.Health <= 0) return;
 
-        if (gameMode == GameMode.Conquest)
+        if (_gameMode == GameMode.Conquest)
         {
             tank.IssueCommand(ControlPoint);
         }
-        else if (gameMode == GameMode.TDM)
+        else if (_gameMode == GameMode.TDM)
         {
             GameObject closestEnemy = GetClosestEnemy(tank);
             if (closestEnemy != null)
@@ -312,23 +278,21 @@ public class EnvController : MonoBehaviour
         }
     }
 
-    
-
     private GameObject GetClosestEnemy(TankManager tank)
     {
         GameObject closest = null;
         float minDist = float.MaxValue;
 
-        foreach (VehicleManager v in VehicleList)
+        foreach (VehicleManager vehicle in _vehicleList)
         {
-            // Find alive enemies
-            if (v.Health > 0 && v.Team != tank.Team)
+            if (vehicle.VehicleType != VehicleType.Tank) continue;
+            if (vehicle.Health > 0 && vehicle.Team != tank.Team)
             {
-                float dist = Vector3.Distance(tank.transform.position, v.transform.position);
+                float dist = Vector3.Distance(tank.transform.position, vehicle.transform.position);
                 if (dist < minDist)
                 {
                     minDist = dist;
-                    closest = v.gameObject;
+                    closest = vehicle.gameObject;
                 }
             }
         }
@@ -337,96 +301,81 @@ public class EnvController : MonoBehaviour
 
     public void ResetEnv(Team? winningTeam, bool TimeIsUp = false)
     {
-        //WriteMatchKillStats();
-
-        // if (winningTeam is null)
-        // {
-        //     AddRewardToTeamMembers(Team.Red, 0.0f);
-        //     AddRewardToTeamMembers(Team.Yellow, 0.0f);
-        // }
-        // else
-        // {
-        //     //float pointDiff = winningTeam == Team.Yellow ? YellowTeamPoints - RedTeamPoints : RedTeamPoints - YellowTeamPoints;
-        //     float timeBonus = Mathf.Clamp01(m_ResetTimer / ((float)timeLimit / 2.0f));
-        //     AddRewardToTeamMembers(Team.Red, winningTeam == Team.Red ? 0.5f + timeBonus : -0.5f - timeBonus);
-        //     AddRewardToTeamMembers(Team.Yellow, winningTeam == Team.Yellow ? 0.5f + timeBonus : -0.5f - timeBonus);
-        // }
-
-        foreach (var vehicle in vehicleList)
+        foreach (var vehicle in _vehicleList)
         {
             vehicle.EndEpisode();
         }
 
-
         GameEnded.Invoke();
-        m_ResetTimer = timeLimit;
-        m_DetectedRedEnemies.Clear();
-        m_DetectedYellowEnemies.Clear();
-        m_DeadAgents.Clear();
-        redAgentsOnCT = 0;
-        yellowAgentsOnCT = 0;
-        capturing = false;
-        ctState = CTState.Neutral;
-        m_ControlPoint?.ChangeState(ctState);
+        _resetTimer = timeLimit;
+        _detectedRedEnemies.Clear();
+        _detectedYellowEnemies.Clear();
+        _deadAgents.Clear();
+        _redAgentsOnCT = 0;
+        _yellowAgentsOnCT = 0;
+        _capturing = false;
+        CtState = CTState.Neutral;
+        _controlPoint?.ChangeState(CtState);
         RedTeamPoints = 0.0f;
         YellowTeamPoints = 0.0f;
-        m_MatchTotalKills = 0;
-        m_MatchTankKills = 0;
-        m_MatchHeliKills = 0;
+        _respawnCooldown = GameMode == GameMode.Conquest ? 15 : 5;
+
+        if(_gameMode == GameMode.TDM)
+        {
+            foreach(var vehicle in _vehicleList)
+            {
+                EnemyDetected(vehicle.gameObject, timeLimit);
+            }
+        }
+        else
+        {
+            _controlPoint.gameObject.SetActive(true);
+        }
+    }
+
+    public void SetGameMode(GameMode mode)
+    {
+        _gameMode = mode;
     }
 
     public Vector3 GetCTPosition()
     {
-        return m_ControlPoint.transform.localPosition;
+        return _controlPoint.transform.localPosition;
     }
 
     public void VehicleEnteredCT(Team team)
     {
         if (team == Team.Red)
-            redAgentsOnCT++;
+            _redAgentsOnCT++;
         else
-            yellowAgentsOnCT++;
+            _yellowAgentsOnCT++;
     }
 
     public void VehicleExitedCT(Team team)
     {
 
         if (team == Team.Red)
-            redAgentsOnCT--;
+            _redAgentsOnCT--;
         else
-            yellowAgentsOnCT--;
+            _yellowAgentsOnCT--;
 
     }
 
     public void HandleCaptureState()
     {
-        if (!capturing)
+        if (!_capturing)
         {
-            //if ((redAgentsOnCT > 0 && yellowAgentsOnCT == 0 && ctState != CTState.Red) 
-            // || (redAgentsOnCT == 0 && yellowAgentsOnCT > 0 && ctState != CTState.Yellow))
-            //{
-            //    capturing = true;
-            //}
-
-            if ((redAgentsOnCT > yellowAgentsOnCT && ctState != CTState.Red)
-             || (yellowAgentsOnCT > redAgentsOnCT && ctState != CTState.Yellow))
+            if ((_redAgentsOnCT > _yellowAgentsOnCT && CtState != CTState.Red)
+             || (_yellowAgentsOnCT > _redAgentsOnCT && CtState != CTState.Yellow))
             {
-                capturing = true;
+                _capturing = true;
             }
         }
         else
         {
-            //if (redAgentsOnCT > 0 && yellowAgentsOnCT > 0
-            // || redAgentsOnCT == 0 && yellowAgentsOnCT == 0
-            // || ctState == CTState.Yellow && redAgentsOnCT == 0
-            // || ctState == CTState.Red && yellowAgentsOnCT == 0)
-            //{
-            //    capturing = false;
-            //}
-
-            if (redAgentsOnCT == yellowAgentsOnCT)
+            if (_redAgentsOnCT == _yellowAgentsOnCT)
             {
-                capturing = false;
+                _capturing = false;
             }
         }
     }
@@ -437,87 +386,56 @@ public class EnvController : MonoBehaviour
         else return YellowTeamPoints;
     }
 
-    public void EnemyDetected(GameObject target, Team team)
+    public void EnemyDetected(GameObject target, float detectionDuration = 15.0f)
     {
-        target.GetComponent<ITargetable>()?.setDetectedState(true);
+        var vehicleManager = target.GetComponent<VehicleManager>();
+        vehicleManager.setDetectedState(true);
 
-        if (team == Team.Yellow)
+        if (vehicleManager.Team == Team.Red)
         {
-            if(m_DetectedRedEnemies.ContainsKey(target))
+            if(_detectedRedEnemies.ContainsKey(target))
             {
-                m_DetectedRedEnemies[target] = 15.0f;
+                _detectedRedEnemies[target] = detectionDuration;
             }
             else
             {
-                m_DetectedRedEnemies.TryAdd(target, 15.0f);
+                _detectedRedEnemies.TryAdd(target, detectionDuration);
             }
         }
         else
         {
-            if (m_DetectedYellowEnemies.ContainsKey(target))
+            if (_detectedYellowEnemies.ContainsKey(target))
             {
-                m_DetectedYellowEnemies[target] = 15.0f;
+                _detectedYellowEnemies[target] = detectionDuration;
             }
             else
             {
-                m_DetectedYellowEnemies.TryAdd(target, 15.0f);
+                _detectedYellowEnemies.TryAdd(target, detectionDuration);
             }
         }
     }
 
     public void resetCT()
     {
-        StateNum = 0;
-        ctState = CTState.Neutral;
-        m_ControlPoint.ChangeState(ctState);
-    }
-
-    public float getStateNum()
-    {
-        return StateNum;
-    }
-
-    public float getRemainingTime()
-    {
-        return m_ResetTimer;
+        _stateNum = 0;
+        CtState = CTState.Neutral;
+        _controlPoint.ChangeState(CtState);
     }
 
     public void clearDetectedEnemies()
     {
-        m_DetectedRedEnemies.Clear();
-        m_DetectedYellowEnemies.Clear();
+        _detectedRedEnemies.Clear();
+        _detectedYellowEnemies.Clear();
     }
 
     private void AddRewardToTeamMembers(Team team, float reward)
     {
-        foreach(var vehicle in vehicleList)
+        foreach(var vehicle in _vehicleList)
         {
             if(vehicle.Team == team)
             {
-                //vehicle.AddReward(reward);
+                vehicle.AddReward(reward);
             }
         }
-    }
-
-    private void RegisterKillForStats(VehicleType vehicleType)
-    {
-        m_MatchTotalKills++;
-
-        if (vehicleType == VehicleType.Tank)
-        {
-            m_MatchTankKills++;
-        }
-        else if (vehicleType == VehicleType.Heli)
-        {
-            m_MatchHeliKills++;
-        }
-    }
-
-    private void WriteMatchKillStats()
-    {
-        var statsRecorder = Academy.Instance.StatsRecorder;
-        statsRecorder.Add("Match/Kills/Total", m_MatchTotalKills, StatAggregationMethod.Average);
-        statsRecorder.Add("Match/Kills/Tank", m_MatchTankKills, StatAggregationMethod.Average);
-        statsRecorder.Add("Match/Kills/Heli", m_MatchHeliKills, StatAggregationMethod.Average);
     }
 }

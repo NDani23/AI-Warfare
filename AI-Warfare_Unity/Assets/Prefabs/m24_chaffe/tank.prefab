@@ -21438,6 +21438,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HealthBar: {fileID: 5149376840159072481}
+--- !u!1 &8208936272567849894
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7269465553195118266}
+  m_Layer: 18
+  m_Name: FollowCommandMarker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7269465553195118266
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8208936272567849894}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -60}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1393235037358775708}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8273277699090842711
 GameObject:
   m_ObjectHideFlags: 0
@@ -27059,6 +27090,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1746913479604866442}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7269465553195118266}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ef0a8115c5cbc614d80f53e278ef0647, type: 3}
       insertIndex: -1
@@ -27140,12 +27174,16 @@ MonoBehaviour:
   SelectedIcon: {fileID: 976558317107708066}
   DeadStateIcon: {fileID: 1256610726261852451}
   GameCameraAnchor: {fileID: 9195421074058834648}
+  _hitscanLayerMask:
+    serializedVersion: 2
+    m_Bits: 100925441
   memberID: 1
   aimSensor: {fileID: 3194373162913784176}
   _commandMarker: {fileID: 8844244151014849480}
   _driverAgent: {fileID: 699821067305294800}
   _shooterAgent: {fileID: 2691580393211870795}
   gameCameraPivot: {fileID: 8677752397175227957}
+  _followPositionMarker: {fileID: 8208936272567849894}
   DiedEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -27549,6 +27587,10 @@ PrefabInstance:
     - target: {fileID: 1664217243094511312, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1856380283264694424, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
+      propertyPath: fixedHeight
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 2405976058743624034, guid: 234ab9fbbc1735c4ea785accc140fbc6, type: 3}
       propertyPath: m_LocalPosition.x

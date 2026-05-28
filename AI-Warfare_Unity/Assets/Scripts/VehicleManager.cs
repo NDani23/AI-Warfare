@@ -22,6 +22,7 @@ public abstract class VehicleManager : MonoBehaviour
     [SerializeField] protected GameObject SelectedIcon;
     [SerializeField] protected GameObject DeadStateIcon;
     [SerializeField] protected GameObject GameCameraAnchor;
+    [SerializeField] protected LayerMask _hitscanLayerMask;
     [SerializeField] protected int memberID;
     public int MemberID => memberID;
 
@@ -66,6 +67,7 @@ public abstract class VehicleManager : MonoBehaviour
     public String AgentName => _agentName;
 
     public abstract void AddReward(float reward);
+    public abstract HitInfo RequestHitInfo();
     public abstract void EndEpisode();
 
     public virtual void SetPlayerControl(bool control)
@@ -76,11 +78,6 @@ public abstract class VehicleManager : MonoBehaviour
         {
             bp.BehaviorType = _isPlayerControlled ? Unity.MLAgents.Policies.BehaviorType.HeuristicOnly : Unity.MLAgents.Policies.BehaviorType.Default;
         }
-    }
-
-    protected virtual void extendSelectedStateChanged(bool isSelected)
-    {
-        // This method can be overridden by derived classes to implement additional behavior when the selected state changes.
     }
 
     protected virtual void extendResetVehicle()
@@ -121,7 +118,7 @@ public abstract class VehicleManager : MonoBehaviour
     {
         _health = MaxHealth;
         _vehicleController.setStartingState((int)_team, memberID);
-        _detected = false;
+        _detected = _envController.GameMode == GameMode.TDM ? true : false;
         if(!_selected) _healthBar.SetActive(true);
         HitBoxMeshes.SetActive(true);
         gameObject.tag = _team == Team.Red ? "RedAgent" : "YellowAgent";
@@ -188,7 +185,6 @@ public abstract class VehicleManager : MonoBehaviour
         {
             _healthBar.SetActive(true);
         }
-        extendSelectedStateChanged(isSelected);
         UpdateIconsVisibility();
     }
 }

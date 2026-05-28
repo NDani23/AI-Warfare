@@ -33,14 +33,14 @@ public class CTController : MonoBehaviour
 
     private void Update()
     {
-        if (m_envController.getStateNum() > 0)
+        if (m_envController.StateNum > 0)
         {
-            YellowState.fillAmount = m_envController.getStateNum() / 10.0f;
+            YellowState.fillAmount = m_envController.StateNum / 10.0f;
             RedState.fillAmount = 0;
         }
-        else if (m_envController.getStateNum() < 0)
+        else if (m_envController.StateNum < 0)
         {
-            RedState.fillAmount = Mathf.Abs(m_envController.getStateNum()) / 10.0f;
+            RedState.fillAmount = Mathf.Abs(m_envController.StateNum) / 10.0f;
             YellowState.fillAmount = 0;
         }
         else

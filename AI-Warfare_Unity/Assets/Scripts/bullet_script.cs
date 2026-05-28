@@ -38,13 +38,13 @@ public class bullet_script : MonoBehaviour
         if ((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Red) ||
             (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Yellow))
         {
-            //Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
-            //emitter.position = collision.transform.position;
+            Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
+            emitter.position = collision.transform.position;
 
             if (_parent.Team == Team.Red)
-                envController.EnemyDetected(_parent.gameObject, Team.Yellow);
+                envController.EnemyDetected(_parent.gameObject);
             else
-                envController.EnemyDetected(_parent.gameObject, Team.Red);
+                envController.EnemyDetected(_parent.gameObject);
 
             collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Hit(_damage);
 
@@ -52,11 +52,8 @@ public class bullet_script : MonoBehaviour
         else if((collision.gameObject.CompareTag("YellowAgent") && _parent.Team == Team.Yellow) ||
                (collision.gameObject.CompareTag("RedAgent") && _parent.Team == Team.Red))
         {
-            //if (_parent.GetComponent<BehaviorParameters>().BehaviorType != BehaviorType.Default)
-            //{
-            //    Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
-            //    emitter.position = collision.transform.position;
-            //}
+            Transform emitter = GameObject.Instantiate(SparkEmitterPrefab);
+            emitter.position = collision.transform.position;
             _parent.AddRewardToShooter(-0.5f);
             collision.collider.gameObject.transform.parent.GetComponent<ITargetable>().Hit(_damage);
         }

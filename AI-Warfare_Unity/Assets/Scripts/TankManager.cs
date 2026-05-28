@@ -24,7 +24,9 @@ public class TankManager : VehicleManager, ITargetable
     [SerializeField] private TankDriverAgent _driverAgent;
     [SerializeField] private TankShooterAgent _shooterAgent;
     [SerializeField] private Transform gameCameraPivot;
+    [SerializeField] private GameObject _followPositionMarker;
 
+    public GameObject FollowPositionMarker => _followPositionMarker;
     BehaviorParameters m_BehaviorParameters;
     private float _maxHealth = 100.0f;
     public override float MaxHealth => _maxHealth;
@@ -101,16 +103,35 @@ public class TankManager : VehicleManager, ITargetable
         _shooterAgent.SetPlayerControl(control);
     }
 
-    protected override void extendSelectedStateChanged(bool isSelected)
+    public override HitInfo RequestHitInfo()
     {
-        if (!isSelected)
+        HitInfo hitInfo = new HitInfo();
+
+        string EnemyTag = _team == Team.Red ? "YellowAgent" : "RedAgent";
+        string AllyTag = _team == Team.Red ? "RedAgent" : "YellowAgent";
+
+        if (Physics.Raycast(_tankController.FirePosition.position, _tankController.FirePosition.forward, out RaycastHit Hit, 1000.0f, _hitscanLayerMask))
         {
-            CommandMarker.ShowCommandIcon=false;
+            hitInfo.hitPosition = Hit.point;
+            hitInfo.hitGameObject = Hit.collider.gameObject;
+
+            if (Hit.collider.CompareTag(EnemyTag))
+            {
+                hitInfo.hitTag = 0;
+            }
+            else if (!Hit.collider.CompareTag(AllyTag))
+            {
+                hitInfo.hitTag = -1;
+            }
         }
         else
         {
-            CommandMarker.ShowCommandIcon=true;
+            hitInfo.hitPosition = _tankController.FirePosition.position + (_tankController.FirePosition.forward * 1000.0f);
+            hitInfo.hitGameObject = null;
+            hitInfo.hitTag = -1;
         }
+
+        return hitInfo;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -135,7 +156,7 @@ public class TankManager : VehicleManager, ITargetable
         RayPerceptionOutput obs = RayPerceptionSensor.Perceive(spec, false);
         if (obs.RayOutputs[0].HitTagIndex == 1)
         {
-            _envController.EnemyDetected(obs.RayOutputs[0].HitGameObject.transform.parent.gameObject, this._team);
+            _envController.EnemyDetected(obs.RayOutputs[0].HitGameObject.transform.parent.gameObject);
         }
 
         const float detectRange= 70.0f;
@@ -151,7 +172,7 @@ public class TankManager : VehicleManager, ITargetable
             Vector3 targetPos = target.transform.position;
             if(Vector3.Distance(tankPos, targetPos) < detectRange)
             {
-                _envController.EnemyDetected(target.gameObject, this._team);
+                _envController.EnemyDetected(target.gameObject);
             }
         }
 
@@ -220,7 +241,7 @@ public class TankManager : VehicleManager, ITargetable
         if (commandTarget == null)
             return;
 
-        if (commandTarget.GetComponent<ITargetable>() != null)
+        if (commandTarget.GetComponent<VehicleManager>() != null && commandTarget.GetComponent<VehicleManager>().Team != this.Team)
         {
             activeCommand = CommandType.EliminateTarget;
             _commandMarker.gameObject.SetActive(true);
