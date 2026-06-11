@@ -4,8 +4,8 @@ behaviors:
     hyperparameters:
       batch_size: 2048
       buffer_size: 20480
-      learning_rate: 0.0003
-      beta: 0.0065
+      learning_rate: 0.00029
+      beta: 0.006
       epsilon: 0.2
       lambd: 0.95
       num_epoch: 3
@@ -24,7 +24,7 @@ behaviors:
         strength: 1.0
     keep_checkpoints: 5
     checkpoint_interval: 1000000
-    max_steps: 60000000
+    max_steps: 50000000
     time_horizon: 512
     summary_freq: 30000
 
@@ -33,8 +33,8 @@ behaviors:
     hyperparameters:
       batch_size: 2048
       buffer_size: 20480
-      learning_rate: 0.00027
-      beta: 0.005
+      learning_rate: 0.00025
+      beta: 0.004
       epsilon: 0.2
       lambd: 0.95
       num_epoch: 3
@@ -52,6 +52,6 @@ behaviors:
         strength: 1.0
     keep_checkpoints: 5
     checkpoint_interval: 1000000
-    max_steps: 60000000
+    max_steps: 50000000
     time_horizon: 512
     summary_freq: 30000

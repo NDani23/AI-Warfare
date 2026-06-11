@@ -38,9 +38,9 @@ public class TankDriverAgent : Agent
         sensor.AddObservation(transform.InverseTransformDirection(_tankRB.angularVelocity).y); // Angular velocity (turn speed)
         sensor.AddObservation(_vehicleManager.Health * 0.01f); // Health
         sensor.AddObservation(transform.InverseTransformDirection(_tankCannon.forward)); // Cannon forward direction relative to the tank body
-        sensor.AddObservation(_vehicleManager.ActiveCommand == CommandType.GoToPosition ? 1.0f : 0.0f); // is Go-to command active
-        sensor.AddObservation(_vehicleManager.ActiveCommand == CommandType.EliminateTarget ? 1.0f : 0.0f); // is Kill-target command active
-        sensor.AddObservation(Vector3.Distance(transform.position, _vehicleManager.CommandMarker.transform.position) / 700.0f);
+        sensor.AddObservation(_vehicleManager.ActiveCommand == TankManager.CommandType.GoToPoint ? 1.0f : 0.0f); // is Go-to command active
+        sensor.AddObservation(_vehicleManager.ActiveCommand == TankManager.CommandType.KillTarget ? 1.0f : 0.0f); // is Kill-target command active
+        sensor.AddObservation(0.0f); //Placeholder for future use (team score relative to the other team)
     }
 
     void FixedUpdate()
@@ -56,13 +56,10 @@ public class TankDriverAgent : Agent
         //     AddReward(-(Time.fixedDeltaTime / 60.0f));
         // }
 
-
-        float dotToTarget = Vector3.Dot(transform.forward, Vector3.Normalize(_vehicleManager.CommandMarker.transform.position - transform.position));
-        float multiplier = dotToTarget > 0f ? 1.0f : 0.5f; // Full reward if facing target, half if somewhat facing, none if facing away
-        multiplier = _vehicleManager.ActiveCommand == CommandType.GoToPosition ? multiplier : 0.5f;
-        
-        if(!_vehicleManager.IsInZone)
-            AddReward(dotToTarget * multiplier * (Time.fixedDeltaTime / 60.0f)); // Small reward for facing the target, scaled down to prevent excessive rewards at high speeds
+        if((!_vehicleManager.IsInZone && _vehicleManager.ActiveCommand == TankManager.CommandType.GoToPoint) || (_vehicleManager.ActiveCommand == TankManager.CommandType.KillTarget))
+        {
+            AddReward(_tankRB.linearVelocity.magnitude / 30.0f * (Time.fixedDeltaTime / 60.0f)); // Reward for forward movement, scaled down to prevent excessive rewards at high speeds
+        }
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -99,12 +96,6 @@ public class TankDriverAgent : Agent
         ActionSegment<float> continuousActions = actionsOut.ContinuousActions;
         continuousActions[0] = Input.GetKey(KeyCode.S) ? -1 : (Input.GetKey(KeyCode.W) ? 1 : 0);
         continuousActions[1] = Input.GetKey(KeyCode.D) ? 1 : (Input.GetKey(KeyCode.A) ? -1 : 0);
-    }
-
-    public bool IsPlayerControlled()
-    {
-        var bp = GetComponent<Unity.MLAgents.Policies.BehaviorParameters>();
-        return bp != null ? bp.BehaviorType == Unity.MLAgents.Policies.BehaviorType.HeuristicOnly : false;
     }
 
     public void SetPlayerControl(bool control)
